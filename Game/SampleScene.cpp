@@ -6,11 +6,11 @@ void SampleScene::Initialize() {
     sprite_->SetPosition({100, 100});
 
     sky_ = std::make_unique<Skybox>();
-    sky_->Initialize("rostock_laage_airport_4k.dds");
+    sky_->Initialize("Skybox.dds");
 
     model_ = std::make_unique<Model>();
     model_->Initialize("animatedcube");
-    model_->SetEnvironmentTexture("rostock_laage_airport_4k.dds");
+    model_->SetEnvironmentTexture("Skybox.dds");
 }
 
 void SampleScene::Update() {
