@@ -6,11 +6,15 @@
 #include "Model.hpp"
 #include "Sprite.hpp"
 #include "src/Sky/Skybox.hpp"
+#include "Player/Player.hpp"
+#include "Input.hpp"
+#include "Camera/Manager/CameraManager.hpp"
 
 class SampleScene final : public IScene{
     std::unique_ptr<Sprite> sprite_;
     std::unique_ptr<Model> model_;
     std::unique_ptr<Skybox> sky_;
+    std::unique_ptr<Player> player_;
 
 public:
     void Initialize() override;
