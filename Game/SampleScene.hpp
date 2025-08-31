@@ -8,8 +8,7 @@
 #include "src/Sky/Skybox.hpp"
 #include "Player/Player.hpp"
 #include "CameraController.hpp"
-#include "Input.hpp"
-#include "Camera/Manager/CameraManager.hpp"
+#include "Enemy/Enemy.hpp"
 
 class SampleScene final : public IScene{
     std::unique_ptr<Sprite> sprite_;
@@ -17,6 +16,8 @@ class SampleScene final : public IScene{
     std::unique_ptr<Skybox> sky_;
     std::unique_ptr<Player> player_;
     std::unique_ptr<CameraController> cameraController_;
+
+    std::unique_ptr<Enemy> enemy_;
 
 public:
     void Initialize() override;

@@ -29,13 +29,11 @@ public:
     void SetRotation(const Vector3& rotation);
     void SetScale(const Vector3& scale);
     
-    // アクティブ状態
     bool IsActive() const { return active_; }
     void SetActive(bool active) { active_ = active; }
 
 protected:
     void UpdateTransform();
-
 }; // class GameObject
 
 #endif // GameObject_HPP_

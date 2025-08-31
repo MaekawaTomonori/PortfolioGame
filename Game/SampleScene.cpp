@@ -1,6 +1,5 @@
 #include "SampleScene.hpp"
 #include "Framework.hpp"
-#include "Pattern/Singleton.hpp"
 
 void SampleScene::Initialize() {
     //sprite_ = std::make_unique<Sprite>();
@@ -23,6 +22,10 @@ void SampleScene::Initialize() {
     cameraController_ = std::make_unique<CameraController>();
     cameraController_->Initialize();
     cameraController_->SetTarget(player_.get());
+
+    enemy_ = std::make_unique<Enemy>();
+    enemy_->Initialize();
+    enemy_->SetTarget(player_.get());
 }
 
 void SampleScene::Update() {
@@ -39,6 +42,10 @@ void SampleScene::Update() {
     if (player_) {
         player_->Update(1.f/60.f);
     }
+
+    if (enemy_) {
+        enemy_->Update(1.f / 60.f);
+    }
     
     if (cameraController_) {
         cameraController_->Update(1.f/60.f);
@@ -54,6 +61,10 @@ void SampleScene::Draw() {
     
     if (player_) {
         player_->Draw();
+    }
+
+    if (enemy_) {
+        enemy_->Draw();
     }
 
     //if (!sprite_) return;
