@@ -18,6 +18,11 @@ void SampleScene::Initialize() {
     player_ = std::make_unique<Player>();
     player_->Initialize();
     player_->SetPosition({0.0f, 0.0f, 0.0f});
+    
+    // CameraController初期化
+    cameraController_ = std::make_unique<CameraController>();
+    cameraController_->Initialize();
+    cameraController_->SetTarget(player_.get());
 }
 
 void SampleScene::Update() {
@@ -33,6 +38,10 @@ void SampleScene::Update() {
     
     if (player_) {
         player_->Update(1.f/60.f);
+    }
+    
+    if (cameraController_) {
+        cameraController_->Update(1.f/60.f);
     }
 }
 

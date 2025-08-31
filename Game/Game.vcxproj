@@ -243,6 +243,8 @@ xcopy "$(SolutionDir)Engine\Assets\*" "$(TargetDir)Engine\Assets\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CameraController.hpp" />
+    <ClInclude Include="Components\MovementComponent.hpp" />
     <ClInclude Include="GameObject\GameObject.hpp" />
     <ClInclude Include="MyGame.hpp" />
     <ClInclude Include="Player\Player.hpp" />
@@ -250,6 +252,8 @@ xcopy "$(SolutionDir)Engine\Assets\*" "$(TargetDir)Engine\Assets\"</Command>
     <ClInclude Include="SceneFactory.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CameraController.cpp" />
+    <ClCompile Include="Components\MovementComponent.cpp" />
     <ClCompile Include="GameObject\GameObject.cpp" />
     <ClCompile Include="MyGame.cpp" />
     <ClCompile Include="Player\Player.cpp" />
