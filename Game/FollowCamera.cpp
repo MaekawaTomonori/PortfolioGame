@@ -1,22 +1,22 @@
-#include "CameraController.hpp"
+#include "FollowCamera.hpp"
 #include "GameObject/GameObject.hpp"
-#include <dinput.h>
+#include "Pattern/Singleton.hpp"
 
-CameraController::CameraController() : 
+FollowCamera::FollowCamera() : 
     target_(nullptr), 
     input_(nullptr), 
     cameraManager_(nullptr) {
 }
 
-CameraController::~CameraController() {
+FollowCamera::~FollowCamera() {
 }
 
-void CameraController::Initialize() {
+void FollowCamera::Initialize() {
     input_ = Singleton<Input>::GetInstance();
-    cameraManager_ = Singleton<CameraManager>::GetInstance();
+    cameraManager_ = Singleton<CameraController>::GetInstance();
 }
 
-void CameraController::Update(float deltaTime) {
+void FollowCamera::Update(float deltaTime) {
     if (!target_ || !input_ || !cameraManager_) return;
     
     // カメラオフセット入力取得
@@ -48,7 +48,7 @@ void CameraController::Update(float deltaTime) {
     UpdateCameraPosition();
 }
 
-Vector3 CameraController::GetCameraOffsetInput() const {
+Vector3 FollowCamera::GetCameraOffsetInput() const {
     if (!input_) return {0.0f, 0.0f, 0.0f};
     
     Vector3 offsetInput{0.0f, 0.0f, 0.0f};
@@ -61,7 +61,7 @@ Vector3 CameraController::GetCameraOffsetInput() const {
     return offsetInput;
 }
 
-void CameraController::UpdateCameraPosition() {
+void FollowCamera::UpdateCameraPosition() {
     if (!target_ || !cameraManager_) return;
     
     // カメラ位置をターゲット位置 + オフセットに設定

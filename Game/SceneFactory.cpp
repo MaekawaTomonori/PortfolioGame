@@ -1,6 +1,6 @@
 #include "SceneFactory.hpp"
 
-#include "SampleScene.hpp"
+#include "Scene/SampleScene.hpp"
 #include "Utils.hpp"
 
 std::unique_ptr<IScene> SceneFactory::Create(const std::string& sceneName) {

@@ -3,16 +3,15 @@
 
 #include "Input.hpp"
 #include "Math/Vector3.hpp"
-#include "Camera/Manager/CameraManager.hpp"
-#include "Pattern/Singleton.hpp"
+#include "Camera/Controller/CameraController.hpp"
 
 class GameObject;
 
-class CameraController {
+class FollowCamera {
 private:
     GameObject* target_;
     Input* input_;
-    CameraManager* cameraManager_;
+    CameraController* cameraManager_;
     
     Vector3 cameraOffset_{0.0f, 10.0f, 0.0f};
     float maxCameraOffset_{10.0f};
@@ -20,8 +19,8 @@ private:
     float cameraHeight_{50.0f};
 
 public:
-    CameraController();
-    ~CameraController();
+    FollowCamera();
+    ~FollowCamera();
     
     void Initialize();
     void Update(float deltaTime);
