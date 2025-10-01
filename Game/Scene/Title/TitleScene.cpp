@@ -1,4 +1,5 @@
 #include "TitleScene.hpp"
+
 void TitleScene::Initialize() {
     skybox_ = std::make_unique<Skybox>();
     skybox_->Initialize("Skybox.dds");
