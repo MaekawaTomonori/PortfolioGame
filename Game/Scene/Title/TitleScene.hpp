@@ -4,8 +4,11 @@
 
 #include "IScene.hpp"
 #include "Model.hpp"
+#include "Sky/Skybox.hpp"
 
 class TitleScene : public IScene{
+    std::unique_ptr<Skybox> skybox_;
+    std::unique_ptr<Model> terrain_;
     std::unique_ptr<Model> model_;
 
 public:
