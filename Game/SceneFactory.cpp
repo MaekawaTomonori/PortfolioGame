@@ -4,6 +4,9 @@
 #include "Utils.hpp"
 #include "Scene/Title/TitleScene.hpp"
 
+SceneFactory::SceneFactory(MyGame* _myGame) :myGame_(_myGame){
+}
+
 std::unique_ptr<IScene> SceneFactory::Create(const std::string& sceneName) {
     std::unique_ptr<IScene> scene = nullptr;
     if (Utils::EqualsIgnoreCase(sceneName, "sample")){
@@ -12,5 +15,6 @@ std::unique_ptr<IScene> SceneFactory::Create(const std::string& sceneName) {
         scene = std::make_unique<TitleScene>();
     }
 
+    scene->SetGame(reinterpret_cast<IGame*>(myGame_));
     return scene;
 }

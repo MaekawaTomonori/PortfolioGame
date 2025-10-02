@@ -1,24 +1,32 @@
 #include "TitleScene.hpp"
 
-void TitleScene::Initialize() {
-    skybox_ = std::make_unique<Skybox>();
-    skybox_->Initialize("Skybox.dds");
+#include "IGame.hpp"
+#include "Camera/Director/CameraDirector.hpp"
+#include "Pattern/Singleton.hpp"
 
-    terrain_= std::make_unique<Model>();
-    terrain_->Initialize("plane");
-    terrain_->SetScale({ 100.f, 100.f, 1.f });
-    terrain_->SetRotate({ -(MathUtils::F_PI / 2.f), 0.f, 0.f });
-    terrain_->SetEnvironmentTexture("skybox.dds");
+#include "PostProcess/BoxBlur/BoxBlur.hpp"
+#include "PostProcess/Executor/PostProcessExecutor.hpp"
+#include "PostProcess/Grayscale/Grayscale.hpp"
+#include "PostProcess/Vignette/Vignette.hpp"
+
+void TitleScene::Initialize() {
+    stage_ = std::make_unique<Stage>();
+    stage_->Initialize();
+
+    Singleton<CameraDirector>::GetInstance()->Run("title", true);
+
+    PostProcessExecutor* postProcessor_ = game_->GetPostProcessor();
+    postProcessor_->Add(std::make_unique<Grayscale>(),"Grayscale");
+    postProcessor_->Add(std::make_unique<Vignette>(), "Vignette");
+    postProcessor_->Add(std::make_unique<BoxBlur>(), "BoxBlur");
 }
 
 void TitleScene::Update() {
-    skybox_->Update();
-    terrain_->Update();
+    stage_->Update();
 }
 
 void TitleScene::Draw() {
-    skybox_->Draw();
-    terrain_->Draw();
+    stage_->Draw();
 }
 
 void TitleScene::Finalize() {

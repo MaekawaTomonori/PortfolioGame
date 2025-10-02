@@ -253,6 +253,7 @@ xcopy "$(SolutionDir)Engine\Assets\*" "$(TargetDir)Engine\Assets\"</Command>
     <ClInclude Include="Scene\SampleScene.hpp" />
     <ClInclude Include="SceneFactory.hpp" />
     <ClInclude Include="Scene\Title\TitleScene.hpp" />
+    <ClInclude Include="Stage\Stage.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FollowCamera.cpp" />
@@ -266,6 +267,7 @@ xcopy "$(SolutionDir)Engine\Assets\*" "$(TargetDir)Engine\Assets\"</Command>
     <ClCompile Include="SceneFactory.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Scene\Title\TitleScene.cpp" />
+    <ClCompile Include="Stage\Stage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Engine\Engine.vcxproj">

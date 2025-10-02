@@ -1,15 +1,13 @@
 #ifndef TitleScene_HPP_
 #define TitleScene_HPP_
+
 #include <memory>
 
 #include "IScene.hpp"
-#include "Model.hpp"
-#include "Sky/Skybox.hpp"
+#include "Stage/Stage.hpp"
 
 class TitleScene : public IScene{
-    std::unique_ptr<Skybox> skybox_;
-    std::unique_ptr<Model> terrain_;
-    std::unique_ptr<Model> model_;
+    std::unique_ptr<Stage> stage_;
 
 public:
     void Initialize() override;
