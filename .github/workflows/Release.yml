@@ -1,11 +1,13 @@
-name: DebugBuild
+name: ReleaseBuild
 on: [pull_request]
 env:
-  SOLUTION_FILE_PATH: Engine.vcxproj
-  CONFIGURATION: Debug
+  SOLUTION_FILE_PATH: GameTemplate.sln
+  CONFIGURATION: Release
+
 jobs:
   build:
     runs-on: windows-2025
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
