@@ -1,0 +1,40 @@
+{
+    "Camerawork": {
+        "title": {
+            "duration": 5.0,
+            "order": [
+                "Start",
+                "Point1",
+                "Start"
+            ],
+            "points": [
+                {
+                    "name": "Start",
+                    "position": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "name": "Point1",
+                    "position": [
+                        1.100000023841858,
+                        1.100000023841858,
+                        -44.79999923706055
+                    ],
+                    "rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ]
+        }
+    }
+}

@@ -17,7 +17,7 @@ msbuild Engine/Engine.vcxproj /p:Configuration=Debug /p:Platform=x64
 msbuild Game/Game.vcxproj /p:Configuration=Debug /p:Platform=x64
 
 # ゲームを実行
-.\out\x64\Debug\Game\Game.exe
+tools\Execute.bat
 
 # クリーンビルド
 msbuild GameTemplate.sln /t:Clean /p:Configuration=Debug /p:Platform=x64
@@ -74,6 +74,14 @@ msbuild GameTemplate.sln /t:Clean /p:Configuration=Debug /p:Platform=x64
 - **imgui** デバッグUI用
 - **DirectXTex** テクスチャ処理用
 - **lwlog** ログ出力用
+
+## 設計思想・開発原則
+このプロジェクトの開発時は `design-philosophy.md` に記載された原則に従ってください：
+- **DRY原則**: コードの重複を避ける
+- **SOLID原則**: オブジェクト指向設計の5原則を遵守
+- **コンポーネント指向**: 疎結合・高凝集なコンポーネント設計
+
+新機能の提案や既存コードの改修時には、これらの原則に沿った実装を心がけてください。
 
 ## よくある問題
 - Windows 10 SDKとVisual Studio 2022 v143ツールセットがインストールされていることを確認

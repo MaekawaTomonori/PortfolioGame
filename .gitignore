@@ -369,7 +369,4 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-/Assets/Shaders
-/imgui.ini
-/Game/imgui.ini
-/Assets
+/Game/Assets

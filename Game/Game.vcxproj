@@ -30,27 +30,27 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -106,7 +106,7 @@
       <WarningLevel>Level4</WarningLevel>
       <TreatWarningAsError>true</TreatWarningAsError>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Engine\include;..\Engine\src;..\Engine\vendor\assimp\include;..\Engine\vendor\imgui;..\Engine\vendor\DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir).;$(SolutionDir)Engine\include;$(SolutionDir)Engine\src;$(SolutionDir)Engine\vendor\assimp\include;$(SolutionDir)Engine\vendor\imgui;$(SolutionDir)Engine\vendor\DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -130,7 +130,8 @@
     </PreBuildEvent>
     <PostBuildEvent>
       <Command>copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxcompiler.dll" "$(TargetDir)dxcompiler.dll"
-copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dxil.dll"</Command>
+copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dxil.dll"
+xcopy "$(SolutionDir)Assets" "$(ProjectDir)Assets" /E /Y /I</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -171,7 +172,7 @@ copy "$(VCToolsInstallDir)bin\Hostx64\x64\clang_rt.asan_dynamic-x86_64.dll" "$(T
       <WarningLevel>Level4</WarningLevel>
       <TreatWarningAsError>true</TreatWarningAsError>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Engine\include;..\Engine\src;..\Engine\vendor\assimp\include;..\Engine\vendor\imgui;..\Engine\vendor\DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir).;$(SolutionDir)Engine\include;$(SolutionDir)Engine\src;$(SolutionDir)Engine\vendor\assimp\include;$(SolutionDir)Engine\vendor\imgui;$(SolutionDir)Engine\vendor\DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>MinSpace</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -199,7 +200,8 @@ copy "$(VCToolsInstallDir)bin\Hostx64\x64\clang_rt.asan_dynamic-x86_64.dll" "$(T
     </PreBuildEvent>
     <PostBuildEvent>
       <Command>copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxcompiler.dll" "$(TargetDir)dxcompiler.dll"
-copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dxil.dll"</Command>
+copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dxil.dll"
+xcopy "$(SolutionDir)Assets" "$(ProjectDir)Assets" /E /Y /I</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -241,15 +243,31 @@ xcopy "$(SolutionDir)Engine\Assets\*" "$(TargetDir)Engine\Assets\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="FollowCamera.hpp" />
+    <ClInclude Include="Components\BehaviorComponent.hpp" />
+    <ClInclude Include="Components\MovementComponent.hpp" />
+    <ClInclude Include="Enemy\Enemy.hpp" />
+    <ClInclude Include="GameObject\GameObject.hpp" />
     <ClInclude Include="MyGame.hpp" />
-    <ClInclude Include="SampleScene.hpp" />
+    <ClInclude Include="Player\Player.hpp" />
+    <ClInclude Include="Scene\SampleScene.hpp" />
     <ClInclude Include="SceneFactory.hpp" />
+    <ClInclude Include="Scene\Title\TitleScene.hpp" />
+    <ClInclude Include="Stage\Stage.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="FollowCamera.cpp" />
+    <ClCompile Include="Components\BehaviorComponent.cpp" />
+    <ClCompile Include="Components\MovementComponent.cpp" />
+    <ClCompile Include="Enemy\Enemy.cpp" />
+    <ClCompile Include="GameObject\GameObject.cpp" />
     <ClCompile Include="MyGame.cpp" />
-    <ClCompile Include="SampleScene.cpp" />
+    <ClCompile Include="Player\Player.cpp" />
+    <ClCompile Include="Scene\SampleScene.cpp" />
     <ClCompile Include="SceneFactory.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Scene\Title\TitleScene.cpp" />
+    <ClCompile Include="Stage\Stage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Engine\Engine.vcxproj">
