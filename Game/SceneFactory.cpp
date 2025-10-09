@@ -13,6 +13,9 @@ std::unique_ptr<IScene> SceneFactory::Create(const std::string& sceneName) {
         scene = std::make_unique<SampleScene>();
     }else if (Utils::EqualsIgnoreCase(sceneName, "title")) {
         scene = std::make_unique<TitleScene>();
+    }else {
+        Utils::Alert(std::format("SceneFactory::Create: Scene '{}' not found", sceneName));
+        return nullptr;
     }
 
     scene->SetGame(reinterpret_cast<IGame*>(myGame_));
