@@ -1,7 +1,7 @@
 name: ReleaseBuild
 on: [pull_request]
 env:
-  SOLUTION_FILE_PATH: Engine.vcxproj
+  SOLUTION_FILE_PATH: GameTemplate.sln
   CONFIGURATION: Release
 
 jobs:

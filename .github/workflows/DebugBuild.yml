@@ -1,7 +1,7 @@
 name: DebugBuild
 on: [pull_request]
 env:
-  SOLUTION_FILE_PATH: Engine.vcxproj
+  SOLUTION_FILE_PATH: GameTemplate.sln
   CONFIGURATION: Debug
 jobs:
   build:
