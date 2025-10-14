@@ -13,17 +13,28 @@ void Stage::Initialize() {
 
     player_ = std::make_unique<Player>();
     player_->Initialize();
+
+    enemy_ = std::make_unique<Enemy>();
+    enemy_->Initialize();
+    enemy_->SetTarget(player_.get());
 }
 
 void Stage::Update() {
     skybox_->Update();
     terrain_->Update();
     player_->Update(1.f / 60.f);
+
+    enemy_->Update(1.f / 60.f);
 }
 
 void Stage::Draw() const {
     skybox_->Draw();
     terrain_->Draw();
     player_->Draw();
+    enemy_->Draw();
 
+}
+
+Player* Stage::GetPlayer() const {
+    return player_.get();
 }

@@ -5,17 +5,9 @@
       <Configuration>Debug</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug|Win32">
-      <Configuration>Debug</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|x64">
       <Configuration>Release</Configuration>
       <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|Win32">
-      <Configuration>Release</Configuration>
-      <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -33,24 +25,11 @@
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v145</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v145</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -58,13 +37,7 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
@@ -76,26 +49,10 @@
     <TargetExt>.exe</TargetExt>
     <ExternalIncludePath>..\Engine;..\Engine\include;$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)out\$(Platform)\$(Configuration)\$(ProjectName)\\</OutDir>
-    <IntDir>$(SolutionDir)out\$(Platform)\$(Configuration)\$(ProjectName)\immd\Win32\Debug\Game\</IntDir>
-    <TargetName>Game</TargetName>
-    <TargetExt>.exe</TargetExt>
-    <ExternalIncludePath>..\Engine;..\Engine\include;$(ExternalIncludePath)</ExternalIncludePath>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)out\$(Platform)\$(Configuration)\$(ProjectName)\\</OutDir>
     <IntDir>$(SolutionDir)out\$(Platform)\$(Configuration)\$(ProjectName)\immd\</IntDir>
-    <TargetName>Game</TargetName>
-    <TargetExt>.exe</TargetExt>
-    <ExternalIncludePath>..\Engine;..\Engine\include;$(ExternalIncludePath)</ExternalIncludePath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)out\$(Platform)\$(Configuration)\$(ProjectName)\\</OutDir>
-    <IntDir>$(SolutionDir)out\$(Platform)\$(Configuration)\$(ProjectName)\immd\Win32\Release\Game\</IntDir>
     <TargetName>Game</TargetName>
     <TargetExt>.exe</TargetExt>
     <ExternalIncludePath>..\Engine;..\Engine\include;$(ExternalIncludePath)</ExternalIncludePath>
@@ -132,38 +89,6 @@
       <Command>copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxcompiler.dll" "$(TargetDir)dxcompiler.dll"
 copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dxil.dll"
 xcopy "$(SolutionDir)Assets" "$(ProjectDir)Assets" /E /Y /I</Command>
-    </PostBuildEvent>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <WarningLevel>Level4</WarningLevel>
-      <TreatWarningAsError>true</TreatWarningAsError>
-      <PreprocessorDefinitions>_DEBUG;WIN32;_WINDOWS;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Engine\include;..\Engine\src;..\Engine\vendor\assimp\include;..\Engine\vendor\imgui;..\Engine\vendor\DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <DebugInformationFormat>OldStyle</DebugInformationFormat>
-      <Optimization>Disabled</Optimization>
-      <MinimalRebuild>false</MinimalRebuild>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalOptions>/utf-8 /MP /permissive- /Zc:preprocessor %(AdditionalOptions)</AdditionalOptions>
-      <LanguageStandard>stdcpp20</LanguageStandard>
-      <ExternalWarningLevel>Level3</ExternalWarningLevel>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
-      <AdditionalLibraryDirectories>$(SolutionDir)out\$(Platform)\$(Configuration)\Engine;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalOptions>/ignore:4049 /ignore:4098 /ignore:4075 /ignore:4099 %(AdditionalOptions)</AdditionalOptions>
-    </Link>
-    <PreBuildEvent>
-      <Command>xcopy /y /s /i "$(SolutionDir)Engine\Assets\*" "$(SolutionDir)Assets\"</Command>
-    </PreBuildEvent>
-    <PostBuildEvent>
-      <Command>copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxcompiler.dll" "$(TargetDir)dxcompiler.dll"
-copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dxil.dll"
-copy "$(VCToolsInstallDir)bin\Hostx64\x64\clang_rt.asan_dbg_dynamic-x86_64.dll" "$(TargetDir)clang_rt.asan_dbg_dynamic-x86_64.dll"
-copy "$(VCToolsInstallDir)bin\Hostx64\x64\clang_rt.asan_dynamic-x86_64.dll" "$(TargetDir)clang_rt.asan_dynamic-x86_64.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -204,44 +129,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
 xcopy "$(SolutionDir)Assets" "$(ProjectDir)Assets" /E /Y /I</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <WarningLevel>Level4</WarningLevel>
-      <TreatWarningAsError>true</TreatWarningAsError>
-      <PreprocessorDefinitions>NDEBUG;WIN32;_WINDOWS;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Engine\include;..\Engine\src;..\Engine\vendor\assimp\include;..\Engine\vendor\imgui;..\Engine\vendor\DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <Optimization>MinSpace</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <MinimalRebuild>false</MinimalRebuild>
-      <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalOptions>/utf-8 /MP /permissive- /Zc:preprocessor %(AdditionalOptions)</AdditionalOptions>
-      <LanguageStandard>stdcpp20</LanguageStandard>
-      <ExternalWarningLevel>Level3</ExternalWarningLevel>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(SolutionDir)out\$(Platform)\$(Configuration)\Engine;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalOptions>/ignore:4049 /ignore:4098 %(AdditionalOptions)</AdditionalOptions>
-    </Link>
-    <PreBuildEvent>
-      <Command>xcopy /y /s /i "$(SolutionDir)Engine\Assets\*" "$(SolutionDir)Assets\"</Command>
-    </PreBuildEvent>
-    <PostBuildEvent>
-      <Command>copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxcompiler.dll" "$(TargetDir)dxcompiler.dll"
-copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dxil.dll"
-copy "$(VCToolsInstallDir)bin\Hostx64\x64\clang_rt.asan_dbg_dynamic-x86_64.dll" "$(TargetDir)clang_rt.asan_dbg_dynamic-x86_64.dll"
-copy "$(VCToolsInstallDir)bin\Hostx64\x64\clang_rt.asan_dynamic-x86_64.dll" "$(TargetDir)clang_rt.asan_dynamic-x86_64.dll"
-xcopy "$(SolutionDir)Assets\*" "$(TargetDir)Assets\"
-xcopy "$(SolutionDir)Engine\Assets\*" "$(TargetDir)Engine\Assets\"</Command>
-    </PostBuildEvent>
-  </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="FollowCamera.hpp" />
     <ClInclude Include="Components\BehaviorComponent.hpp" />
@@ -250,6 +137,7 @@ xcopy "$(SolutionDir)Engine\Assets\*" "$(TargetDir)Engine\Assets\"</Command>
     <ClInclude Include="GameObject\GameObject.hpp" />
     <ClInclude Include="MyGame.hpp" />
     <ClInclude Include="Player\Player.hpp" />
+    <ClInclude Include="Scene\Game\GameScene.hpp" />
     <ClInclude Include="Scene\SampleScene.hpp" />
     <ClInclude Include="SceneFactory.hpp" />
     <ClInclude Include="Scene\Title\TitleScene.hpp" />
@@ -263,6 +151,7 @@ xcopy "$(SolutionDir)Engine\Assets\*" "$(TargetDir)Engine\Assets\"</Command>
     <ClCompile Include="GameObject\GameObject.cpp" />
     <ClCompile Include="MyGame.cpp" />
     <ClCompile Include="Player\Player.cpp" />
+    <ClCompile Include="Scene\Game\GameScene.cpp" />
     <ClCompile Include="Scene\SampleScene.cpp" />
     <ClCompile Include="SceneFactory.cpp" />
     <ClCompile Include="main.cpp" />

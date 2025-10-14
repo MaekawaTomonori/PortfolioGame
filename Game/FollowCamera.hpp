@@ -12,33 +12,32 @@ private:
     GameObject* target_;
     Input* input_;
     CameraController* cameraManager_;
+    DebugUI* debug_ = nullptr;
     
-    Vector3 cameraOffset_{0.0f, 10.0f, 0.0f};
-    float maxCameraOffset_{10.0f};
-    float cameraReturnSpeed_{2.0f};
-    float cameraHeight_{50.0f};
+    Vector3 offset_{0.0f, 0.0f, 0.0f};
+    float yaw_ = 0.f, pitch_ = 0.f;
+
+    bool active_ = false;
 
 public:
     FollowCamera();
     ~FollowCamera();
     
     void Initialize();
-    void Update(float deltaTime);
-    
+    void Update();
+
+    void SetActive(bool _state);
+    void SetDebug(DebugUI* _debug) { debug_ = _debug; }
+
     // Target設定
     void SetTarget(GameObject* target) { target_ = target; }
-    
-    // Camera設定
-    void SetMaxOffset(float offset) { maxCameraOffset_ = offset; }
-    void SetCameraHeight(float height) { cameraHeight_ = height; }
-    void SetReturnSpeed(float speed) { cameraReturnSpeed_ = speed; }
-    
-    // Getters
-    const Vector3& GetCameraOffset() const { return cameraOffset_; }
 
 private:
-    Vector3 GetCameraOffsetInput() const;
-    void UpdateCameraPosition();
+    void Load();
+    void Save();
+    void Debug();
+
+    void UpdateCameraPosition() const;
 };
 
 #endif // CAMERA_CONTROLLER_HPP_

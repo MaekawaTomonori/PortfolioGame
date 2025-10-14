@@ -1,10 +1,13 @@
 #include "TitleScene.hpp"
 
-#include "IGame.hpp"
 #include "Camera/Director/CameraDirector.hpp"
 #include "Pattern/Singleton.hpp"
 
 void TitleScene::Initialize() {
+    name_ = "title";
+
+    exitTransition_ = Transition::Type::Fade;
+
     stage_ = std::make_unique<Stage>();
     stage_->Initialize();
 
@@ -29,7 +32,7 @@ void TitleScene::Initialize() {
 void TitleScene::Update() {
     if (Singleton<Input>::GetInstance()->IsPress(DIK_SPACE)) {
         // Start the game
-        next_ = "sample";
+        next_ = "game";
         Change();
     }
 
