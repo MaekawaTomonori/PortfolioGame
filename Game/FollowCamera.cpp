@@ -1,5 +1,8 @@
 #include "FollowCamera.hpp"
+
+#include "imgui.h"
 #include "GameObject/GameObject.hpp"
+#include "Json/Json.hpp"
 #include "Pattern/Singleton.hpp"
 
 FollowCamera::FollowCamera() : 
@@ -14,62 +17,71 @@ FollowCamera::~FollowCamera() {
 void FollowCamera::Initialize() {
     input_ = Singleton<Input>::GetInstance();
     cameraManager_ = Singleton<CameraController>::GetInstance();
+
+    Load();
 }
 
-void FollowCamera::Update(float deltaTime) {
+void FollowCamera::Update() {
+    Debug();
+
+    if (!active_) return;
     if (!target_ || !input_ || !cameraManager_) return;
-    
-    // カメラオフセット入力取得
-    Vector3 offsetInput = GetCameraOffsetInput();
-    
-    if (offsetInput.Length() > 0.0f) {
-        // 入力がある場合：オフセット更新
-        cameraOffset_ += offsetInput * deltaTime * 10.0f; // 感度調整
-        
-        // 最大オフセット制限
-        float currentLength = cameraOffset_.Length();
-        if (currentLength > maxCameraOffset_) {
-            cameraOffset_ = cameraOffset_.Normalize() * maxCameraOffset_;
-        }
-    } else {
-        // 入力がない場合：中央に戻る
-        if (cameraOffset_.Length() > 0.01f) {
-            Vector3 returnVector = cameraOffset_ * -1.0f;
-            returnVector = returnVector.Normalize() * cameraReturnSpeed_ * deltaTime;
-            
-            if (returnVector.Length() > cameraOffset_.Length()) {
-                cameraOffset_ = {0.0f, 10.0f, 0.0f}; // デフォルトオフセット
-            } else {
-                cameraOffset_ += returnVector;
-            }
-        }
-    }
     
     UpdateCameraPosition();
 }
 
-Vector3 FollowCamera::GetCameraOffsetInput() const {
-    if (!input_) return {0.0f, 0.0f, 0.0f};
-    
-    Vector3 offsetInput{0.0f, 0.0f, 0.0f};
-    
-    if (input_->IsPress(DIK_UP)) offsetInput.z += 1.0f;
-    if (input_->IsPress(DIK_DOWN)) offsetInput.z -= 1.0f;
-    if (input_->IsPress(DIK_LEFT)) offsetInput.x -= 1.0f;
-    if (input_->IsPress(DIK_RIGHT)) offsetInput.x += 1.0f;
-    
-    return offsetInput;
+void FollowCamera::SetActive(bool _state) {
+    active_ = _state;
 }
 
-void FollowCamera::UpdateCameraPosition() {
+void FollowCamera::Load() {
+    const auto& json = Singleton<Json>::GetInstance();
+
+    if (json->Load("FollowCamera")){
+        offset_ = std::get<Vector3>(json->GetValue("FollowCamera", "Settings", "Offset"));
+        yaw_ = std::get<float>(json->GetValue("FollowCamera", "Settings", "Yaw"));
+        pitch_ = std::get<float>(json->GetValue("FollowCamera", "Settings", "Pitch"));
+    } else {
+        offset_ = {0.0f, 10.0f, 0.0f};
+    }
+}
+
+void FollowCamera::Save() {
+    const auto& json = Singleton<Json>::GetInstance();
+    json->SetValue("FollowCamera", "Settings", "Offset", offset_);
+    json->SetValue("FollowCamera", "Settings", "Yaw", yaw_);
+    json->SetValue("FollowCamera", "Settings", "Pitch", pitch_);
+    json->Save("FollowCamera");
+}
+
+void FollowCamera::Debug() {
+    if (!debug_) return;
+
+    debug_->RegisterCommand("FollowCamera", [this]() {
+        ImGui::Begin("FollowCamera");
+        ImGui::Text("Active : %s", active_ ? "Active" : "Inactive");
+        ImGui::Separator();
+        ImGui::Text("Follow Camera Settings");
+        ImGui::Text("Camera Offset");
+        ImGui::DragFloat3("Offset", &offset_.x, 0.1f);
+        ImGui::Text("Yaw : ");
+        ImGui::SameLine();
+        ImGui::DragFloat("Yaw", &yaw_, 0.1f);
+        ImGui::Text("Pitch : ");
+        ImGui::SameLine();
+        ImGui::DragFloat("Pitch", &pitch_, 0.1f);
+        ImGui::Separator();
+        if (ImGui::Button("Save Settings")) {
+            Save();
+        }
+        ImGui::End();
+    });
+}
+
+void FollowCamera::UpdateCameraPosition() const {
     if (!target_ || !cameraManager_) return;
-    
-    // カメラ位置をターゲット位置 + オフセットに設定
-    Vector3 targetPosition = target_->GetPosition();
-    Vector3 cameraPos = targetPosition + Vector3{cameraOffset_.x, cameraHeight_, cameraOffset_.z};
-    cameraManager_->GetActive()->transform_.translate = cameraPos;
-    
-    // カメラを下向きに設定（トップダウン視点）
-    Vector3 cameraRotation = {90.0f * (3.14159f / 180.0f), 0.0f, 0.0f}; // 90度下向き
-    cameraManager_->GetActive()->transform_.rotate = cameraRotation;
+
+    auto active = cameraManager_->GetActive();
+    active->transform_.translate = target_->GetPosition() + offset_;
+    active->transform_.rotate = Vector3{pitch_, yaw_, 0.f};
 }

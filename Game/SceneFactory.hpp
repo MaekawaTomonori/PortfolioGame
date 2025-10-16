@@ -9,7 +9,7 @@ class SceneFactory final : public AbstractSceneFactory{
 public:
     SceneFactory(MyGame* _myGame);
     ~SceneFactory() override = default;
-    std::unique_ptr<IScene> Create(const std::string& sceneName) override;
+    std::unique_ptr<IScene> Create(const std::string& _sceneName) override;
 }; // class SceneFactory
 
 #endif // SceneFactory_HPP_
