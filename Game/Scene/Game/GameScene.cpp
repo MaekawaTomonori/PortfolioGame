@@ -16,14 +16,14 @@ void GameScene::Initialize() {
     followCamera_->SetDebug(debug_);
     followCamera_->SetTarget(stage_->GetPlayer());
 
-    Singleton<CameraController>::GetInstance()->GetActive()->transform_.translate = { 0.f, 5.f, -5.f };
+    //Singleton<CameraController>::GetInstance()->GetActive()->transform_.translate = { 0.f, 5.f, -5.f };
 }
 
 void GameScene::Update() {
     if (!camerawork_)return;
-    if (intro_){
+
+    if (Singleton<Input>::GetInstance()->IsPress(DIK_SPACE)){
         camerawork_->Run("intro");
-        intro_ = false;
     }
 
     followCamera_->SetActive(!camerawork_->IsPlaying());
