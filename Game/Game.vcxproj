@@ -90,6 +90,9 @@
 copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dxil.dll"
 xcopy "$(SolutionDir)Assets" "$(ProjectDir)Assets" /E /Y /I</Command>
     </PostBuildEvent>
+    <ProjectReference>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -128,6 +131,9 @@ xcopy "$(SolutionDir)Assets" "$(ProjectDir)Assets" /E /Y /I</Command>
 copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dxil.dll"
 xcopy "$(SolutionDir)Assets" "$(ProjectDir)Assets" /E /Y /I</Command>
     </PostBuildEvent>
+    <ProjectReference>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="FollowCamera.hpp" />
@@ -136,6 +142,7 @@ xcopy "$(SolutionDir)Assets" "$(ProjectDir)Assets" /E /Y /I</Command>
     <ClInclude Include="Enemy\Enemy.hpp" />
     <ClInclude Include="GameObject\GameObject.hpp" />
     <ClInclude Include="MyGame.hpp" />
+    <ClInclude Include="Performance\Intro\Intro.hpp" />
     <ClInclude Include="Player\Player.hpp" />
     <ClInclude Include="Scene\Game\GameScene.hpp" />
     <ClInclude Include="Scene\SampleScene.hpp" />
@@ -150,6 +157,7 @@ xcopy "$(SolutionDir)Assets" "$(ProjectDir)Assets" /E /Y /I</Command>
     <ClCompile Include="Enemy\Enemy.cpp" />
     <ClCompile Include="GameObject\GameObject.cpp" />
     <ClCompile Include="MyGame.cpp" />
+    <ClCompile Include="Performance\Intro\Intro.cpp" />
     <ClCompile Include="Player\Player.cpp" />
     <ClCompile Include="Scene\Game\GameScene.cpp" />
     <ClCompile Include="Scene\SampleScene.cpp" />

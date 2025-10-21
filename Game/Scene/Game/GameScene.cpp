@@ -7,7 +7,6 @@ void GameScene::Initialize() {
 
     entryTransition_ = Transition::Type::Fade;
 
-    camerawork_ = Singleton<CameraDirector>::GetInstance();
     stage_ = std::make_unique<Stage>();
     stage_->Initialize();
 
@@ -16,17 +15,24 @@ void GameScene::Initialize() {
     followCamera_->SetDebug(debug_);
     followCamera_->SetTarget(stage_->GetPlayer());
 
-    //Singleton<CameraController>::GetInstance()->GetActive()->transform_.translate = { 0.f, 5.f, -5.f };
+    intro_ = std::make_unique<Intro>();
+    intro_->Initialize();
 }
 
 void GameScene::Update() {
-    if (!camerawork_)return;
-
-    if (Singleton<Input>::GetInstance()->IsPress(DIK_SPACE)){
-        camerawork_->Run("intro");
+    if (!introD_){
+        intro_->Update();
+        introD_ = intro_->IsFinish();
     }
 
-    followCamera_->SetActive(!camerawork_->IsPlaying());
+    if (introD_) {
+        if (Singleton<Input>::GetInstance()->IsPress(DIK_SPACE)) {
+            intro_->Initialize();
+            introD_ = false;
+        }
+    }
+
+    followCamera_->SetActive(intro_->IsCameraDone());
 
     stage_->Update();
     followCamera_->Update();
@@ -34,4 +40,8 @@ void GameScene::Update() {
 
 void GameScene::Draw() {
     stage_->Draw();
+
+    if (!introD_) {
+        intro_->Draw();
+    }
 }
