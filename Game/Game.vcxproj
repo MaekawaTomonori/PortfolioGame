@@ -144,9 +144,11 @@ xcopy "$(SolutionDir)Assets" "$(ProjectDir)Assets" /E /Y /I</Command>
     <ClInclude Include="MyGame.hpp" />
     <ClInclude Include="Performance\Intro\Intro.hpp" />
     <ClInclude Include="Player\Player.hpp" />
+    <ClInclude Include="Factory\PostEffectFactory.hpp" />
     <ClInclude Include="Scene\Game\GameScene.hpp" />
+    <ClInclude Include="Scene\Result\GameOver.hpp" />
     <ClInclude Include="Scene\SampleScene.hpp" />
-    <ClInclude Include="SceneFactory.hpp" />
+    <ClInclude Include="Factory\SceneFactory.hpp" />
     <ClInclude Include="Scene\Title\TitleScene.hpp" />
     <ClInclude Include="Stage\Stage.hpp" />
   </ItemGroup>
@@ -159,7 +161,9 @@ xcopy "$(SolutionDir)Assets" "$(ProjectDir)Assets" /E /Y /I</Command>
     <ClCompile Include="MyGame.cpp" />
     <ClCompile Include="Performance\Intro\Intro.cpp" />
     <ClCompile Include="Player\Player.cpp" />
+    <ClCompile Include="PostEffectFactory.cpp" />
     <ClCompile Include="Scene\Game\GameScene.cpp" />
+    <ClCompile Include="Scene\Result\GameOver.cpp" />
     <ClCompile Include="Scene\SampleScene.cpp" />
     <ClCompile Include="SceneFactory.cpp" />
     <ClCompile Include="main.cpp" />

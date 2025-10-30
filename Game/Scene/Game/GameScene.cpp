@@ -1,6 +1,8 @@
 #include "GameScene.hpp"
 
 #include "Camera/Director/CameraDirector.hpp"
+#include "PostProcess/Executor/PostProcessExecutor.hpp"
+#include "PostProcess/Vignette/Vignette.hpp"
 
 void GameScene::Initialize() {
     name_ = "game";
@@ -27,8 +29,10 @@ void GameScene::Update() {
 
     if (introD_) {
         if (Singleton<Input>::GetInstance()->IsPress(DIK_SPACE)) {
-            intro_->Initialize();
-            introD_ = false;
+            next_ = "gameover";
+            postEffects_->ApplyPreset("DarkScene", "replace", {}, [this]() {
+                Change();
+            });
         }
     }
 

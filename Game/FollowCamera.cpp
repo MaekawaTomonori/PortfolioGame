@@ -3,6 +3,7 @@
 #include "imgui.h"
 #include "GameObject/GameObject.hpp"
 #include "Json/Json.hpp"
+#include "Math/MathUtils.hpp"
 #include "Pattern/Singleton.hpp"
 
 FollowCamera::FollowCamera() : 

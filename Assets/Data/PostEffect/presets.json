@@ -1,0 +1,14 @@
+{
+    "DarkScene": {
+        "duration": 2.0,
+        "ignoreList": [],
+        "members": [
+            {
+                "autoCreate": true,
+                "name": "v",
+                "type": "Vignette"
+            }
+        ],
+        "mode": "maintain_state"
+    }
+}
