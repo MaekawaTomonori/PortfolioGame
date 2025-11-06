@@ -136,6 +136,8 @@ xcopy "$(SolutionDir)Assets" "$(ProjectDir)Assets" /E /Y /I</Command>
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Command\ICommand.hpp" />
+    <ClInclude Include="Command\Move\ToTargetCommand.hpp" />
     <ClInclude Include="FollowCamera.hpp" />
     <ClInclude Include="Components\BehaviorComponent.hpp" />
     <ClInclude Include="Components\MovementComponent.hpp" />
@@ -153,6 +155,8 @@ xcopy "$(SolutionDir)Assets" "$(ProjectDir)Assets" /E /Y /I</Command>
     <ClInclude Include="Stage\Stage.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Command\ICommand.cpp" />
+    <ClCompile Include="Command\Move\ToTargetCommand.cpp" />
     <ClCompile Include="FollowCamera.cpp" />
     <ClCompile Include="Components\BehaviorComponent.cpp" />
     <ClCompile Include="Components\MovementComponent.cpp" />

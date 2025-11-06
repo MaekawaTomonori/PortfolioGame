@@ -1,5 +1,7 @@
 #include "Stage.hpp"
 
+#include "Command/Move/ToTargetCommand.hpp"
+
 void Stage::Initialize() {
     skybox_ = std::make_unique<Skybox>();
     skybox_->Initialize("rostock.dds");
@@ -18,6 +20,7 @@ void Stage::Initialize() {
     enemy_ = std::make_unique<Enemy>();
     enemy_->Initialize();
     enemy_->SetTarget(player_.get());
+    enemy_->SetMoveCommand(std::make_unique<ToTargetCommand>());
 }
 
 void Stage::Update() {
@@ -33,7 +36,6 @@ void Stage::Draw() const {
     terrain_->Draw();
     player_->Draw();
     enemy_->Draw();
-
 }
 
 Player* Stage::GetPlayer() const {

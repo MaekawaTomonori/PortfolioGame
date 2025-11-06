@@ -34,9 +34,9 @@ void Player::Update(float deltaTime) {
 
     // モデル更新
     if (model_) {
-        model_->SetTranslate(position_);
-        model_->SetRotate(rotation_);
         model_->SetScale(scale_);
+        model_->SetRotate(rotation_);
+        model_->SetTranslate(position_);
         model_->Update();
     }
 }
