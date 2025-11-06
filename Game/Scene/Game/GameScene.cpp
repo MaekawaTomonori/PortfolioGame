@@ -2,7 +2,6 @@
 
 #include "Camera/Director/CameraDirector.hpp"
 #include "PostProcess/Executor/PostProcessExecutor.hpp"
-#include "PostProcess/Vignette/Vignette.hpp"
 
 void GameScene::Initialize() {
     name_ = "game";
