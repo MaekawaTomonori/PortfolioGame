@@ -20,9 +20,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "imgui", "Engine\vendor\imgu
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Vendor", "Vendor", "{450DA277-0C00-449F-8484-BD86BF8344D3}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CollisionLib", "Lib\Collision\CollisionLib.vcxproj", "{3B4663F4-D09B-4503-AEB0-B2477444918F}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libs", "Libs", "{C476BDE4-2B60-4846-8FAD-AF5DBCF46178}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CollisionLib", "Lib\Collision\CollisionLib.vcxproj", "{3B4663F4-D09B-4503-AEB0-B2477444918F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
