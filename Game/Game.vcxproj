@@ -136,8 +136,10 @@ xcopy "$(SolutionDir)Assets" "$(ProjectDir)Assets" /E /Y /I</Command>
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Bullet\Bullet.hpp" />
     <ClInclude Include="Command\ICommand.hpp" />
     <ClInclude Include="Command\Move\ToTargetCommand.hpp" />
+    <ClInclude Include="Enemy\Enemies.hpp" />
     <ClInclude Include="FollowCamera.hpp" />
     <ClInclude Include="Components\BehaviorComponent.hpp" />
     <ClInclude Include="Components\MovementComponent.hpp" />
@@ -145,6 +147,7 @@ xcopy "$(SolutionDir)Assets" "$(ProjectDir)Assets" /E /Y /I</Command>
     <ClInclude Include="GameObject\GameObject.hpp" />
     <ClInclude Include="MyGame.hpp" />
     <ClInclude Include="Performance\Intro\Intro.hpp" />
+    <ClInclude Include="Player\Module\Attack\Attack.hpp" />
     <ClInclude Include="Player\Player.hpp" />
     <ClInclude Include="Factory\PostEffectFactory.hpp" />
     <ClInclude Include="Scene\Game\GameScene.hpp" />
@@ -155,8 +158,10 @@ xcopy "$(SolutionDir)Assets" "$(ProjectDir)Assets" /E /Y /I</Command>
     <ClInclude Include="Stage\Stage.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Bullet\Bullet.cpp" />
     <ClCompile Include="Command\ICommand.cpp" />
     <ClCompile Include="Command\Move\ToTargetCommand.cpp" />
+    <ClCompile Include="Enemy\Enemies.cpp" />
     <ClCompile Include="FollowCamera.cpp" />
     <ClCompile Include="Components\BehaviorComponent.cpp" />
     <ClCompile Include="Components\MovementComponent.cpp" />
@@ -164,6 +169,7 @@ xcopy "$(SolutionDir)Assets" "$(ProjectDir)Assets" /E /Y /I</Command>
     <ClCompile Include="GameObject\GameObject.cpp" />
     <ClCompile Include="MyGame.cpp" />
     <ClCompile Include="Performance\Intro\Intro.cpp" />
+    <ClCompile Include="Player\Module\Attack\Attack.cpp" />
     <ClCompile Include="Player\Player.cpp" />
     <ClCompile Include="PostEffectFactory.cpp" />
     <ClCompile Include="Scene\Game\GameScene.cpp" />
@@ -177,6 +183,9 @@ xcopy "$(SolutionDir)Assets" "$(ProjectDir)Assets" /E /Y /I</Command>
   <ItemGroup>
     <ProjectReference Include="..\Engine\Engine.vcxproj">
       <Project>{DBC7D3B0-C769-FE86-B024-12DB9C6585D7}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Lib\Collision\CollisionLib.vcxproj">
+      <Project>{3b4663f4-d09b-4503-aeb0-b2477444918f}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
