@@ -1,19 +1,21 @@
 {
     "Light": {
-        "ab3e3d1e-b32a-4c5b-91ab-e03f061edfba": {
+        "aca4f29a-6613-480b-9f39-88aa6ef1d082": {
             "color": [
                 1.0,
                 1.0,
                 1.0,
                 1.0
             ],
-            "direction": [
+            "decay": 0.8600000143051147,
+            "intensity": 1.0,
+            "position": [
                 0.0,
-                -1.0,
+                4.800000190734863,
                 0.0
             ],
-            "intensity": 1.0,
-            "type": 0
+            "radius": 100.0,
+            "type": 1
         }
     }
 }

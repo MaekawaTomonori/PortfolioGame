@@ -16,8 +16,7 @@ public:
     /// </summary>
     /// <param name="executor">実行者（敵またはプレイヤー）</param>
     /// <param name="target">ターゲット（NULLの場合もある）</param>
-    /// <param name="deltaTime">経過時間</param>
-    virtual void Execute(GameObject* executor, GameObject* target, float deltaTime) = 0;
+    virtual void Execute(GameObject* executor, GameObject* target) = 0;
 }; // class ICommand
 
 #endif // ICommand_HPP_

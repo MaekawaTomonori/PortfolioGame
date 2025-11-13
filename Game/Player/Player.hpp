@@ -3,27 +3,35 @@
 
 #include "GameObject/GameObject.hpp"
 #include "Components/MovementComponent.hpp"
-#include "Model.hpp"
+#include "Module/Attack/Attack.hpp"
 #include <memory>
+
+#include "Status/PlayerStatus.hpp"
 
 class MovementComponent;
 
 class Player : public GameObject {
-private:
     std::unique_ptr<MovementComponent> movement_;
-    
-    std::unique_ptr<Model> model_;
+    std::unique_ptr<Attack> attack_;
+
+    std::unique_ptr<Collision::Collider> collider_;
+
+    Vector3 targetPosition_ = {};
+
+    Vector3 forlight_ = {};
+
+    PlayerStatus status_{};
+
+    bool invulnerability_ = false;
+    float invulnerabilityTimer_ = 1.f;
 
 public:
-    Player();
-    ~Player() override;
-    
-    void Initialize();
-    
+    void Initialize() override;
     void Update(float deltaTime) override;
     void Draw() override;
-    
-    void SetMoveSpeed(float speed);
-    const Vector3& GetVelocity() const;
+
+    void SetTargetPosition(Vector3 _position);
+
+    void OnCollision(const Collision::Collider* _collider);
 };
 #endif // PLAYER_HPP_

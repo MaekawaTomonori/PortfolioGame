@@ -13,7 +13,11 @@ class GameScene : public IScene{
     std::unique_ptr<Intro> intro_;
     bool introD_ = false;
 
-    std::unique_ptr<Sprite> sprite_ ;
+    std::unique_ptr<Sprite> sprite_;
+
+    Collision::Manager* cManager_ = nullptr;
+
+    bool outro_ = false;
 
 public:
     void Initialize() override;

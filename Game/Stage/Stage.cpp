@@ -1,7 +1,5 @@
 #include "Stage.hpp"
 
-#include "Command/Move/ToTargetCommand.hpp"
-
 void Stage::Initialize() {
     skybox_ = std::make_unique<Skybox>();
     skybox_->Initialize("rostock.dds");
@@ -12,30 +10,30 @@ void Stage::Initialize() {
     terrain_->SetTilingMultiply({10.f, 10.f});
     terrain_->SetRotate({ -(MathUtils::F_PI / 2.f), 0.f, 0.f });
     terrain_->SetEnvironmentTexture("rostock.dds");
-    terrain_->SetTexture("block.png");
+    terrain_->SetTexture("tile.png");
 
     player_ = std::make_unique<Player>();
     player_->Initialize();
 
-    enemy_ = std::make_unique<Enemy>();
-    enemy_->Initialize();
-    enemy_->SetTarget(player_.get());
-    enemy_->SetMoveCommand(std::make_unique<ToTargetCommand>());
+    enemies_ = std::make_unique<Enemies>();
+    enemies_->Initialize();
+    enemies_->SetTarget(player_.get());
 }
 
 void Stage::Update() {
+    player_->SetTargetPosition(enemies_->GetNearest(player_->GetPosition()));
+
     skybox_->Update();
     terrain_->Update();
     player_->Update(1.f / 60.f);
-
-    enemy_->Update(1.f / 60.f);
+    enemies_->Update();
 }
 
 void Stage::Draw() const {
     skybox_->Draw();
     terrain_->Draw();
     player_->Draw();
-    enemy_->Draw();
+    enemies_->Draw();
 }
 
 Player* Stage::GetPlayer() const {

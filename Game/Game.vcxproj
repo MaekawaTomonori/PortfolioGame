@@ -44,18 +44,18 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)out\$(Platform)\$(Configuration)\$(ProjectName)\\</OutDir>
-    <IntDir>$(SolutionDir)out\$(Platform)\$(Configuration)\$(ProjectName)\immd\</IntDir>
+    <IntDir>$(SolutionDir)out\$(Platform)\$(Configuration)\$(ProjectName)\bin\</IntDir>
     <TargetName>Game</TargetName>
     <TargetExt>.exe</TargetExt>
-    <ExternalIncludePath>..\Engine;..\Engine\include;$(ExternalIncludePath)</ExternalIncludePath>
+    <ExternalIncludePath>$(SolutionDir)\Engine;$(SolutionDir)\Engine\include;$(SolutionDir)\Lib\Collision;$(SolutionDir)\Lib\Collision\include;$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)out\$(Platform)\$(Configuration)\$(ProjectName)\\</OutDir>
-    <IntDir>$(SolutionDir)out\$(Platform)\$(Configuration)\$(ProjectName)\immd\</IntDir>
+    <IntDir>$(SolutionDir)out\$(Platform)\$(Configuration)\$(ProjectName)\bin\</IntDir>
     <TargetName>Game</TargetName>
     <TargetExt>.exe</TargetExt>
-    <ExternalIncludePath>..\Engine;..\Engine\include;$(ExternalIncludePath)</ExternalIncludePath>
+    <ExternalIncludePath>$(SolutionDir)\Engine;$(SolutionDir)\Engine\include;$(SolutionDir)\Lib\Collision;$(SolutionDir)\Lib\Collision\include;$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -137,6 +137,7 @@ xcopy "$(SolutionDir)Assets" "$(ProjectDir)Assets" /E /Y /I</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Bullet\Bullet.hpp" />
+    <ClInclude Include="ColliderType.hpp" />
     <ClInclude Include="Command\ICommand.hpp" />
     <ClInclude Include="Command\Move\ToTargetCommand.hpp" />
     <ClInclude Include="Enemy\Enemies.hpp" />
@@ -150,6 +151,7 @@ xcopy "$(SolutionDir)Assets" "$(ProjectDir)Assets" /E /Y /I</Command>
     <ClInclude Include="Player\Module\Attack\Attack.hpp" />
     <ClInclude Include="Player\Player.hpp" />
     <ClInclude Include="Factory\PostEffectFactory.hpp" />
+    <ClInclude Include="Player\Status\PlayerStatus.hpp" />
     <ClInclude Include="Scene\Game\GameScene.hpp" />
     <ClInclude Include="Scene\Result\GameOver.hpp" />
     <ClInclude Include="Scene\SampleScene.hpp" />

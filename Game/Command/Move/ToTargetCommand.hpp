@@ -14,7 +14,7 @@ public:
     /// <param name="minDistance">これ以上近づかない距離</param>
     ToTargetCommand(float speed = 3.0f, float minDistance = 0.5f);
 
-    void Execute(GameObject* executor, GameObject* target, float deltaTime) override;
+    void Execute(GameObject* executor, GameObject* target) override;
 
 private:
     float speed_;

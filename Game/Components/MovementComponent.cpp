@@ -1,21 +1,28 @@
 #include "MovementComponent.hpp"
+#include "GameObject/GameObject.hpp"
 #include <dinput.h>
 
-MovementComponent::MovementComponent() : input_(nullptr) {
+#include "Pattern/Singleton.hpp"
+
+MovementComponent::MovementComponent() : input_(nullptr), owner_(nullptr) {
 }
 
 MovementComponent::~MovementComponent() {
 }
 
-void MovementComponent::Initialize() {
+void MovementComponent::Initialize(GameObject* owner) {
+    owner_ = owner;
     input_ = Singleton<Input>::GetInstance();
 }
 
-Vector3 MovementComponent::Update(float deltaTime) {
+void MovementComponent::Update() {
+    if (!owner_) return;
+
     Vector3 inputVector = GetInputVector();
-    velocity_ = inputVector * moveSpeed_;
-    
-    return velocity_ * deltaTime;
+    Vector3 velocity = inputVector * moveSpeed_;
+
+    // GameObjectのvelocityに設定
+    owner_->SetVelocity(velocity);
 }
 
 Vector3 MovementComponent::GetInputVector() const {

@@ -1,12 +1,15 @@
 #include "GameScene.hpp"
 
-#include "Camera/Director/CameraDirector.hpp"
+#include "Collision/CollisionManager.h"
+#include "Pattern/Singleton.hpp"
 #include "PostProcess/Executor/PostProcessExecutor.hpp"
 
 void GameScene::Initialize() {
     name_ = "game";
 
     entryTransition_ = Transition::Type::Fade;
+
+    cManager_ = Singleton<Collision::Manager>::GetInstance();
 
     stage_ = std::make_unique<Stage>();
     stage_->Initialize();
@@ -27,11 +30,12 @@ void GameScene::Update() {
     }
 
     if (introD_) {
-        if (Singleton<Input>::GetInstance()->IsPress(DIK_SPACE)) {
+        if (!stage_->GetPlayer()->IsActive() && !outro_) {
             next_ = "gameover";
             postEffects_->ApplyPreset("DarkScene", "replace", {}, [this]() {
                 Change();
             });
+            outro_ = true;
         }
     }
 
@@ -39,6 +43,9 @@ void GameScene::Update() {
 
     stage_->Update();
     followCamera_->Update();
+
+    cManager_->Detect();
+    cManager_->ProcessEvent();
 }
 
 void GameScene::Draw() {

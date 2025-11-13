@@ -6,7 +6,7 @@ ToTargetCommand::ToTargetCommand(float speed, float minDistance)
     , minDistance_(minDistance) {
 }
 
-void ToTargetCommand::Execute(GameObject* executor, GameObject* target, float deltaTime) {
+void ToTargetCommand::Execute(GameObject* executor, GameObject* target) {
     // executorまたはtargetがnullの場合は何もしない
     if (!executor || !target) {
         return;
@@ -20,15 +20,15 @@ void ToTargetCommand::Execute(GameObject* executor, GameObject* target, float de
     Vector3 direction = targetPos - currentPos;
     float distance = direction.Length();
 
-    // 最小距離より近い場合は移動しない
+    // 最小距離より近い場合は停止
     if (distance <= minDistance_) {
+        executor->SetVelocity({0.0f, 0.0f, 0.0f});
         return;
     }
 
-    // 方向ベクトルを正規化して移動量を計算
-    direction = direction.Normalize();
-    Vector3 movement = direction * speed_ * deltaTime;
+    direction.y = 0;
 
-    // 新しい位置を設定
-    executor->SetPosition(currentPos + movement);
+    // 方向ベクトルを正規化してvelocityを設定
+    direction = direction.Normalize();
+    executor->SetVelocity(direction * speed_);
 }

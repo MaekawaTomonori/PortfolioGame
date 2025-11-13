@@ -3,25 +3,25 @@
 
 #include "Input.hpp"
 #include "Math/Vector3.hpp"
-#include "Pattern/Singleton.hpp"
+
+class GameObject;
 
 class MovementComponent {
 private:
-    Vector3 velocity_{0.0f, 0.0f, 0.0f};
     float moveSpeed_{5.0f};
     Input* input_;
+    GameObject* owner_;
 
 public:
     MovementComponent();
     ~MovementComponent();
-    
-    void Initialize();
-    Vector3 Update(float deltaTime);
-    
+
+    void Initialize(GameObject* owner);
+    void Update();
+
     // Getters
-    const Vector3& GetVelocity() const { return velocity_; }
     float GetMoveSpeed() const { return moveSpeed_; }
-    
+
     // Setters
     void SetMoveSpeed(float speed) { moveSpeed_ = speed; }
 

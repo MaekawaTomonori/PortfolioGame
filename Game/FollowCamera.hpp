@@ -8,7 +8,6 @@
 class GameObject;
 
 class FollowCamera {
-private:
     GameObject* target_;
     Input* input_;
     CameraController* cameraManager_;
@@ -18,6 +17,10 @@ private:
     float yaw_ = 0.f, pitch_ = 0.f;
 
     bool active_ = false;
+
+    Vector3 shake = {};
+    float shakeTimer_ = 0.f;
+    float shakePower_ = 0.f;
 
 public:
     FollowCamera();
@@ -32,12 +35,15 @@ public:
     // Target設定
     void SetTarget(GameObject* target) { target_ = target; }
 
+    void Shake(float _time, float _power);
+
 private:
     void Load();
     void Save();
     void Debug();
 
     void UpdateCameraPosition() const;
+    void ApplyShake();
 };
 
 #endif // CAMERA_CONTROLLER_HPP_

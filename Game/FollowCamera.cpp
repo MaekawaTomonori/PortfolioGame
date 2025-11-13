@@ -3,7 +3,6 @@
 #include "imgui.h"
 #include "GameObject/GameObject.hpp"
 #include "Json/Json.hpp"
-#include "Math/MathUtils.hpp"
 #include "Pattern/Singleton.hpp"
 
 FollowCamera::FollowCamera() : 
@@ -30,10 +29,16 @@ void FollowCamera::Update() {
     if (!target_ || !input_ || !cameraManager_) return;
     
     UpdateCameraPosition();
+    ApplyShake();
 }
 
 void FollowCamera::SetActive(bool _state) {
     active_ = _state;
+}
+
+void FollowCamera::Shake(const float _time, const float _power) {
+    shakeTimer_ = _time;
+    shakePower_ = _power;
 }
 
 void FollowCamera::Load() {
@@ -86,4 +91,11 @@ void FollowCamera::UpdateCameraPosition() const {
     auto active = cameraManager_->GetActive();
     active->transform_.translate = target_->GetPosition() + offset_;
     active->transform_.rotate = Vector3{pitch_, yaw_, 0.f};
+}
+
+void FollowCamera::ApplyShake() {
+    if (0.f < shakeTimer_) {
+        shake = Vector3::Random() * shakePower_;
+    }
+    cameraManager_->GetActive()->transform_.translate += shake;
 }
