@@ -2,29 +2,39 @@
 #define ENEMY_HPP_
 
 #include "GameObject/GameObject.hpp"
-#include "Components/BehaviorComponent.hpp"
-#include "Model.hpp"
+#include "Command/ICommand.hpp"
 #include <memory>
 
+#include "Collision/Collider.h"
+
 class Enemy : public GameObject {
-private:
-    std::unique_ptr<BehaviorComponent> behavior_;
-    std::unique_ptr<Model> model_;
-    
+    struct Status {
+        float hp;
+        float damage;
+    };
+
+    std::unique_ptr<ICommand> moveCommand_;
+    GameObject* target_ = nullptr;
+
+    std::unique_ptr<Collision::Collider> collider_;
+
 public:
-    Enemy();
-    virtual ~Enemy();
-    
+    // Enemy基本インターフェース
+    void Initialize() override;
+
     // GameObject必須メソッド
     void Update(float deltaTime) override;
     void Draw() override;
-    
-    // Enemy基本インターフェース  
-    virtual void Initialize();
-    
+
+
     // ターゲット設定
-    void SetTarget(GameObject* target);
-    GameObject* GetTarget() const;
+    void SetTarget(GameObject* target) { target_ = target; }
+    GameObject* GetTarget() const { return target_; }
+
+    // コマンド設定
+    void SetMoveCommand(std::unique_ptr<ICommand> command) { moveCommand_ = std::move(command); }
+
+    void OnCollision(const Collision::Collider* _collider);
 };
 
 #endif // ENEMY_HPP_

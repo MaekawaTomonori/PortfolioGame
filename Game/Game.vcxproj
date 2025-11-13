@@ -44,18 +44,18 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)out\$(Platform)\$(Configuration)\$(ProjectName)\\</OutDir>
-    <IntDir>$(SolutionDir)out\$(Platform)\$(Configuration)\$(ProjectName)\immd\</IntDir>
+    <IntDir>$(SolutionDir)out\$(Platform)\$(Configuration)\$(ProjectName)\bin\</IntDir>
     <TargetName>Game</TargetName>
     <TargetExt>.exe</TargetExt>
-    <ExternalIncludePath>..\Engine;..\Engine\include;$(ExternalIncludePath)</ExternalIncludePath>
+    <ExternalIncludePath>$(SolutionDir)\Engine;$(SolutionDir)\Engine\include;$(SolutionDir)\Lib\Collision;$(SolutionDir)\Lib\Collision\include;$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LinkIncremental>true</LinkIncremental>
+    <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)out\$(Platform)\$(Configuration)\$(ProjectName)\\</OutDir>
-    <IntDir>$(SolutionDir)out\$(Platform)\$(Configuration)\$(ProjectName)\immd\</IntDir>
+    <IntDir>$(SolutionDir)out\$(Platform)\$(Configuration)\$(ProjectName)\bin\</IntDir>
     <TargetName>Game</TargetName>
     <TargetExt>.exe</TargetExt>
-    <ExternalIncludePath>..\Engine;..\Engine\include;$(ExternalIncludePath)</ExternalIncludePath>
+    <ExternalIncludePath>$(SolutionDir)\Engine;$(SolutionDir)\Engine\include;$(SolutionDir)\Lib\Collision;$(SolutionDir)\Lib\Collision\include;$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -90,6 +90,9 @@
 copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dxil.dll"
 xcopy "$(SolutionDir)Assets" "$(ProjectDir)Assets" /E /Y /I</Command>
     </PostBuildEvent>
+    <ProjectReference>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -128,30 +131,51 @@ xcopy "$(SolutionDir)Assets" "$(ProjectDir)Assets" /E /Y /I</Command>
 copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dxil.dll"
 xcopy "$(SolutionDir)Assets" "$(ProjectDir)Assets" /E /Y /I</Command>
     </PostBuildEvent>
+    <ProjectReference>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Bullet\Bullet.hpp" />
+    <ClInclude Include="ColliderType.hpp" />
+    <ClInclude Include="Command\ICommand.hpp" />
+    <ClInclude Include="Command\Move\ToTargetCommand.hpp" />
+    <ClInclude Include="Enemy\Enemies.hpp" />
     <ClInclude Include="FollowCamera.hpp" />
     <ClInclude Include="Components\BehaviorComponent.hpp" />
     <ClInclude Include="Components\MovementComponent.hpp" />
     <ClInclude Include="Enemy\Enemy.hpp" />
     <ClInclude Include="GameObject\GameObject.hpp" />
     <ClInclude Include="MyGame.hpp" />
+    <ClInclude Include="Performance\Intro\Intro.hpp" />
+    <ClInclude Include="Player\Module\Attack\Attack.hpp" />
     <ClInclude Include="Player\Player.hpp" />
+    <ClInclude Include="Factory\PostEffectFactory.hpp" />
+    <ClInclude Include="Player\Status\PlayerStatus.hpp" />
     <ClInclude Include="Scene\Game\GameScene.hpp" />
+    <ClInclude Include="Scene\Result\GameOver.hpp" />
     <ClInclude Include="Scene\SampleScene.hpp" />
-    <ClInclude Include="SceneFactory.hpp" />
+    <ClInclude Include="Factory\SceneFactory.hpp" />
     <ClInclude Include="Scene\Title\TitleScene.hpp" />
     <ClInclude Include="Stage\Stage.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Bullet\Bullet.cpp" />
+    <ClCompile Include="Command\ICommand.cpp" />
+    <ClCompile Include="Command\Move\ToTargetCommand.cpp" />
+    <ClCompile Include="Enemy\Enemies.cpp" />
     <ClCompile Include="FollowCamera.cpp" />
     <ClCompile Include="Components\BehaviorComponent.cpp" />
     <ClCompile Include="Components\MovementComponent.cpp" />
     <ClCompile Include="Enemy\Enemy.cpp" />
     <ClCompile Include="GameObject\GameObject.cpp" />
     <ClCompile Include="MyGame.cpp" />
+    <ClCompile Include="Performance\Intro\Intro.cpp" />
+    <ClCompile Include="Player\Module\Attack\Attack.cpp" />
     <ClCompile Include="Player\Player.cpp" />
+    <ClCompile Include="PostEffectFactory.cpp" />
     <ClCompile Include="Scene\Game\GameScene.cpp" />
+    <ClCompile Include="Scene\Result\GameOver.cpp" />
     <ClCompile Include="Scene\SampleScene.cpp" />
     <ClCompile Include="SceneFactory.cpp" />
     <ClCompile Include="main.cpp" />
@@ -161,6 +185,9 @@ xcopy "$(SolutionDir)Assets" "$(ProjectDir)Assets" /E /Y /I</Command>
   <ItemGroup>
     <ProjectReference Include="..\Engine\Engine.vcxproj">
       <Project>{DBC7D3B0-C769-FE86-B024-12DB9C6585D7}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Lib\Collision\CollisionLib.vcxproj">
+      <Project>{3b4663f4-d09b-4503-aeb0-b2477444918f}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

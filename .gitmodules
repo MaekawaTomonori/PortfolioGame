@@ -2,3 +2,6 @@
 	path = Engine
 	url = https://github.com/MaekawaTomonori/GameEngine.git
 	branch = feature/window
+[submodule "Lib/Collision"]
+	path = Lib/Collision
+	url = https://github.com/MaekawaTomonori/CollisionLib.git
