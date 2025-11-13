@@ -50,7 +50,7 @@
     <ExternalIncludePath>$(SolutionDir)\Engine;$(SolutionDir)\Engine\include;$(SolutionDir)\Lib\Collision;$(SolutionDir)\Lib\Collision\include;$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LinkIncremental>true</LinkIncremental>
+    <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)out\$(Platform)\$(Configuration)\$(ProjectName)\\</OutDir>
     <IntDir>$(SolutionDir)out\$(Platform)\$(Configuration)\$(ProjectName)\bin\</IntDir>
     <TargetName>Game</TargetName>
