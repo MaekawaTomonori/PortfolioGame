@@ -14,11 +14,11 @@ void TitleScene::Initialize() {
     titleLogo_ = std::make_unique<Sprite>();
     titleLogo_->Initialize("title.png");
     titleLogo_->SetPosition({ 640.f, 360.f });
-    titleLogo_->SetAnchorPoint({.5f, .5f});
+    titleLogo_->SetAnchorPoint({ .5f, .5f });
 
     pushtoStart_ = std::make_unique<Sprite>();
     pushtoStart_->Initialize("space.png");
-    pushtoStart_->SetAnchorPoint({.5f, 0.5f});
+    pushtoStart_->SetAnchorPoint({ .5f, 0.5f });
     pushtoStart_->SetPosition({ 640.f, 500.f });
 
     Singleton<CameraDirector>::GetInstance()->Run("title", true);
@@ -32,7 +32,7 @@ void TitleScene::Initialize() {
 void TitleScene::Update() {
     if (Singleton<Input>::GetInstance()->IsPress(DIK_SPACE)) {
         // Start the game
-        next_ = "game";
+        next_ = "gameclear";
         Change();
     }
 
@@ -40,8 +40,8 @@ void TitleScene::Update() {
     titleLogo_->Update();
 
     alpha_ += increase_ ? 0.02f : -0.02f;
-    if (alpha_ >= 1.f) { alpha_ = 1.f; increase_ = false;}
-    else if (alpha_ <= 0.f) {alpha_ = 0.f; increase_ = true;}
+    if (alpha_ >= 1.f) { alpha_ = 1.f; increase_ = false; }
+    else if (alpha_ <= 0.f) { alpha_ = 0.f; increase_ = true; }
 
     Vector4 color = pushtoStart_->GetColor();
     color.w = alpha_;

@@ -27,9 +27,10 @@ void GameScene::Update() {
     if (!introD_) {
         intro_->Update();
         introD_ = intro_->IsFinish();
+        followCamera_->SetActive(intro_->IsCameraDone());
     }
 
-    if (introD_) {
+    if (introD_ && !clear_ && !outro_) {
         if (!stage_->GetPlayer()->IsActive() && !outro_) {
             next_ = "gameover";
             PostEffect()->ApplyPreset("DarkScene", "replace", {}, [this]() {
@@ -37,9 +38,24 @@ void GameScene::Update() {
                 });
             outro_ = true;
         }
+
+        if (Singleton<Input>::GetInstance()->IsTrigger(DIK_SPACE)) {
+            clear_ = true;
+            outro_ = true;
+            outroAnim_ = std::make_unique<Outro>();
+            outroAnim_->Run();
+        }
     }
 
-    followCamera_->SetActive(intro_->IsCameraDone());
+    if (clear_ && !outro_) {
+        next_ = "gameclear";
+        Change();
+    }
+
+    if (clear_ && outro_) {
+        followCamera_->SetActive(false);
+        outro_ = !outroAnim_->IsFinish();
+    }
 
     stage_->Update();
     followCamera_->Update();

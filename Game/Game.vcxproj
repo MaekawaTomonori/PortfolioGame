@@ -147,16 +147,19 @@ xcopy "$(SolutionDir)Assets" "$(ProjectDir)Assets" /E /Y /I</Command>
     <ClInclude Include="Enemy\Enemy.hpp" />
     <ClInclude Include="GameObject\GameObject.hpp" />
     <ClInclude Include="MyGame.hpp" />
+    <ClInclude Include="Outro\Outro.hpp" />
     <ClInclude Include="Performance\Intro\Intro.hpp" />
     <ClInclude Include="Player\Module\Attack\Attack.hpp" />
     <ClInclude Include="Player\Player.hpp" />
     <ClInclude Include="Factory\PostEffectFactory.hpp" />
     <ClInclude Include="Player\Status\PlayerStatus.hpp" />
     <ClInclude Include="Scene\Game\GameScene.hpp" />
+    <ClInclude Include="Scene\Result\GameClear.hpp" />
     <ClInclude Include="Scene\Result\GameOver.hpp" />
     <ClInclude Include="Scene\SampleScene.hpp" />
     <ClInclude Include="Factory\SceneFactory.hpp" />
     <ClInclude Include="Scene\Title\TitleScene.hpp" />
+    <ClInclude Include="Showcase\ItemShowcase.hpp" />
     <ClInclude Include="Stage\Stage.hpp" />
   </ItemGroup>
   <ItemGroup>
@@ -170,16 +173,19 @@ xcopy "$(SolutionDir)Assets" "$(ProjectDir)Assets" /E /Y /I</Command>
     <ClCompile Include="Enemy\Enemy.cpp" />
     <ClCompile Include="GameObject\GameObject.cpp" />
     <ClCompile Include="MyGame.cpp" />
+    <ClCompile Include="Outro\Outro.cpp" />
     <ClCompile Include="Performance\Intro\Intro.cpp" />
     <ClCompile Include="Player\Module\Attack\Attack.cpp" />
     <ClCompile Include="Player\Player.cpp" />
     <ClCompile Include="PostEffectFactory.cpp" />
     <ClCompile Include="Scene\Game\GameScene.cpp" />
+    <ClCompile Include="Scene\Result\GameClear.cpp" />
     <ClCompile Include="Scene\Result\GameOver.cpp" />
     <ClCompile Include="Scene\SampleScene.cpp" />
     <ClCompile Include="SceneFactory.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Scene\Title\TitleScene.cpp" />
+    <ClCompile Include="Showcase\ItemShowcase.cpp" />
     <ClCompile Include="Stage\Stage.cpp" />
   </ItemGroup>
   <ItemGroup>

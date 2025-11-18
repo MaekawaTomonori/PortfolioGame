@@ -15,25 +15,25 @@ void Player::Initialize() {
     };
 
     // MovementComponentの初期化
-    movement_ = std::make_unique<MovementComponent>();
-    movement_->Initialize(this);
+    //movement_ = std::make_unique<MovementComponent>();
+    //movement_->Initialize(this);
 
     // Attackモジュールの初期化
-    attack_ = std::make_unique<Attack>();
-    attack_->Initialize();
-    attack_->SetOwner(this);
+    //attack_ = std::make_unique<Attack>();
+    //attack_->Initialize();
+    //attack_->SetOwner(this);
 
     // モデルの初期化
     SetModel("animatedcube");
     model_->SetTexture("white_x16.png");
-    model_->SetColor({0.3f, 0.3f, 1.f, 1.f});
+    model_->SetColor({ 0.3f, 0.3f, 1.f, 1.f });
 
     // Collision
     collider_ = std::make_unique<Collision::Collider>();
-    collider_->SetEvent(Collision::EventType::Trigger, [this](const Collision::Collider* _collider) {OnCollision(_collider);})
-        ->SetTranslate({position_.x, position_.y, position_.z})
+    collider_->SetEvent(Collision::EventType::Trigger, [this](const Collision::Collider* _collider) {OnCollision(_collider); })
+        ->SetTranslate({ position_.x, position_.y, position_.z })
         ->SetType(Collision::Type::AABB)
-        ->SetSize(Collision::Vec3{1.f, 1.f, 1.f})
+        ->SetSize(Collision::Vec3{ 1.f, 1.f, 1.f })
         ->SetOwner(this)
         ->AddAttribute(static_cast<uint32_t>(CollisionType::Player))
         ->AddIgnore(static_cast<uint32_t>(CollisionType::P_Bullet))
@@ -43,10 +43,12 @@ void Player::Initialize() {
 }
 
 void Player::Update(float deltaTime) {
-    if (!active_ || !movement_) return;
+    if (!active_) return;
 
     // MovementComponentでvelocityを設定
-    movement_->Update();
+    if (movement_) {
+        movement_->Update();
+    }
 
     //Attackモジュールの更新
     if (attack_) {
@@ -68,7 +70,7 @@ void Player::Update(float deltaTime) {
     forlight_ = position_;
     forlight_.y += 3.0f;
 
-    collider_->SetTranslate({position_.x, position_.y, position_.z});
+    collider_->SetTranslate({ position_.x, position_.y, position_.z });
 
     UpdateModel();
 }
@@ -93,7 +95,8 @@ void Player::OnCollision(const Collision::Collider* _collider) {
         if (0.f < status_.hp) {
             status_.hp -= 1.f;
             invulnerability_ = true;
-        } else {
+        }
+        else {
             active_ = false;
         }
     }

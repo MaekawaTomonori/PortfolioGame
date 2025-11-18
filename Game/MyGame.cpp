@@ -3,7 +3,7 @@
 #include "Factory/SceneFactory.hpp"
 #include "Factory/PostEffectFactory.hpp"
 
-MyGame::MyGame(): IGame(std::make_unique<SceneFactory>(this), "game") {
+MyGame::MyGame() : IGame(std::make_unique<SceneFactory>(this), "game") {
     GetCurrentConfig()
         .SetTitle("GameTemplate")
         .SetFPS(60);
