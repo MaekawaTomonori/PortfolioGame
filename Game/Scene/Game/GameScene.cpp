@@ -16,7 +16,7 @@ void GameScene::Initialize() {
 
     followCamera_ = std::make_unique<FollowCamera>();
     followCamera_->Initialize();
-    followCamera_->SetDebug(debug_);
+    followCamera_->SetDebug(DebugUI());
     followCamera_->SetTarget(stage_->GetPlayer());
 
     intro_ = std::make_unique<Intro>();
@@ -24,7 +24,7 @@ void GameScene::Initialize() {
 }
 
 void GameScene::Update() {
-    if (!introD_){
+    if (!introD_) {
         intro_->Update();
         introD_ = intro_->IsFinish();
     }
@@ -32,9 +32,9 @@ void GameScene::Update() {
     if (introD_) {
         if (!stage_->GetPlayer()->IsActive() && !outro_) {
             next_ = "gameover";
-            postEffects_->ApplyPreset("DarkScene", "replace", {}, [this]() {
+            PostEffect()->ApplyPreset("DarkScene", "replace", {}, [this]() {
                 Change();
-            });
+                });
             outro_ = true;
         }
     }
