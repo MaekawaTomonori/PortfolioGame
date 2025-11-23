@@ -23,8 +23,6 @@ void FollowCamera::Initialize() {
 }
 
 void FollowCamera::Update() {
-    Debug();
-
     if (!active_) return;
     if (!target_ || !input_ || !cameraManager_) return;
     
@@ -62,27 +60,23 @@ void FollowCamera::Save() {
 }
 
 void FollowCamera::Debug() {
-    if (!debug_) return;
-
-    debug_->RegisterCommand("FollowCamera", [this]() {
-        ImGui::Begin("FollowCamera");
-        ImGui::Text("Active : %s", active_ ? "Active" : "Inactive");
-        ImGui::Separator();
-        ImGui::Text("Follow Camera Settings");
-        ImGui::Text("Camera Offset");
-        ImGui::DragFloat3("Offset", &offset_.x, 0.1f);
-        ImGui::Text("Yaw : ");
-        ImGui::SameLine();
-        ImGui::DragFloat("Yaw", &yaw_, 0.1f);
-        ImGui::Text("Pitch : ");
-        ImGui::SameLine();
-        ImGui::DragFloat("Pitch", &pitch_, 0.1f);
-        ImGui::Separator();
-        if (ImGui::Button("Save Settings")) {
-            Save();
-        }
-        ImGui::End();
-    });
+    ImGui::Begin("FollowCamera");
+    ImGui::Text("Active : %s", active_ ? "Active" : "Inactive");
+    ImGui::Separator();
+    ImGui::Text("Follow Camera Settings");
+    ImGui::Text("Camera Offset");
+    ImGui::DragFloat3("Offset", &offset_.x, 0.1f);
+    ImGui::Text("Yaw : ");
+    ImGui::SameLine();
+    ImGui::DragFloat("Yaw", &yaw_, 0.1f);
+    ImGui::Text("Pitch : ");
+    ImGui::SameLine();
+    ImGui::DragFloat("Pitch", &pitch_, 0.1f);
+    ImGui::Separator();
+    if (ImGui::Button("Save Settings")) {
+        Save();
+    }
+    ImGui::End();
 }
 
 void FollowCamera::UpdateCameraPosition() const {

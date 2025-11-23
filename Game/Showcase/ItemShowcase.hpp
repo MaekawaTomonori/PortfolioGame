@@ -15,8 +15,6 @@ class ItemShowcase {
         Vector3 translate;
     };
 
-    std::optional<std::reference_wrapper<DebugUI>> debugUI_;
-
     std::unique_ptr<Model> model_;
     Transform transform_{ {1,1,1}, {0,0,0}, {0,0,0} };
     Vector3 originalP = { 0,0,0 };
@@ -33,7 +31,6 @@ public:
     void Update();
     void Draw();
 
-    ItemShowcase& SetDebug(const std::reference_wrapper<DebugUI>& _debugUI);
     ItemShowcase& SetPosition(const Vector3& _position);
     ItemShowcase& SetRotation(const Vector3& _rotation);
     ItemShowcase& SetScale(const Vector3& _scale);

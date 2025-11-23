@@ -1,6 +1,7 @@
 #include "GameClear.hpp"
 
 #include "Input.hpp"
+#include "imgui_internal.h"
 #include "Camera/Controller/CameraController.hpp"
 #include "Pattern/Singleton.hpp"
 
@@ -14,13 +15,17 @@ void GameClear::Initialize() {
     std::unique_ptr<Model> model_ = std::make_unique<Model>();
     model_->Initialize("animatedcube");
     showcase_ = std::make_unique<ItemShowcase>(std::move(model_));
-    showcase_->SetDebug(*DebugUI())
-        .SetRotateSpeed(0.7f)
+    showcase_
+        ->SetRotateSpeed(0.7f)
         .SetWaveAmplitude(0.5f);
 
     sprite_ = std::make_unique<Sprite>();
     sprite_->Initialize("congrats.png");
     sprite_->SetPosition({ 640.f, 190.f });
+
+    Particle()
+        ->Register("game_clear")
+        .AddEmitter({ .frequency = 1.0f, .spawnCount = 5, .color = { 1.f, 1.f, 1.f, 1.f } });
 }
 
 void GameClear::Update() {
@@ -37,4 +42,12 @@ void GameClear::Update() {
 void GameClear::Draw() {
     showcase_->Draw();
     sprite_->Draw();
+}
+
+void GameClear::Debug() {
+    ImGui::Begin("ClearScene");
+    if (ImGui::Button("Emit Particle")){
+        Particle()->Edit("game_clear").Emit();
+    }
+    ImGui::End();
 }

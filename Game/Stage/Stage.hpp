@@ -8,8 +8,6 @@
 #include "Player/Player.hpp"
 
 class Stage {
-    DebugUI* debug_ = nullptr;
-
     std::unique_ptr<Skybox> skybox_;
     std::unique_ptr<Model> terrain_;
     std::unique_ptr<Player> player_;
@@ -19,10 +17,6 @@ public:
     void Initialize();
     void Update();
     void Draw() const;
-
-    void SetDebug(DebugUI* _debug) {
-        debug_ = _debug;
-    }
 
     //Getter
     [[nodiscard]] Player* GetPlayer() const;

@@ -11,7 +11,6 @@ class FollowCamera {
     GameObject* target_;
     Input* input_;
     CameraController* cameraManager_;
-    DebugUI* debug_ = nullptr;
     
     Vector3 offset_{0.0f, 0.0f, 0.0f};
     float yaw_ = 0.f, pitch_ = 0.f;
@@ -28,9 +27,9 @@ public:
     
     void Initialize();
     void Update();
+    void Debug();
 
     void SetActive(bool _state);
-    void SetDebug(DebugUI* _debug) { debug_ = _debug; }
 
     // Target設定
     void SetTarget(GameObject* target) { target_ = target; }
@@ -40,7 +39,6 @@ public:
 private:
     void Load();
     void Save();
-    void Debug();
 
     void UpdateCameraPosition() const;
     void ApplyShake();

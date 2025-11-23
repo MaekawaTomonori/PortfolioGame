@@ -16,7 +16,6 @@ void GameScene::Initialize() {
 
     followCamera_ = std::make_unique<FollowCamera>();
     followCamera_->Initialize();
-    followCamera_->SetDebug(DebugUI());
     followCamera_->SetTarget(stage_->GetPlayer());
 
     intro_ = std::make_unique<Intro>();
@@ -70,4 +69,8 @@ void GameScene::Draw() {
     if (!introD_) {
         intro_->Draw();
     }
+}
+
+void GameScene::Debug() {
+    followCamera_->Debug();
 }
