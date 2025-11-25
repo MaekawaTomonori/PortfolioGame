@@ -1,0 +1,76 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build Solution (Debug)",
+            "type": "shell",
+            "command": "msbuild",
+            "args": [
+                "GameTemplate.sln",
+                "/p:Configuration=Debug",
+                "/p:Platform=x64",
+                "/m"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "Build Solution (Release)",
+            "type": "shell",
+            "command": "msbuild",
+            "args": [
+                "GameTemplate.sln",
+                "/p:Configuration=Release",
+                "/p:Platform=x64",
+                "/m"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "Clean Solution",
+            "type": "shell",
+            "command": "msbuild",
+            "args": [
+                "GameTemplate.sln",
+                "/t:Clean",
+                "/p:Configuration=Debug",
+                "/p:Platform=x64"
+            ],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Rebuild Solution (Debug)",
+            "type": "shell",
+            "command": "msbuild",
+            "args": [
+                "GameTemplate.sln",
+                "/t:Rebuild",
+                "/p:Configuration=Debug",
+                "/p:Platform=x64",
+                "/m"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": "$msCompile"
+        }
+    ]
+}
