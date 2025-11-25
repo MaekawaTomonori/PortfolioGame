@@ -7,15 +7,13 @@
 #include "Sprite.hpp"
 
 class SampleScene final : public IScene{
-    std::unique_ptr<Sprite> sprite_;
-    std::unique_ptr<Model> model_;
+    bool smoke_ = false;
 
 public:
     void Initialize() override;
     void Update() override;
     void Draw() override;
-    void Finalize() override;
-
+    void Debug() override;
 private:
 
 }; // class SampleScene

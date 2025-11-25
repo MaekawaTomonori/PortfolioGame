@@ -4,6 +4,7 @@
 #include "imgui_internal.h"
 #include "Camera/Controller/CameraController.hpp"
 #include "Pattern/Singleton.hpp"
+#include "src/Random/RandomEngine.hpp"
 
 void GameClear::Initialize() {
     Singleton<CameraController>::GetInstance()->GetActive()->transform_ = {
@@ -22,10 +23,6 @@ void GameClear::Initialize() {
     sprite_ = std::make_unique<Sprite>();
     sprite_->Initialize("congrats.png");
     sprite_->SetPosition({ 640.f, 190.f });
-
-    Particle()
-        ->Register("game_clear")
-        .AddEmitter({ .frequency = 1.0f, .spawnCount = 5, .color = { 1.f, 1.f, 1.f, 1.f } });
 }
 
 void GameClear::Update() {
@@ -45,9 +42,5 @@ void GameClear::Draw() {
 }
 
 void GameClear::Debug() {
-    ImGui::Begin("ClearScene");
-    if (ImGui::Button("Emit Particle")){
-        Particle()->Edit("game_clear").Emit();
-    }
-    ImGui::End();
+
 }
