@@ -5,6 +5,7 @@
 #include "include/Pattern/Singleton.hpp"
 
 void SampleScene::Initialize() {
+    name_ = "sample";
     // 煙エフェクト（ゆっくり上昇して広がる白い煙）
     Particle()
         ->Register("smoke", { -3.f, 0.f, 0.f })
@@ -27,7 +28,7 @@ void SampleScene::Initialize() {
                 // フェードアウト
                 color.w = 0.5f * (1.0f - t);
             }
-            });
+        });
 
     // ヒットエフェクト1（金色の爆発 - 外側に弾ける）
     Particle()

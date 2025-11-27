@@ -1,16 +1,19 @@
 #include "MyGame.hpp"
 
-#include "Factory/SceneFactory.hpp"
+#include "SceneRegister.hpp"
 #include "Factory/PostEffectFactory.hpp"
 
-MyGame::MyGame() : IGame(std::make_unique<SceneFactory>(this), "sample") {
-    GetCurrentConfig()
-        .SetTitle("GameTemplate")
-        .SetFPS(60);
+void MyGame::Initialize(GameEngine::Config& _config) {
+    _config = { 
+        .title = "GameTemplate",
+        .defaultScene = "sample",
+        .fps = 60,
+    };
+
+    SceneRegister::Register([this](const std::string& _name, std::function<std::unique_ptr<IScene>()> _func) {
+        RegisterScene(_name, _func);
+    });
 
     // PostEffectFactoryを登録
-    SetPostEffectFactory(std::make_unique<PostEffectFactory>());
+    SetPostEffectFactory(std::make_unique<PostEffectFactory>());    
 }
-
-MyGame::~MyGame() = default;
-
