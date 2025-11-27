@@ -2,16 +2,14 @@
 #define PLAYER_HPP_
 
 #include "GameObject/GameObject.hpp"
-#include "Components/MovementComponent.hpp"
+#include "Movement/Movement.hpp"
 #include "Module/Attack/Attack.hpp"
 #include <memory>
 
 #include "Status/PlayerStatus.hpp"
 
-class MovementComponent;
-
 class Player : public GameObject {
-    std::unique_ptr<MovementComponent> movement_;
+    std::unique_ptr<Movement> movement_;
     std::unique_ptr<Attack> attack_;
 
     std::unique_ptr<Collision::Collider> collider_;

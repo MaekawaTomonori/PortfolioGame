@@ -1,5 +1,5 @@
 #include "TitleScene.hpp"
-
+#include "Input.hpp"
 #include "Camera/Director/CameraDirector.hpp"
 #include "Pattern/Singleton.hpp"
 
@@ -32,7 +32,7 @@ void TitleScene::Initialize() {
 void TitleScene::Update() {
     if (Singleton<Input>::GetInstance()->IsPress(DIK_SPACE)) {
         // Start the game
-        next_ = "gameclear";
+        next_ = "game";
         Change();
     }
 

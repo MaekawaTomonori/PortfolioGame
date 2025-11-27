@@ -1,10 +1,9 @@
 #include "Player.hpp"
-
-#include <filesystem>
-
 #include "ColliderType.hpp"
 #include "Pattern/Singleton.hpp"
 #include "Light/LightManager.hpp"
+#include "Movement/WalkBehavior.hpp"
+#include "Movement/DashBehavior.hpp"
 
 void Player::Initialize() {
     status_ = {
@@ -14,9 +13,13 @@ void Player::Initialize() {
         1.f
     };
 
-    // MovementComponentの初期化
-    movement_ = std::make_unique<MovementComponent>();
+    // Movementシステムの初期化
+    movement_ = std::make_unique<Movement>();
     movement_->Initialize(this);
+
+    // 移動動作を登録（優先度順：ダッシュ > 歩行）
+    movement_->AddBehavior(std::make_unique<DashBehavior>(10.0f, 0.3f, 1.0f));
+    movement_->AddBehavior(std::make_unique<WalkBehavior>(5.0f));
 
     // Attackモジュールの初期化
     //attack_ = std::make_unique<Attack>();
@@ -45,9 +48,9 @@ void Player::Initialize() {
 void Player::Update(float deltaTime) {
     if (!active_) return;
 
-    // MovementComponentでvelocityを設定
+    // Movementシステムでvelocityを設定
     if (movement_) {
-        movement_->Update();
+        movement_->Update(deltaTime);
     }
 
     //Attackモジュールの更新
