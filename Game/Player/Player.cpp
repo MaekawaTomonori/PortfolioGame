@@ -15,8 +15,8 @@ void Player::Initialize() {
     };
 
     // MovementComponentの初期化
-    //movement_ = std::make_unique<MovementComponent>();
-    //movement_->Initialize(this);
+    movement_ = std::make_unique<MovementComponent>();
+    movement_->Initialize(this);
 
     // Attackモジュールの初期化
     //attack_ = std::make_unique<Attack>();
