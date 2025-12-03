@@ -31,6 +31,12 @@ void Movement::Update(const float _deltaTime) {
     owner_->SetVelocity({});
 }
 
+void Movement::Debug() const {
+    for (const auto& behavior : behaviors_) {
+        behavior->Debug();
+    }
+}
+
 void Movement::AddBehavior(std::unique_ptr<IMovementBehavior> _behavior) {
     if (_behavior) {
         behaviors_.push_back(std::move(_behavior));

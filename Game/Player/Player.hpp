@@ -27,6 +27,7 @@ public:
     void Initialize() override;
     void Update(float deltaTime) override;
     void Draw() override;
+    void Debug() const override;
 
     void SetTargetPosition(Vector3 _position);
 

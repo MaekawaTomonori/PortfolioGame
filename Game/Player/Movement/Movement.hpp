@@ -34,6 +34,8 @@ public:
     /// <param name="_deltaTime">フレーム時間</param>
     void Update(float _deltaTime);
 
+    void Debug() const;
+
     /// <summary>
     /// 移動動作を追加
     /// </summary>

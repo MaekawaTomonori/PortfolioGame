@@ -13,9 +13,12 @@ void GameClear::Initialize() {
         {0.f, 2.5f, -11.1f}
     };
 
-    std::unique_ptr<Model> model_ = std::make_unique<Model>();
-    model_->Initialize("animatedcube");
-    showcase_ = std::make_unique<ItemShowcase>(std::move(model_));
+    std::unique_ptr<Model> model = std::make_unique<Model>();
+    model->Initialize("animatedcube");
+    model->SetTexture("white_x16.png");
+    model->SetColor({ 0.3f, 0.3f, 1.f, 1.f });
+
+    showcase_ = std::make_unique<ItemShowcase>(std::move(model));
     showcase_
         ->SetRotateSpeed(0.7f)
         .SetWaveAmplitude(0.5f);
@@ -27,7 +30,7 @@ void GameClear::Initialize() {
 
 void GameClear::Update() {
     if (Singleton<Input>::GetInstance()->IsTrigger(DIK_SPACE)) {
-        next_ = "game";
+        next_ = "title";
         Change();
         return;
     }

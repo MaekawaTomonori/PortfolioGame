@@ -9,7 +9,7 @@ Vector3 WalkBehavior::Calculate(const Input* input, float deltaTime) {
     return inputVector * speed_;
 }
 
-bool WalkBehavior::CanExecute(const Input* input) const {
+bool WalkBehavior::CanExecute(const Input* input) {
     if (!input) return false;
 
     // WASD入力があれば実行可能

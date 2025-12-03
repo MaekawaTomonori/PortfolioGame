@@ -1,13 +1,9 @@
 #include "DashBehavior.hpp"
 #include "Input.hpp"
+#include "imgui.h"
 
 Vector3 DashBehavior::Calculate(const Input* _input, const float _deltaTime) {
     if (!_input) return {};
-
-    // クールダウン更新
-    if (currentCooldown_ > 0.0f) {
-        currentCooldown_ -= _deltaTime;
-    }
 
     // ダッシュ開始
     if (!isDashing_ && CanExecute(_input)) {
@@ -20,26 +16,27 @@ Vector3 DashBehavior::Calculate(const Input* _input, const float _deltaTime) {
     if (isDashing_) {
         currentDuration_ -= _deltaTime;
 
-        // ダッシュ終了
+        // ダッシュ終了チェック
         if (currentDuration_ <= 0.0f) {
             isDashing_ = false;
             currentCooldown_ = cooldown_;
+            currentDuration_ = 0.0f;
             return {};
         }
 
+        // ダッシュ継続中
         return dashDirection_ * speed_;
     }
 
     return {};
 }
 
-bool DashBehavior::CanExecute(const Input* _input) const {
+bool DashBehavior::CanExecute(const Input* _input) {
     if (!_input) return false;
 
     // クールダウン中は実行不可
-    if (currentCooldown_ > 0.0f) return false;
+    if (IsCooldown()) return false;
 
-    // ダッシュ中は実行不可
     if (isDashing_) return true;
 
     // Shift + 移動キー入力でダッシュ可能
@@ -50,6 +47,16 @@ bool DashBehavior::CanExecute(const Input* _input) const {
                        _input->IsPress(DIK_D);
 
     return hasShift && hasMovement;
+}
+
+void DashBehavior::Debug() const {
+    ImGui::Begin("DashBehavior Debug");
+    ImGui::Text("Speed: %f", speed_);
+    ImGui::Text("Duration: %f", duration_);
+    ImGui::Text("Cooldown: %f", cooldown_);
+    ImGui::Text("Is Dashing: %s", isDashing_ ? "Yes" : "No");
+    ImGui::Text("Cooldown Remaining: %f", currentCooldown_);
+    ImGui::End();
 }
 
 Vector3 DashBehavior::GetInputVector(const Input* _input) const {
@@ -69,4 +76,14 @@ Vector3 DashBehavior::GetInputVector(const Input* _input) const {
     }
 
     return inputVector;
+}
+
+bool DashBehavior::IsCooldown() {
+    if (currentCooldown_ <= 0.f) {
+        currentCooldown_ = 0.f;
+        return false;
+    }
+
+    currentCooldown_ -= 1.f / 60.f;
+    return true;
 }

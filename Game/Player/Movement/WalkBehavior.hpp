@@ -18,7 +18,7 @@ public:
     ~WalkBehavior() override = default;
 
     Vector3 Calculate(const Input* input, float deltaTime) override;
-    bool CanExecute(const Input* input) const override;
+    bool CanExecute(const Input* input) override;
     int GetPriority() const override { return 0; } // 最低優先度
 
     // Setters

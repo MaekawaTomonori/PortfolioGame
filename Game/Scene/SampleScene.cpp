@@ -162,14 +162,20 @@ void SampleScene::Initialize() {
                 color.w = 0.7f * (1.0f - t * t);
             }
         }); 
+
+    sprite_ = std::make_unique<Sprite>();
+    sprite_->Initialize("title.png");
+    sprite_->SetAnchorPoint({0.5f, 0.5f});
+    sprite_->SetPosition({640.f, 360.f});
 }
 
 void SampleScene::Update() {
+    sprite_->Update();
 
 }
 
 void SampleScene::Draw() {
-    
+    sprite_->Draw();
 }
 
 void SampleScene::Debug() {

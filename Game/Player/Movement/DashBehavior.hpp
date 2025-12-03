@@ -2,7 +2,6 @@
 #define DASH_BEHAVIOR_HPP_
 
 #include "IMovementBehavior.hpp"
-#include "Input.hpp"
 
 /// <summary>
 /// ダッシュ動作
@@ -10,7 +9,6 @@
 /// クールダウンと持続時間を持つ
 /// </summary>
 class DashBehavior : public IMovementBehavior {
-private:
     float speed_ = 10.0f;           // ダッシュ速度
     float duration_ = 0.3f;         // ダッシュ持続時間
     float cooldown_ = 1.0f;         // クールダウン時間
@@ -18,7 +16,7 @@ private:
     float currentDuration_ = 0.0f;  // 現在のダッシュ時間
     float currentCooldown_ = 0.0f;  // 現在のクールダウン時間
     bool isDashing_ = false;        // ダッシュ中フラグ
-    Vector3 dashDirection_;         // ダッシュ方向
+    Vector3 dashDirection_{};       // ダッシュ方向
 
 public:
     DashBehavior() = default;
@@ -27,7 +25,9 @@ public:
     ~DashBehavior() override = default;
 
     Vector3 Calculate(const Input* _input, float _deltaTime) override;
-    bool CanExecute(const Input* _input) const override;
+    bool CanExecute(const Input* _input) override;
+    void Debug() const override;
+
     int GetPriority() const override { return 10; } // 高優先度
 
     // Setters
@@ -47,6 +47,8 @@ private:
     /// 入力からベクトルを取得
     /// </summary>
     Vector3 GetInputVector(const Input* _input) const;
+
+    bool IsCooldown();
 };
 
 #endif // DASH_BEHAVIOR_HPP_

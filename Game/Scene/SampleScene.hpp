@@ -8,6 +8,7 @@
 
 class SampleScene final : public IScene{
     bool smoke_ = false;
+    std::unique_ptr<Sprite> sprite_;
 
 public:
     void Initialize() override;

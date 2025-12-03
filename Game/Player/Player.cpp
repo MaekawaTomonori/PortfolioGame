@@ -22,9 +22,9 @@ void Player::Initialize() {
     movement_->AddBehavior(std::make_unique<WalkBehavior>(5.0f));
 
     // Attackモジュールの初期化
-    //attack_ = std::make_unique<Attack>();
-    //attack_->Initialize();
-    //attack_->SetOwner(this);
+    attack_ = std::make_unique<Attack>();
+    attack_->Initialize();
+    attack_->SetOwner(this);
 
     // モデルの初期化
     SetModel("animatedcube");
@@ -86,6 +86,10 @@ void Player::Draw() {
     }
 
     model_->Draw();
+}
+
+void Player::Debug() const {
+    movement_->Debug();
 }
 
 void Player::SetTargetPosition(Vector3 _position) {

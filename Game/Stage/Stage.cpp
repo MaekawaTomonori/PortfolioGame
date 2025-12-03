@@ -3,6 +3,7 @@
 void Stage::Initialize() {
     skybox_ = std::make_unique<Skybox>();
     skybox_->Initialize("rostock.dds");
+    skybox_->SetColor({0.f, 0.f, 0.f, 1.f});
 
     terrain_ = std::make_unique<Model>();
     terrain_->Initialize("plane");
@@ -26,14 +27,18 @@ void Stage::Update() {
     skybox_->Update();
     terrain_->Update();
     player_->Update(1.f / 60.f);
-    //enemies_->Update();
+    enemies_->Update();
 }
 
 void Stage::Draw() const {
     skybox_->Draw();
     terrain_->Draw();
     player_->Draw();
-    //enemies_->Draw();
+    enemies_->Draw();
+}
+
+void Stage::Debug() const {
+    player_->Debug();
 }
 
 Player* Stage::GetPlayer() const {

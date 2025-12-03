@@ -57,6 +57,11 @@ void GameScene::Update() {
     //    outro_ = !outroAnim_->IsFinish();
     //}
 
+    if (Singleton<Input>::GetInstance()->IsTrigger(DIK_RETURN)) {
+        next_ = "gameclear";
+        Change();
+    }
+
     stage_->Update();
     followCamera_->Update();
 
@@ -74,4 +79,5 @@ void GameScene::Draw() {
 
 void GameScene::Debug() {
     followCamera_->Debug();
+    stage_->Debug();
 }

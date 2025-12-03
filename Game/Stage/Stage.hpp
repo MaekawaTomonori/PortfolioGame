@@ -17,6 +17,7 @@ public:
     void Initialize();
     void Update();
     void Draw() const;
+    void Debug() const;
 
     //Getter
     [[nodiscard]] Player* GetPlayer() const;

@@ -26,13 +26,16 @@ public:
     /// </summary>
     /// <param name="input">入力システム</param>
     /// <returns>実行可能な場合true</returns>
-    virtual bool CanExecute(const Input* input) const = 0;
+    virtual bool CanExecute(const Input* input) = 0;
 
     /// <summary>
     /// この動作の優先度を取得（高いほど優先）
     /// </summary>
     /// <returns>優先度</returns>
     virtual int GetPriority() const = 0;
-};
+
+    
+    virtual void Debug() const {}
+};  
 
 #endif // I_MOVEMENT_BEHAVIOR_HPP_
