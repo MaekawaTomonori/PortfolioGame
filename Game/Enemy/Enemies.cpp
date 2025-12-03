@@ -1,5 +1,6 @@
 #include "Enemies.hpp"
 
+#include "imgui.h"
 #include "Command/Move/ToTargetCommand.hpp"
 
 void Enemies::Initialize() {
@@ -11,12 +12,19 @@ void Enemies::Update() {
 
     std::erase_if(enemies_, [](const auto& _enemy) {return !_enemy->IsActive();});
 
-    if (Interval <= timer_) {
-        timer_ = 0.f;
-        Spawn();
-    } else {
-        timer_ += DeltaTime;
+#ifdef _DEBUG
+    if (autoSpawn_) {
+#endif
+        if (Interval <= timer_) {
+            timer_ = 0.f;
+            Spawn();
+        } else {
+            timer_ += DeltaTime;
+        }
+
+#ifdef _DEBUG
     }
+#endif
 
     for (const auto& enemy : enemies_) {
         enemy->Update(DeltaTime);
@@ -44,6 +52,33 @@ Vector3 Enemies::GetNearest(const Vector3 _pos) const {
 
 void Enemies::SetTarget(GameObject* _target) {
     target_ = _target;
+}
+
+void Enemies::Debug() {
+    ImGui::Begin("Enemies");
+
+    // Auto Spawn toggle with clear visual state
+    ImGui::Checkbox("Auto Spawn", &autoSpawn_);
+    ImGui::SameLine();
+    ImGui::TextColored(autoSpawn_ ? ImVec4(0.0f, 1.0f, 0.0f, 1.0f) : ImVec4(0.5f, 0.5f, 0.5f, 1.0f),autoSpawn_ ? "[ON]" : "[OFF]");
+
+    // Show spawn timer when auto spawn is enabled
+    if (autoSpawn_) {
+        ImGui::Text("Next spawn in: %.1fs", Interval - timer_);
+        ImGui::ProgressBar(timer_ / Interval, ImVec2(-1.0f, 0.0f));
+    }
+
+    ImGui::Separator();
+
+    // Manual spawn button
+    if (ImGui::Button("Spawn Enemy")) {
+        Spawn();
+    }
+
+    // Display current enemy count
+    ImGui::Text("Active Enemies: %zu / %hu", enemies_.size(), MaxEnemies);
+
+    ImGui::End();
 }
 
 void Enemies::Spawn() {

@@ -39,6 +39,7 @@ void Stage::Draw() const {
 
 void Stage::Debug() const {
     player_->Debug();
+    enemies_->Debug();
 }
 
 Player* Stage::GetPlayer() const {

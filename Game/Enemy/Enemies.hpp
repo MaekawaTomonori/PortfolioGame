@@ -12,6 +12,10 @@ class Enemies {
     const float Interval = 2.f;
     float timer_ = 0.f;
 
+#ifdef _DEBUG
+    bool autoSpawn_ = true;
+#endif
+
 public:
     void Initialize();
     void Update();
@@ -21,7 +25,9 @@ public:
 
     void SetTarget(GameObject* _target);
 
-    private:
+    void Debug();
+
+private:
     void Spawn();
 
 }; // class Enemies
