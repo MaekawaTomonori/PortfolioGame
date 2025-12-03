@@ -16,7 +16,12 @@ class Enemy : public GameObject {
     std::unique_ptr<ICommand> moveCommand_;
     GameObject* target_ = nullptr;
 
+    Status status_ {};
+
     std::unique_ptr<Collision::Collider> collider_;
+
+    bool invincible_ = false;
+    float invincibleTimer_ = 0.3f;
 
 public:
     // Enemy基本インターフェース

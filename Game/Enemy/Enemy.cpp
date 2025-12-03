@@ -7,6 +7,11 @@ void Enemy::Initialize() {
     model_->SetTexture("white_x16.png");
     model_->SetColor({1.f, 0.3f, 0.3f, 1.f});
 
+    status_ = {
+        .hp = 100.f,
+        .damage = 0.f
+    };
+
     collider_ = std::make_unique<Collision::Collider>();
     collider_->SetEvent(Collision::EventType::Trigger, [this](const Collision::Collider* _pCol){ this->OnCollision(_pCol); })
         ->SetOwner(this)
@@ -26,6 +31,17 @@ void Enemy::Update(float deltaTime) {
         moveCommand_->Execute(this, target_);
     }
 
+    if (invincible_) {
+        invincibleTimer_ -= deltaTime;
+
+        velocity_ *= 0.7f;
+
+        if (invincibleTimer_ <= 0.f) {
+            invincible_ = false;
+            invincibleTimer_ = 0.3f;
+        }
+    }
+
     // velocityを位置に適用
     ApplyVelocity(deltaTime);
 
@@ -41,6 +57,7 @@ void Enemy::Draw() {
 }
 
 void Enemy::OnCollision(const Collision::Collider* _collider) {
+    if (invincible_) return;
     if (_collider->GetAttribute() & static_cast<uint32_t>(CollisionType::Player)) {
         active_ = false;
         collider_->Disable();
@@ -48,7 +65,12 @@ void Enemy::OnCollision(const Collision::Collider* _collider) {
     }
 
     if (_collider->GetAttribute() & static_cast<uint32_t>(CollisionType::P_Bullet)) {
-        active_ = false;
-        collider_->Disable();
+        --status_.hp;
+        invincible_ = true;
+
+        if (status_.hp <= 0.f) {
+            active_ = false;
+            collider_->Disable();
+        }
     }
 }
