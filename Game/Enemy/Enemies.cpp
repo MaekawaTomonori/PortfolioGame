@@ -68,6 +68,7 @@ Vector3 Enemies::GetNearest(const Vector3 _pos) const {
     float minDistance = FLT_MAX;
     Vector3 nearest = {};
     for (const auto& enemy : enemies_) {
+        if (enemy->IsDead()) continue;
         Vector3 toEnemy = enemy->GetPosition() - _pos;
         if (toEnemy.Length() < minDistance) {
             minDistance = toEnemy.Length();

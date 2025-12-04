@@ -44,6 +44,11 @@ class Enemy : public GameObject {
     float pulseDuration_ = 0.f;
     float pulseTimer_ = 0.f;
 
+    // Death演出
+    bool dying_ = false;
+    float deathTimer_ = 0.f;
+    const float DeathDuration = 0.8f;
+
 public:
     // Enemy基本インターフェース
     void Initialize() override;
@@ -63,6 +68,8 @@ public:
 
     void SetParticleSystem(ParticleSystem* _particle) { particle_ = _particle; }
 
+    bool IsDead() const { return dying_; }
+
 private:
     void ApplyKnockback(Vector3 _direction, float _force, float _duration);
     void ApplyShake(uint16_t _frames, float _power = 1.f, bool _decay = true);
@@ -70,6 +77,7 @@ private:
 
     void UpdateShake();
     void UpdatePulse(float _deltaTime);
+    void UpdateDeath(float _deltaTime);
 };
 
 #endif // ENEMY_HPP_

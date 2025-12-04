@@ -8,7 +8,7 @@ void Enemy::Initialize() {
     model_->SetColor({1.f, 0.3f, 0.3f, 1.f});
 
     status_ = {
-        .hp = 100.f,
+        .hp = 1.f,
         .damage = 0.f
     };
 
@@ -25,6 +25,13 @@ void Enemy::Initialize() {
 
 void Enemy::Update(float deltaTime) {
     if (!active_) return;
+
+    // 死亡演出中は特別処理
+    if (dying_) {
+        UpdateDeath(deltaTime);
+        UpdateModel();
+        return;
+    }
 
     // 移動コマンドを実行（velocityを設定）
     // if(!UpdateKnockback()){
@@ -121,7 +128,9 @@ void Enemy::OnCollision(const Collision::Collider* _collider) {
             }
 
             if (status_.hp <= 0.f) {
-                active_ = false;
+                // 死亡演出を開始
+                dying_ = true;
+                deathTimer_ = 0.f;
                 collider_->Disable();
             }
         }
@@ -192,4 +201,52 @@ void Enemy::UpdatePulse(float _deltaTime) {
     // スケール計算 (1.0 → 1.2 → 1.0)
     float scaleFactor = 1.0f + (curve * 0.2f);
     scale_ = Vector3{scaleFactor, scaleFactor, scaleFactor};
+}
+
+void Enemy::UpdateDeath(float _deltaTime) {
+    deathTimer_ += _deltaTime;
+
+    if (deathTimer_ >= DeathDuration) {
+        // 演出終了、敵を削除
+        active_ = false;
+        return;
+    }
+
+    float progress = deathTimer_ / DeathDuration;  // 0.0 → 1.0
+
+    // フェーズ1 (0.0-0.3): 膨張しながら光る
+    // フェーズ2 (0.3-0.8): 縮小しながらフェードアウト
+
+    if (progress < 0.3f) {
+        // === フェーズ1: 膨張 ===
+        float phase1Progress = progress / 0.3f;  // 0.0 → 1.0
+
+        // スケール: 1.0 → 1.3 に膨張
+        float scaleValue = MathUtils::Lerp(1.0f, 1.3f, phase1Progress);
+        scale_ = Vector3{scaleValue, scaleValue, scaleValue};
+
+        // 色: 白く光る
+        model_->SetColor({2.f, 2.f, 2.f, 1.f});
+
+        // 回転: Y軸で加速回転
+        rotation_.y += _deltaTime * 10.0f * (1.0f + phase1Progress * 2.0f);
+
+    } else {
+        // === フェーズ2: 縮小＆フェードアウト ===
+        float phase2Progress = (progress - 0.3f) / 0.5f;  // 0.0 → 1.0
+
+        // スケール: 1.5 → 0.0 に縮小
+        float scaleValue = MathUtils::Lerp(1.5f, 0.0f, phase2Progress);
+        scale_ = Vector3{scaleValue, scaleValue, scaleValue};
+
+        // 色: 白 → 透明へフェードアウト
+        float alpha = 1.0f - phase2Progress;
+        model_->SetColor({2.f, 2.f, 2.f, alpha});
+
+        // 回転: さらに加速
+        rotation_.y += _deltaTime * 20.0f;
+
+        // 位置: 少し浮き上がる
+        position_.y += _deltaTime * 2.0f;
+    }
 }
