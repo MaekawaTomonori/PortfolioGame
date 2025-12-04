@@ -78,6 +78,9 @@ private:
     void UpdateShake();
     void UpdatePulse(float _deltaTime);
     void UpdateDeath(float _deltaTime);
+    void UpdateKnockback(float _deltaTime);
+    void UpdateInvincible(float _deltaTime);
+    void UpdateMovement(float _deltaTime);
 };
 
 #endif // ENEMY_HPP_

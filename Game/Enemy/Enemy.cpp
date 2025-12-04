@@ -33,54 +33,16 @@ void Enemy::Update(float deltaTime) {
         return;
     }
 
-    // 移動コマンドを実行（velocityを設定）
-    // if(!UpdateKnockback()){
-    if (knockback_) {
-        velocity_ *= KnockbackDecay;
-        knockbackTimer_ -= deltaTime;
-
-        if (knockbackTimer_ <= 0.f) {
-            knockback_ = false;
-            knockbackTimer_ = 0.f;
-        }
-    } else {
-        if (moveCommand_ && target_) {
-            moveCommand_->Execute(this, target_);
-        }
-
-        if (invincible_) {
-            velocity_ *= 0.3f;
-        }
-    }
-
-    // UpdateInvincible()
-    if (invincible_) {
-        invincibleTimer_ -= deltaTime;
-
-        // 進行度を計算 (1.0 → 0.0)
-        float progress = invincibleTimer_ / InvincibleDuration;
-
-        // 白(2.0, 2.0, 2.0) → 赤(1.0, 0.3, 0.3) にグラデーション
-        float r = MathUtils::Lerp(1.0f, 2.0f, progress);
-        float g = MathUtils::Lerp(0.3f, 2.0f, progress);
-        float b = MathUtils::Lerp(0.3f, 2.0f, progress);
-        model_->SetColor({r, g, b, 1.f});
-
-        if (invincibleTimer_ <= 0.f) {
-            invincible_ = false;
-            invincibleTimer_ = InvincibleDuration;
-            model_->SetColor({1.f, 0.3f, 0.3f, 1.f});
-        }
-    }
-
+    // 各状態の更新
+    UpdateMovement(deltaTime);
+    UpdateInvincible(deltaTime);
     UpdateShake();
     UpdatePulse(deltaTime);
 
-    // velocityを位置に適用
     ApplyVelocity(deltaTime);
-
     collider_->SetTranslate({position_.x, position_.y, position_.z});
 
+    // 描画更新
     UpdateModel();
 }
 
@@ -201,6 +163,53 @@ void Enemy::UpdatePulse(float _deltaTime) {
     // スケール計算 (1.0 → 1.2 → 1.0)
     float scaleFactor = 1.0f + (curve * 0.2f);
     scale_ = Vector3{scaleFactor, scaleFactor, scaleFactor};
+}
+
+void Enemy::UpdateMovement(float _deltaTime) {
+    if (knockback_) {
+        UpdateKnockback(_deltaTime);
+    } else {
+        // 移動コマンドを実行
+        if (moveCommand_ && target_) {
+            moveCommand_->Execute(this, target_);
+        }
+
+        // 無敵時は移動速度を減衰
+        if (invincible_) {
+            velocity_ *= 0.3f;
+        }
+    }
+}
+
+void Enemy::UpdateKnockback(float _deltaTime) {
+    velocity_ *= KnockbackDecay;
+    knockbackTimer_ -= _deltaTime;
+
+    if (knockbackTimer_ <= 0.f) {
+        knockback_ = false;
+        knockbackTimer_ = 0.f;
+    }
+}
+
+void Enemy::UpdateInvincible(float _deltaTime) {
+    if (!invincible_) return;
+
+    invincibleTimer_ -= _deltaTime;
+
+    // 進行度を計算 (1.0 → 0.0)
+    float progress = invincibleTimer_ / InvincibleDuration;
+
+    // 白(2.0, 2.0, 2.0) → 赤(1.0, 0.3, 0.3) にグラデーション
+    float r = MathUtils::Lerp(1.0f, 2.0f, progress);
+    float g = MathUtils::Lerp(0.3f, 2.0f, progress);
+    float b = MathUtils::Lerp(0.3f, 2.0f, progress);
+    model_->SetColor({r, g, b, 1.f});
+
+    if (invincibleTimer_ <= 0.f) {
+        invincible_ = false;
+        invincibleTimer_ = InvincibleDuration;
+        model_->SetColor({1.f, 0.3f, 0.3f, 1.f});
+    }
 }
 
 void Enemy::UpdateDeath(float _deltaTime) {
