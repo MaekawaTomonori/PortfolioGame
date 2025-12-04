@@ -22,13 +22,13 @@ void Enemies::Initialize(ParticleSystem* _particle) {
             .updateFunc = [](float t, Vector3& velocity, Vector4& color) {
                 // ランダムな方向に爆発（初回のみ設定）
                 if (t < 0.01f) {
-                    velocity = Vector3::Random() * 5.0f;  // より速く爆発
+                    velocity = Vector3::Random() * 6.0f;
                 }
                 // 減速と重力
-                velocity = velocity * 0.92f;  // より強い減速
-                velocity.y -= 0.05f;  // 重力を加える
+                velocity = velocity * 0.92f;
+                velocity.y -= 0.05f;
                 // フェードアウト
-                color.w = 0.9f * (1.0f - t);
+                color.w = 0.9f * (.7f - t);
             }
         });
 }
