@@ -12,7 +12,7 @@ void GameScene::Initialize() {
     cManager_ = Singleton<Collision::Manager>::GetInstance();
 
     stage_ = std::make_unique<Stage>();
-    stage_->Initialize();
+    stage_->Initialize(Particle());
 
     followCamera_ = std::make_unique<FollowCamera>();
     followCamera_->Initialize();

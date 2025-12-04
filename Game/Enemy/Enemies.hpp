@@ -3,8 +3,11 @@
 #include <vector>
 
 #include "Enemy.hpp"
+#include "ParticleSystem/ParticleSystem.hpp"
 
 class Enemies {
+    ParticleSystem* particle_ = nullptr;
+
     GameObject* target_ = nullptr;
     std::vector<std::unique_ptr<Enemy>> enemies_;
 
@@ -17,7 +20,7 @@ class Enemies {
 #endif
 
 public:
-    void Initialize();
+    void Initialize(ParticleSystem* _particle);
     void Update();
     void Draw() const;
 

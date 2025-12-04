@@ -14,13 +14,14 @@ class GameObject {
         NONE
     };
 
+    Transform transform_{};
 
 protected:
     std::unique_ptr<Model> model_{ nullptr };
     Vector3 position_{0.f, 1.f, 0.f};
     Vector3 rotation_{};
     Vector3 scale_{1.f, 1.f, 1.f};
-    Transform transform_{};
+    Vector3 offset_ {};
     Vector3 velocity_{};
     bool active_{true};
 
@@ -55,7 +56,7 @@ public:
     Type GetType() const { return type_; }
 
 protected:
-    void UpdateTransform();
+    void UpdateModel();
 
     /// <summary>
     /// velocityを位置に適用（継承先のUpdate内で呼び出す）
@@ -63,7 +64,9 @@ protected:
     void ApplyVelocity(float deltaTime);
 
     void SetModel(const std::string& _name);
-    void UpdateModel() const;
+
+private:
+    void UpdateTransform();
 }; // class GameObject
 
 #endif // GameObject_HPP_

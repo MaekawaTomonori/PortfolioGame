@@ -1,6 +1,10 @@
 #include "Stage.hpp"
 
-void Stage::Initialize() {
+void Stage::Initialize(ParticleSystem* _particle) {
+    particle_ = _particle;
+
+    if (!particle_) Utils::Alert("ParticleSystem is null");
+
     skybox_ = std::make_unique<Skybox>();
     skybox_->Initialize("rostock.dds");
     skybox_->SetColor({0.f, 0.f, 0.f, 1.f});
@@ -17,9 +21,11 @@ void Stage::Initialize() {
     player_->Initialize();
 
     enemies_ = std::make_unique<Enemies>();
-    enemies_->Initialize();
+
+    enemies_->Initialize(particle_);
     enemies_->SetTarget(player_.get());
 }
+
 
 void Stage::Update() {
     player_->SetTargetPosition(enemies_->GetNearest(player_->GetPosition()));
