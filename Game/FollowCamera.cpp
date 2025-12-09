@@ -37,6 +37,7 @@ void FollowCamera::SetActive(bool _state) {
 void FollowCamera::Shake(const float _time, const float _power) {
     shakeTimer_ = _time;
     shakePower_ = _power;
+    shaking_ = true;
 }
 
 void FollowCamera::Load() {
@@ -88,8 +89,16 @@ void FollowCamera::UpdateCameraPosition() const {
 }
 
 void FollowCamera::ApplyShake() {
-    if (0.f < shakeTimer_) {
-        shake = Vector3::Random() * shakePower_;
+    if (!shaking_) return;
+
+    if (shakeTimer_ < 0.f) {
+        shaking_ = false;
+        shakeTimer_ = 0.f;
+        shake = {0.f, 0.f, 0.f};
     }
+
+    shakeTimer_ -= 1.f / 60.f;
+    shake = Vector3::Random() * shakePower_;
     cameraManager_->GetActive()->transform_.translate += shake;
+    shakePower_ *= 0.9f;
 }

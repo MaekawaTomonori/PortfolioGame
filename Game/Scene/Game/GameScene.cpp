@@ -1,6 +1,7 @@
 #include "GameScene.hpp"
 
 #include "Collision/CollisionManager.h"
+#include "Light/LightManager.hpp"
 #include "Pattern/Singleton.hpp"
 #include "PostProcess/Executor/PostProcessExecutor.hpp"
 
@@ -18,6 +19,8 @@ void GameScene::Initialize() {
     followCamera_->Initialize();
     followCamera_->SetTarget(stage_->GetPlayer());
     followCamera_->SetActive(true);
+
+    stage_->SetCamera(followCamera_.get());
 
     //intro_ = std::make_unique<Intro>();
     //intro_->Initialize();
@@ -56,11 +59,6 @@ void GameScene::Update() {
     //    followCamera_->SetActive(false);
     //    outro_ = !outroAnim_->IsFinish();
     //}
-
-    if (Singleton<Input>::GetInstance()->IsTrigger(DIK_RETURN)) {
-        next_ = "gameclear";
-        Change();
-    }
 
     stage_->Update();
     followCamera_->Update();

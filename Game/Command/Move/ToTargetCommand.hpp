@@ -2,25 +2,24 @@
 #define ToTargetCommand_HPP_
 #include "Command/ICommand.hpp"
 
-/// <summary>
-/// ターゲットに向かって直線的に移動するコマンド
-/// 最もシンプルな追跡AI
-/// </summary>
+/**
+ * @brief ターゲットに向かって直線的に移動するコマンド
+ */
 class ToTargetCommand : public ICommand {
 public:
-    /// <summary>
-    /// コンストラクタ
-    /// </summary>
-    /// <param name="speed">移動速度</param>
-    /// <param name="minDistance">これ以上近づかない距離</param>
+    /**
+     * @brief コンストラクタ
+     * @param speed 移動速度（未使用、Behaviorで管理）
+     * @param minDistance これ以上近づかない距離
+     */
     ToTargetCommand(float speed = 3.0f, float minDistance = 0.5f);
 
-    void Execute(GameObject* executor, GameObject* target, float deltaTime) override;
+    void Execute(MovementContext& context) override;
     void Debug() override;
 
 private:
     float speed_;
     float minDistance_;
-}; // class ToTargetCommand
+};
 
 #endif // ToTargetCommand_HPP_

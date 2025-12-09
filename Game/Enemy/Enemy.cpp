@@ -1,4 +1,5 @@
 #include "Enemy.hpp"
+#include "Player/Movement/WalkBehavior.hpp"
 
 #include "ColliderType.hpp"
 
@@ -8,7 +9,7 @@ void Enemy::Initialize() {
     model_->SetColor({1.f, 0.3f, 0.3f, 1.f});
 
     status_ = {
-        .hp = 1.f,
+        .hp = 10.f,
         .damage = 0.f
     };
 
@@ -21,6 +22,9 @@ void Enemy::Initialize() {
         ->AddAttribute(static_cast<uint32_t>(CollisionType::Enemy))
         ->AddIgnore(static_cast<uint32_t>(CollisionType::Enemy))
         ->Enable();
+
+    movement_ = std::make_unique<Movement>();
+    movement_->Initialize(this);
 }
 
 void Enemy::Update(float deltaTime) {
@@ -86,7 +90,7 @@ void Enemy::OnCollision(const Collision::Collider* _collider) {
             if (particle_) {
                 Vector3 p = position_;
                 p.y += 1.5f;
-                particle_->Edit("hit").SetPosition(p).Emit();
+                particle_->Edit("enemy_hit").SetPosition(p).Emit();
             }
 
             if (status_.hp <= 0.f) {
@@ -169,12 +173,18 @@ void Enemy::UpdateMovement(float _deltaTime) {
     if (knockback_) {
         UpdateKnockback(_deltaTime);
     } else {
-        // 移動コマンドを実行
-        if (moveCommand_ && target_) {
-            moveCommand_->Execute(this, target_, _deltaTime);
+        movementContext_.Reset();
+        movementContext_.position = position_;
+        movementContext_.target = target_;
+
+        if (moveCommand_) {
+            moveCommand_->Execute(movementContext_);
         }
 
-        // 無敵時は移動速度を減衰
+        if (movement_) {
+            movement_->Update(movementContext_, _deltaTime);
+        }
+
         if (invincible_) {
             velocity_ *= 0.3f;
         }
@@ -259,3 +269,4 @@ void Enemy::UpdateDeath(float _deltaTime) {
         position_.y += _deltaTime * 2.0f;
     }
 }
+

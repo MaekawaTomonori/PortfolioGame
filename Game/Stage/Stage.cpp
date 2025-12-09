@@ -18,7 +18,7 @@ void Stage::Initialize(ParticleSystem* _particle) {
     terrain_->SetTexture("tile.png");
 
     player_ = std::make_unique<Player>();
-    player_->Initialize();
+    player_->Initialize(particle_);
 
     enemies_ = std::make_unique<Enemies>();
 
@@ -28,12 +28,11 @@ void Stage::Initialize(ParticleSystem* _particle) {
 
 
 void Stage::Update() {
-    player_->SetTargetPosition(enemies_->GetNearest(player_->GetPosition()));
-
     skybox_->Update();
     terrain_->Update();
-    player_->Update(1.f / 60.f);
     enemies_->Update();
+    player_->SetTargetPosition(enemies_->GetNearest(player_->GetPosition()));
+    player_->Update(1.f / 60.f);
 }
 
 void Stage::Draw() const {
@@ -50,4 +49,8 @@ void Stage::Debug() const {
 
 Player* Stage::GetPlayer() const {
     return player_.get();
+}
+
+void Stage::SetCamera(FollowCamera* _camera) const {
+    player_->SetCamera(_camera);
 }

@@ -2,6 +2,8 @@
 
 #include "imgui.h"
 #include "Command/Move/ToTargetCommand.hpp"
+#include "Player/Movement/WalkBehavior.hpp"
+#include "Player/Movement/DashBehavior.hpp"
 
 void Enemies::Initialize(ParticleSystem* _particle) {
     timer_ = 0.f;
@@ -9,7 +11,14 @@ void Enemies::Initialize(ParticleSystem* _particle) {
 
     if (!particle_) Utils::Alert("ParticleSystem is null");
 
-    particle_->Register("hit", { 3.f, 2.f, 0.f })
+    // 共有Behaviorを生成（Flyweight Pattern）
+    walkBehavior_ = std::make_unique<WalkBehavior>(3.0f);
+    dashBehavior_ = std::make_unique<DashBehavior>(8.0f, 0.5f, 2.0f);
+
+    // 共有Commandを生成
+    toTargetCommand_ = std::make_unique<ToTargetCommand>(3.0f, 0.5f);
+
+    particle_->Register("enemy_hit", { 3.f, 2.f, 0.f })
         .AddEmitter({
             .texture = "white_x16.png",
             .active = false,
@@ -116,6 +125,16 @@ void Enemies::Spawn() {
     enemy->Initialize();
     enemy->SetParticleSystem(particle_);
     enemy->SetTarget(target_);
-    enemy->SetMoveCommand(std::make_unique<ToTargetCommand>());
+
+    // 共有Commandを設定（ポインタのみ）
+    enemy->SetMoveCommand(toTargetCommand_.get());
+
+    // 共有Behaviorを設定（ポインタのみ）
+    auto* movement = enemy->GetMovement();
+    if (movement) {
+        movement->ClearBehaviors();
+        movement->AddBehavior(walkBehavior_.get());
+    }
+
     enemies_.push_back(std::move(enemy));
 }

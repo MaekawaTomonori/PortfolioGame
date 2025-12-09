@@ -4,6 +4,8 @@
 #include "Light/LightManager.hpp"
 #include "Movement/WalkBehavior.hpp"
 #include "Movement/DashBehavior.hpp"
+#include "Movement/FlashBehavior.hpp"
+#include "Math/MathUtils.hpp"
 
 void Player::Initialize() {
     status_ = {
@@ -13,25 +15,28 @@ void Player::Initialize() {
         1.f
     };
 
-    // Movementシステムの初期化
+    inputHandler_ = std::make_unique<InputHandler>();
+    inputHandler_->Initialize();
+
     movement_ = std::make_unique<Movement>();
     movement_->Initialize(this);
 
-    // 移動動作を登録（優先度順：ダッシュ > 歩行）
-    movement_->AddBehavior(std::make_unique<DashBehavior>(10.0f, 0.3f, 1.0f));
-    movement_->AddBehavior(std::make_unique<WalkBehavior>(5.0f));
+    behaviors_.push_back(std::make_unique<FlashBehavior>(5.0f, 3.0f));
+    behaviors_.push_back(std::make_unique<DashBehavior>(10.0f, 0.3f, 1.0f));
+    behaviors_.push_back(std::make_unique<WalkBehavior>(5.0f));
 
-    // Attackモジュールの初期化
+    for (auto& behavior : behaviors_) {
+        movement_->AddBehavior(behavior.get());
+    }
+
     attack_ = std::make_unique<Attack>();
     attack_->Initialize();
     attack_->SetOwner(this);
 
-    // モデルの初期化
     SetModel("animatedcube");
     model_->SetTexture("white_x16.png");
-    model_->SetColor({ 0.3f, 0.3f, 1.f, 1.f });
+    model_->SetColor(BaseColor);
 
-    // Collision
     collider_ = std::make_unique<Collision::Collider>();
     collider_->SetEvent(Collision::EventType::Trigger, [this](const Collision::Collider* _collider) {OnCollision(_collider); })
         ->SetTranslate({ position_.x, position_.y, position_.z })
@@ -42,36 +47,64 @@ void Player::Initialize() {
         ->AddIgnore(static_cast<uint32_t>(CollisionType::P_Bullet))
         ->Enable();
 
-    Singleton<LightManager>::GetInstance()->SetReference(forlight_);
+    Singleton<LightManager>::GetInstance()->SetPosition(forlight_);
+
+    particle_->Register("hit", { 3.f, 2.f, 0.f })
+        .AddEmitter({
+            .texture = "white_x16.png",
+            .active = false,
+            .frequency = 0.5f,
+            .duration = 0.7f,
+            .spawnCount = 15,
+            .size = {0.3f, 0.3f, 0.3f},
+            .velocity = {0.f, 0.f, 0.f},
+            .color = { 0.f, 0.2f, 1.f, 0.9f },
+            .updateFunc = [](float t, Vector3& velocity, Vector4& color) {
+                // ランダムな方向に爆発（初回のみ設定）
+                if (t < 0.01f) {
+                    velocity = Vector3::Random() * 8.0f;
+                }
+                // 減速と重力
+                velocity = velocity * 0.92f;
+                velocity.y -= 0.05f;
+                // フェードアウト
+                color.w = 0.9f * (.7f - t);
+            }
+        });
+}
+
+void Player::Initialize(ParticleSystem* _particle) {
+    particle_ = _particle;
+    Initialize();
 }
 
 void Player::Update(float deltaTime) {
     if (!active_) return;
 
-    // Movementシステムでvelocityを設定
-    if (movement_) {
-        movement_->Update(deltaTime);
+    if (inputHandler_) {
+        inputHandler_->UpdateContext(movementContext_, position_);
     }
+#ifndef NO_MOVE
+    if (movement_) {
+        movement_->Update(movementContext_, deltaTime);
+    }
+#endif
 
-    //Attackモジュールの更新
-    if (attack_) {
+#ifndef NO_ATK
+    if (attack_ && targetExist_) {
         attack_->SetDirection((targetPosition_ - position_).Normalize());
         attack_->Update();
+        targetExist_ = false;
     }
+#endif
 
-    if (invulnerability_) {
-        invulnerabilityTimer_ -= deltaTime;
-        if (invulnerabilityTimer_ <= 0.f) {
-            invulnerability_ = false;
-            invulnerabilityTimer_ = 1.f;
-        }
-    }
+    UpdateInvulnerability(deltaTime);
 
-    // velocityを位置に適用
     ApplyVelocity(deltaTime);
 
     forlight_ = position_;
     forlight_.y += 3.0f;
+    Singleton<LightManager>::GetInstance()->SetPosition(forlight_);
 
     collider_->SetTranslate({ position_.x, position_.y, position_.z });
 
@@ -94,17 +127,54 @@ void Player::Debug() const {
 
 void Player::SetTargetPosition(Vector3 _position) {
     targetPosition_ = _position;
+    targetExist_ = true;
 }
 
 void Player::OnCollision(const Collision::Collider* _collider) {
     if (_collider->GetAttribute() & static_cast<uint32_t>(CollisionType::Enemy)) {
         if (invulnerability_)return;
         if (0.f < status_.hp) {
-            status_.hp -= 1.f;
+            //Damage Motion
+            if (camera_) camera_->Shake(0.4f, 1.f);
+
+            Vector3 p = position_;
+            p.y += 1.5f;
+            particle_->Edit("hit").SetPosition(p).Emit();
+
+            model_->SetColor(DamageFlashColor);
+
             invulnerability_ = true;
+            invulnerabilityTimer_ = InvulnerabilityDuration;
         }
         else {
             active_ = false;
         }
+    }
+}
+
+void Player::SetCamera(FollowCamera* _camera) {
+    camera_ = _camera;
+}
+
+void Player::UpdateInvulnerability(float deltaTime) {
+    if (!invulnerability_) return;
+
+    invulnerabilityTimer_ -= deltaTime;
+
+    // 進行度を計算 (1.0 → 0.0)
+    float progress = invulnerabilityTimer_ / InvulnerabilityDuration;
+
+    // 白(2.0, 2.0, 2.0) → 青(0.3, 0.3, 1.0) にグラデーション
+    Vector4 currentColor;
+    currentColor.x = MathUtils::Lerp(BaseColor.x, DamageFlashColor.x, progress);
+    currentColor.y = MathUtils::Lerp(BaseColor.y, DamageFlashColor.y, progress);
+    currentColor.z = MathUtils::Lerp(BaseColor.z, DamageFlashColor.z, progress);
+    currentColor.w = 1.f;
+    model_->SetColor(currentColor);
+
+    if (invulnerabilityTimer_ <= 0.f) {
+        invulnerability_ = false;
+        invulnerabilityTimer_ = InvulnerabilityDuration;
+        model_->SetColor(BaseColor);
     }
 }

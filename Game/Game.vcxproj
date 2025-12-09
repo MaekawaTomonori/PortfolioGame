@@ -150,11 +150,14 @@ xcopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)d
     <ClInclude Include="Performance\Intro\Intro.hpp" />
     <ClInclude Include="Player\Module\Attack\Attack.hpp" />
     <ClInclude Include="Player\Movement\DashBehavior.hpp" />
+    <ClInclude Include="Player\Movement\FlashBehavior.hpp" />
     <ClInclude Include="Player\Movement\IMovementBehavior.hpp" />
     <ClInclude Include="Player\Movement\Movement.hpp" />
+    <ClInclude Include="Player\Movement\MovementContext.hpp" />
     <ClInclude Include="Player\Movement\WalkBehavior.hpp" />
     <ClInclude Include="Player\Player.hpp" />
     <ClInclude Include="Factory\PostEffectFactory.hpp" />
+    <ClInclude Include="Player\InputHandler.hpp" />
     <ClInclude Include="Player\Status\PlayerStatus.hpp" />
     <ClInclude Include="SceneRegister.hpp" />
     <ClInclude Include="Scene\Game\GameScene.hpp" />
@@ -179,9 +182,11 @@ xcopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)d
     <ClCompile Include="Performance\Intro\Intro.cpp" />
     <ClCompile Include="Player\Module\Attack\Attack.cpp" />
     <ClCompile Include="Player\Movement\DashBehavior.cpp" />
+    <ClCompile Include="Player\Movement\FlashBehavior.cpp" />
     <ClCompile Include="Player\Movement\Movement.cpp" />
     <ClCompile Include="Player\Movement\WalkBehavior.cpp" />
     <ClCompile Include="Player\Player.cpp" />
+    <ClCompile Include="Player\InputHandler.cpp" />
     <ClCompile Include="PostEffectFactory.cpp" />
     <ClCompile Include="SceneRegister.cpp" />
     <ClCompile Include="Scene\Game\GameScene.cpp" />

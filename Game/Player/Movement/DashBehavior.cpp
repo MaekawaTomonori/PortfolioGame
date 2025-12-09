@@ -1,22 +1,21 @@
 #include "DashBehavior.hpp"
-#include "Input.hpp"
 #include "imgui.h"
 
-Vector3 DashBehavior::Calculate(const Input* _input, const float _deltaTime) {
-    if (!_input) return {};
-
-    // ダッシュ開始
-    if (!isDashing_ && CanExecute(_input)) {
+Vector3 DashBehavior::Calculate(const MovementContext& context, const float deltaTime) {
+    if (!isDashing_ && CanExecute(context)) {
         isDashing_ = true;
         currentDuration_ = duration_;
-        dashDirection_ = GetInputVector(_input);
+        dashDirection_ = context.moveDirection;
+        if (dashDirection_.Length() <= 0.0001f) {
+             isDashing_ = false;
+             return {};
+        }
+        dashDirection_ = dashDirection_.Normalize();
     }
 
-    // ダッシュ中
     if (isDashing_) {
-        currentDuration_ -= _deltaTime;
+        currentDuration_ -= deltaTime;
 
-        // ダッシュ終了チェック
         if (currentDuration_ <= 0.0f) {
             isDashing_ = false;
             currentCooldown_ = cooldown_;
@@ -24,29 +23,21 @@ Vector3 DashBehavior::Calculate(const Input* _input, const float _deltaTime) {
             return {};
         }
 
-        // ダッシュ継続中
         return dashDirection_ * speed_;
     }
 
     return {};
 }
 
-bool DashBehavior::CanExecute(const Input* _input) {
-    if (!_input) return false;
-
-    // クールダウン中は実行不可
+bool DashBehavior::CanExecute(const MovementContext& context) {
     if (IsCooldown()) return false;
 
     if (isDashing_) return true;
 
-    // Shift + 移動キー入力でダッシュ可能
-    bool hasShift = _input->IsPress(DIK_LSHIFT);
-    bool hasMovement = _input->IsPress(DIK_W) ||
-                       _input->IsPress(DIK_S) ||
-                       _input->IsPress(DIK_A) ||
-                       _input->IsPress(DIK_D);
+    bool hasDashInput = context.isDashRequested;
+    bool hasMovement = context.moveDirection.Length() > 0.0001f;
 
-    return hasShift && hasMovement;
+    return hasDashInput && hasMovement;
 }
 
 void DashBehavior::Debug() const {
@@ -56,26 +47,8 @@ void DashBehavior::Debug() const {
     ImGui::Text("Cooldown: %f", cooldown_);
     ImGui::Text("Is Dashing: %s", isDashing_ ? "Yes" : "No");
     ImGui::Text("Cooldown Remaining: %f", currentCooldown_);
+    ImGui::ProgressBar((cooldown_ - currentCooldown_) / cooldown_, ImVec2(-1.0f, 0.0f));
     ImGui::End();
-}
-
-Vector3 DashBehavior::GetInputVector(const Input* _input) const {
-    if (!_input) return {};
-
-    Vector3 inputVector = {};
-
-    // WASD入力
-    if (_input->IsPress(DIK_W)) inputVector.z += 1.0f;
-    if (_input->IsPress(DIK_S)) inputVector.z -= 1.0f;
-    if (_input->IsPress(DIK_A)) inputVector.x -= 1.0f;
-    if (_input->IsPress(DIK_D)) inputVector.x += 1.0f;
-
-    // 正規化
-    if (inputVector.Length() > 0.0f) {
-        inputVector = inputVector.Normalize();
-    }
-
-    return inputVector;
 }
 
 bool DashBehavior::IsCooldown() {

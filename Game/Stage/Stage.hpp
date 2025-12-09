@@ -23,6 +23,8 @@ public:
 
     //Getter
     [[nodiscard]] Player* GetPlayer() const;
+
+    void SetCamera(FollowCamera* _camera) const;
 }; // class Stage
 
 #endif // Stage_HPP_

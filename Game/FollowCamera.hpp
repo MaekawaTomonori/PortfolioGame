@@ -17,6 +17,7 @@ class FollowCamera {
 
     bool active_ = false;
 
+    bool shaking_ = false;
     Vector3 shake = {};
     float shakeTimer_ = 0.f;
     float shakePower_ = 0.f;
@@ -32,7 +33,10 @@ public:
     void SetActive(bool _state);
 
     // Target設定
+    // Target設定
     void SetTarget(GameObject* target) { target_ = target; }
+
+    const Camera* GetCamera() const { return cameraManager_ ? cameraManager_->GetActive() : nullptr; }
 
     void Shake(float _time, float _power);
 
