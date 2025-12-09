@@ -1,16 +1,19 @@
 #include "ToTargetCommand.hpp"
 #include "GameObject/GameObject.hpp"
+#include "imgui.h"
 
 ToTargetCommand::ToTargetCommand(float speed, float minDistance)
     : speed_(speed)
     , minDistance_(minDistance) {
 }
 
-void ToTargetCommand::Execute(GameObject* executor, GameObject* target) {
+void ToTargetCommand::Execute(GameObject* executor, GameObject* target, float deltaTime) {
     // executorまたはtargetがnullの場合は何もしない
     if (!executor || !target) {
         return;
     }
+
+    (void)deltaTime;
 
     // 現在位置とターゲット位置を取得
     Vector3 currentPos = executor->GetPosition();
@@ -31,4 +34,10 @@ void ToTargetCommand::Execute(GameObject* executor, GameObject* target) {
     // 方向ベクトルを正規化してvelocityを設定
     direction = direction.Normalize();
     executor->SetVelocity(direction * speed_);
+}
+
+void ToTargetCommand::Debug() {
+    ImGui::Text("Type: ToTarget (Linear)");
+    ImGui::Text("Speed: %.2f", speed_);
+    ImGui::Text("Min Distance: %.2f", minDistance_);
 }

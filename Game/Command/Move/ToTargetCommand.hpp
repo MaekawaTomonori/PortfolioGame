@@ -3,7 +3,8 @@
 #include "Command/ICommand.hpp"
 
 /// <summary>
-/// ターゲットに向かって移動するコマンド
+/// ターゲットに向かって直線的に移動するコマンド
+/// 最もシンプルな追跡AI
 /// </summary>
 class ToTargetCommand : public ICommand {
 public:
@@ -14,7 +15,8 @@ public:
     /// <param name="minDistance">これ以上近づかない距離</param>
     ToTargetCommand(float speed = 3.0f, float minDistance = 0.5f);
 
-    void Execute(GameObject* executor, GameObject* target) override;
+    void Execute(GameObject* executor, GameObject* target, float deltaTime) override;
+    void Debug() override;
 
 private:
     float speed_;

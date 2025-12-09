@@ -171,7 +171,7 @@ void Enemy::UpdateMovement(float _deltaTime) {
     } else {
         // 移動コマンドを実行
         if (moveCommand_ && target_) {
-            moveCommand_->Execute(this, target_);
+            moveCommand_->Execute(this, target_, _deltaTime);
         }
 
         // 無敵時は移動速度を減衰
