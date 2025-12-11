@@ -23,7 +23,7 @@ class Attack {
     // own
     std::vector<std::unique_ptr<Bullet>> bullets_;
 
-    const float BaseAttackRate = 3.f;
+    const float BaseAttackRate = 1.f;
     float timer_ = 0.f;
 
     Vector3 direction_ = {};
@@ -39,6 +39,8 @@ public:
     void SetDirection(Vector3 _direction);
 
     void SetStatus(PlayerStatus& _status);
+
+    void Clear();
 
 private:
     void Execute();

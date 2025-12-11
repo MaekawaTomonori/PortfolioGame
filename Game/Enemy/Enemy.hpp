@@ -55,6 +55,8 @@ public:
     void Update(float deltaTime) override;
     void Draw() override;
 
+    void Debug() override;
+
     void SetTarget(GameObject* target) { target_ = target; }
     GameObject* GetTarget() const { return target_; }
 

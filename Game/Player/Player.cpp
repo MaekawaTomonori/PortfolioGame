@@ -1,11 +1,13 @@
 #include "Player.hpp"
 #include "ColliderType.hpp"
+#include "imgui_internal.h"
 #include "Pattern/Singleton.hpp"
 #include "Light/LightManager.hpp"
 #include "Movement/WalkBehavior.hpp"
 #include "Movement/DashBehavior.hpp"
 #include "Movement/FlashBehavior.hpp"
 #include "Math/MathUtils.hpp"
+#include "PostProcess/Executor/PostProcessExecutor.hpp"
 
 void Player::Initialize() {
     status_ = {
@@ -14,6 +16,8 @@ void Player::Initialize() {
         1.f,
         1.f
     };
+
+    position_ = {0.f, 1.5f,-5.f};
 
     inputHandler_ = std::make_unique<InputHandler>();
     inputHandler_->Initialize();
@@ -73,10 +77,12 @@ void Player::Initialize() {
         });
 }
 
-void Player::Initialize(ParticleSystem* _particle) {
+void Player::Initialize(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
     particle_ = _particle;
+    postEffect_ = _postEffect;
     Initialize();
 }
+
 
 void Player::Update(float deltaTime) {
     if (!active_) return;
@@ -84,19 +90,18 @@ void Player::Update(float deltaTime) {
     if (inputHandler_) {
         inputHandler_->UpdateContext(movementContext_, position_);
     }
-#ifndef NO_MOVE
-    if (movement_) {
-        movement_->Update(movementContext_, deltaTime);
-    }
-#endif
 
-#ifndef NO_ATK
-    if (attack_ && targetExist_) {
-        attack_->SetDirection((targetPosition_ - position_).Normalize());
-        attack_->Update();
-        targetExist_ = false;
-    }
+#ifdef _DEBUG
+    if (!no_move)
 #endif
+        if (movement_) {
+            movement_->Update(movementContext_, deltaTime);
+        }
+
+#ifdef _DEBUG
+    if (!no_atk)
+#endif
+        UpdateAttack();
 
     UpdateInvulnerability(deltaTime);
 
@@ -121,8 +126,17 @@ void Player::Draw() {
     model_->Draw();
 }
 
-void Player::Debug() const {
-    movement_->Debug();
+void Player::Debug() {
+    if (movement_){
+        movement_->Debug();
+    }
+
+#ifdef _DEBUG
+    ImGui::Begin("Player");
+    ImGui::Checkbox("No Move", &no_move);
+    ImGui::Checkbox("No Attack", &no_atk);
+    ImGui::End();
+#endif
 }
 
 void Player::SetTargetPosition(Vector3 _position) {
@@ -136,6 +150,8 @@ void Player::OnCollision(const Collision::Collider* _collider) {
         if (0.f < status_.hp) {
             //Damage Motion
             if (camera_) camera_->Shake(0.4f, 1.f);
+
+            if (postEffect_) postEffect_->ApplyPreset("DamageScreen");
 
             Vector3 p = position_;
             p.y += 1.5f;
@@ -177,4 +193,16 @@ void Player::UpdateInvulnerability(float deltaTime) {
         invulnerabilityTimer_ = InvulnerabilityDuration;
         model_->SetColor(BaseColor);
     }
+}
+
+void Player::UpdateAttack() {
+    if (!attack_) return; 
+    if (!targetExist_) {
+        attack_->Clear();
+        return;
+    }
+
+    attack_->SetDirection((targetPosition_ - position_).Normalize());
+    attack_->Update();
+    targetExist_ = false;
 }

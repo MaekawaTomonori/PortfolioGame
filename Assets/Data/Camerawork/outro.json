@@ -1,0 +1,51 @@
+{
+    "Camerawork": {
+        "outro": {
+            "duration": 5.0,
+            "points": [
+                {
+                    "name": "end",
+                    "position": [
+                        0.0,
+                        2.700000047683716,
+                        -14.699999809265137
+                    ],
+                    "rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "useLookAt": false
+                },
+                {
+                    "name": "Point1",
+                    "position": [
+                        0.0,
+                        24.600000381469727,
+                        -5.5
+                    ],
+                    "rotation": [
+                        0.0,
+                        1.350000023841858,
+                        0.0
+                    ],
+                    "useLookAt": false
+                }
+            ],
+            "segments": [
+                {
+                    "end": "end",
+                    "positionType": "Linear",
+                    "rotationType": "Linear",
+                    "start": "Point1"
+                },
+                {
+                    "end": "end",
+                    "positionType": "Linear",
+                    "rotationType": "Linear",
+                    "start": "end"
+                }
+            ]
+        }
+    }
+}

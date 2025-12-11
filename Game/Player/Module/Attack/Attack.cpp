@@ -40,6 +40,10 @@ void Attack::SetStatus(PlayerStatus& _status) {
     status_ = std::ref(_status);
 }
 
+void Attack::Clear() {
+    bullets_.clear();
+}
+
 void Attack::Execute() {
     if (!owner_ && !owner_->IsActive()) return;
 

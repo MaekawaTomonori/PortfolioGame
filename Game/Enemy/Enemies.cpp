@@ -1,4 +1,7 @@
+#define NOMINMAX
 #include "Enemies.hpp"
+
+#include <algorithm>
 
 #include "imgui.h"
 #include "Command/Move/ToTargetCommand.hpp"
@@ -40,6 +43,10 @@ void Enemies::Initialize(ParticleSystem* _particle) {
                 color.w = 0.9f * (.7f - t);
             }
         });
+#ifdef _DEBUG
+    line_.Initialize();
+    line_.SetColor({0.3f, 1.f, 0.3f, 1.f});
+#endif
 }
 
 
@@ -49,6 +56,50 @@ void Enemies::Update() {
     std::erase_if(enemies_, [](const auto& _enemy) {return !_enemy->IsActive();});
 
 #ifdef _DEBUG
+
+    line_.Clear();
+    Vector3 p = target_->GetPosition();
+
+    constexpr int segments = 32;
+    constexpr float angleStep = 2.f * MathUtils::F_PI / static_cast<float>(segments);
+
+    for (int i = 0; i < segments; ++i) {
+        float ang1 = angleStep * i;
+        float ang2 = angleStep * ((i + 1) % segments);
+
+        Vector3 point1 = p + Vector3{
+            cosf(ang1) * distance_.x,
+            0.f,
+            sinf(ang1)* distance_.x
+        };
+        Vector3 point2 = p + Vector3{
+            cosf(ang2) * distance_.x,
+            0.f,
+            sinf(ang2)* distance_.x
+        };
+        line_.AddLine(point1, point2);
+    }
+
+    for (int i = 0; i < segments; ++i) {
+        float ang1 = angleStep * i;
+        float ang2 = angleStep * ((i + 1) % segments);
+
+        Vector3 point1 = p + Vector3{
+            cosf(ang1) * distance_.y,
+            0.f,
+            sinf(ang1)* distance_.y
+        };
+        Vector3 point2 = p + Vector3{
+            cosf(ang2) * distance_.y,
+            0.f,
+            sinf(ang2)* distance_.y
+        };
+
+        line_.AddLine(point1, point2);
+    }
+
+    line_.Update();
+
     if (autoSpawn_) {
 #endif
         if (Interval <= timer_) {
@@ -71,6 +122,10 @@ void Enemies::Draw() const {
     for (const auto& enemy : enemies_) {
         enemy->Draw();
     }
+
+#ifdef _DEBUG
+    line_.Draw();
+#endif
 }
 
 Vector3 Enemies::GetNearest(const Vector3 _pos) const {
@@ -92,7 +147,34 @@ void Enemies::SetTarget(GameObject* _target) {
 }
 
 void Enemies::Debug() {
+#ifdef _DEBUG
     ImGui::Begin("Enemies");
+
+    ImGui::Text("Spawn Distance Range");
+
+    ImGui::SetNextItemWidth(120.0f);
+    bool minChanged = ImGui::DragFloat("##Min", &distance_.x, 0.1f, 0.0f, 24.9f, "%.1f");
+    ImGui::SameLine();
+    ImGui::SetNextItemWidth(120.0f);
+    bool maxChanged = ImGui::DragFloat("##Max", &distance_.y, 0.1f, 0.1f, 25.0f, "%.1f");
+
+    // Minを動かしたときの処理
+    if (minChanged && !maxChanged) {
+        distance_.x = std::clamp(distance_.x, 0.0f, 24.9f);
+        if (distance_.x >= distance_.y) {
+            distance_.y = std::min(distance_.x + 0.1f, 25.0f);
+        }
+    }
+
+    // Maxを動かしたときの処理
+    if (maxChanged && !minChanged) {
+        distance_.y = std::clamp(distance_.y, 0.1f, 25.0f);
+        if (distance_.y <= distance_.x) {
+            distance_.x = std::max(distance_.y - 0.1f, 0.f);
+        }
+    }
+
+    ImGui::Separator();
 
     // Auto Spawn toggle with clear visual state
     ImGui::Checkbox("Auto Spawn", &autoSpawn_);
@@ -115,14 +197,54 @@ void Enemies::Debug() {
     // Display current enemy count
     ImGui::Text("Active Enemies: %zu / %hu", enemies_.size(), MaxEnemies);
 
+    ImGui::Separator();
+
+    // Individual enemy details
+    if (ImGui::CollapsingHeader("Enemy Details")) {
+        int index = 0;
+        for (const auto& enemy : enemies_) {
+            ImGui::PushID(index);
+
+            // Enemy header with status indicator
+            bool isDying = enemy->IsDead();
+            bool isActive = enemy->IsActive();
+
+            ImVec4 headerColor = isActive ?
+                (isDying ? ImVec4(1.0f, 0.5f, 0.0f, 1.0f) : ImVec4(0.0f, 1.0f, 0.0f, 1.0f)) :
+                ImVec4(0.5f, 0.5f, 0.5f, 1.0f);
+
+            ImGui::TextColored(headerColor, "Enemy #%d", index);
+            ImGui::SameLine();
+
+            const char* status = isActive ? (isDying ? "[Dying]" : "[Active]") : "[Inactive]";
+            ImGui::Text("%s", status);
+
+            // Enemy debug info
+            enemy->Debug();
+
+            ImGui::PopID();
+            ++index;
+        }
+    }
+
     ImGui::End();
+#endif
+}
+bool Enemies::Empty() const {
+    return enemies_.empty();
 }
 
 void Enemies::Spawn() {
+    if (!target_) return;
     if (MaxEnemies <= enemies_.size()) return;
+
+    Vector3 position = target_->GetPosition();
+    position += Vector3::Random().Normalize() * MathUtils::Random(distance_.x, distance_.y);
+    position.y = 1.5f;
 
     std::unique_ptr<Enemy> enemy = std::make_unique<Enemy>();
     enemy->Initialize();
+    enemy->SetPosition(position);
     enemy->SetParticleSystem(particle_);
     enemy->SetTarget(target_);
 
@@ -130,11 +252,25 @@ void Enemies::Spawn() {
     enemy->SetMoveCommand(toTargetCommand_.get());
 
     // 共有Behaviorを設定（ポインタのみ）
-    auto* movement = enemy->GetMovement();
-    if (movement) {
+    if (auto* movement = enemy->GetMovement()) {
         movement->ClearBehaviors();
         movement->AddBehavior(walkBehavior_.get());
     }
 
     enemies_.push_back(std::move(enemy));
+}
+
+float Enemies::GetFarthestEnemyDistance(Vector3 referencePos) const {
+    float maxDistance = 0.0f;
+
+    for (const auto& enemy : enemies_) {
+        if (!enemy->IsActive() || enemy->IsDead()) continue;
+
+        float dist = (enemy->GetPosition() - referencePos).Length();
+        if (dist > maxDistance) {
+            maxDistance = dist;
+        }
+    }
+
+    return maxDistance;
 }

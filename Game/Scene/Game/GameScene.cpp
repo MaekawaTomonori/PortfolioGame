@@ -13,12 +13,13 @@ void GameScene::Initialize() {
     cManager_ = Singleton<Collision::Manager>::GetInstance();
 
     stage_ = std::make_unique<Stage>();
-    stage_->Initialize(Particle());
+    stage_->Initialize(Particle(), PostEffect());
 
     followCamera_ = std::make_unique<FollowCamera>();
     followCamera_->Initialize();
-    followCamera_->SetTarget(stage_->GetPlayer());
     followCamera_->SetActive(true);
+    followCamera_->SetTarget(stage_->GetPlayer());
+    followCamera_->SetEnemies(stage_->GetEnemies());
 
     stage_->SetCamera(followCamera_.get());
 

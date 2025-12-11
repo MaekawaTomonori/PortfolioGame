@@ -1,19 +1,29 @@
 #ifndef CAMERA_CONTROLLER_HPP_
 #define CAMERA_CONTROLLER_HPP_
 
-#include "Input.hpp"
 #include "Math/Vector3.hpp"
 #include "Camera/Controller/CameraController.hpp"
 
 class GameObject;
+class Enemies;
 
 class FollowCamera {
-    GameObject* target_;
-    Input* input_;
     CameraController* cameraManager_;
     
-    Vector3 offset_{0.0f, 0.0f, 0.0f};
-    float yaw_ = 0.f, pitch_ = 0.f;
+    GameObject* target_ = nullptr;
+    Enemies* enemies_ = nullptr;
+
+    Vector3 offset_ {};
+
+    // カメラパラメータ（角度と距離で表現）
+    float distance_ = 15.f;           // カメラとターゲットの距離
+    float yaw_ = 0.f;                 // 水平角度（ラジアン）
+    float pitch_ = -0.785f;           // 垂直角度（ラジアン、デフォルト-45度：斜め上から見下ろす）
+
+    // 動的ズーム設定
+    float minDistance_ = 12.f;  // 最小距離
+    float maxDistance_ = 35.f;  // 最大距離
+    float zoomSensitivity_ = 0.8f;    // ズーム感度
 
     bool active_ = false;
 
@@ -33,8 +43,8 @@ public:
     void SetActive(bool _state);
 
     // Target設定
-    // Target設定
-    void SetTarget(GameObject* target) { target_ = target; }
+    void SetTarget(GameObject* _target) { target_ = _target; }
+    void SetEnemies(Enemies* _enemies) { enemies_ = _enemies; }
 
     const Camera* GetCamera() const { return cameraManager_ ? cameraManager_->GetActive() : nullptr; }
 
@@ -44,7 +54,8 @@ private:
     void Load();
     void Save();
 
-    void UpdateCameraPosition() const;
+    void UpdateCameraDistance();
+    void UpdateCameraPosition();
     void ApplyShake();
 };
 

@@ -33,7 +33,7 @@ public:
     // 基本更新・描画
     virtual void Update(float deltaTime) = 0;
     virtual void Draw() = 0;
-    virtual void Debug() const {}
+    virtual void Debug() {}
 
     // Transform関連
     const Vector3& GetPosition() const { return position_; }

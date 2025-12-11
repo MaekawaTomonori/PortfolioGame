@@ -1,7 +1,7 @@
 #include "Enemy.hpp"
-#include "Player/Movement/WalkBehavior.hpp"
 
 #include "ColliderType.hpp"
+#include "imgui.h"
 
 void Enemy::Initialize() {
     SetModel("animatedcube");
@@ -9,7 +9,7 @@ void Enemy::Initialize() {
     model_->SetColor({1.f, 0.3f, 0.3f, 1.f});
 
     status_ = {
-        .hp = 10.f,
+        .hp = 3.f,
         .damage = 0.f
     };
 
@@ -54,6 +54,127 @@ void Enemy::Draw() {
     if (!active_ || !model_) return;
 
     model_->Draw();
+
+}
+
+void Enemy::Debug() {
+#ifdef _DEBUG
+    if (ImGui::TreeNode("Enemy Info")) {
+        // 基本情報
+        ImGui::Text("Active: %s", active_ ? "Yes" : "No");
+        ImGui::Text("Dying: %s", dying_ ? "Yes" : "No");
+
+        ImGui::Separator();
+
+        // ステータス
+        if (ImGui::CollapsingHeader("Status", ImGuiTreeNodeFlags_DefaultOpen)) {
+            ImGui::Text("HP: %.1f", status_.hp);
+            ImGui::ProgressBar(status_.hp / 3.0f, ImVec2(-1, 0), "");
+            ImGui::Text("Damage: %.1f", status_.damage);
+        }
+
+        // 位置情報
+        if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen)) {
+            ImGui::Text("Position: (%.2f, %.2f, %.2f)", position_.x, position_.y, position_.z);
+            ImGui::Text("Rotation: (%.2f, %.2f, %.2f)", rotation_.x, rotation_.y, rotation_.z);
+            ImGui::Text("Scale: (%.2f, %.2f, %.2f)", scale_.x, scale_.y, scale_.z);
+            ImGui::Text("Velocity: (%.2f, %.2f, %.2f)", velocity_.x, velocity_.y, velocity_.z);
+            ImGui::Text("Velocity Length: %.2f", velocity_.Length());
+        }
+
+        // Collider情報
+        if (ImGui::CollapsingHeader("Collider")) {
+            if (collider_) {
+                auto pos = collider_->GetTranslate();
+                auto size = get<Collision::Vec3>(collider_->GetSize());
+                ImGui::Text("Position: (%.2f, %.2f, %.2f)", pos.x, pos.y, pos.z);
+                ImGui::Text("Size: (%.2f, %.2f, %.2f)", size.x, size.y, size.z);
+                ImGui::Text("Enabled: %s", collider_->IsEnabled() ? "Yes" : "No");
+
+                // Position と Collider のズレをチェック
+                float diff = std::sqrt(
+                    (position_.x - pos.x) * (position_.x - pos.x) +
+                    (position_.y - pos.y) * (position_.y - pos.y) +
+                    (position_.z - pos.z) * (position_.z - pos.z)
+                );
+                ImGui::TextColored(
+                    diff > 0.01f ? ImVec4(1.0f, 0.0f, 0.0f, 1.0f) : ImVec4(0.0f, 1.0f, 0.0f, 1.0f),
+                    "Position Mismatch: %.4f", diff
+                );
+            } else {
+                ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "No Collider");
+            }
+        }
+
+        // 状態フラグ
+        if (ImGui::CollapsingHeader("State Flags")) {
+            ImGui::Checkbox("Invincible", (bool*)&invincible_);
+            if (invincible_) {
+                ImGui::SameLine();
+                ImGui::Text("(%.2fs)", invincibleTimer_);
+                ImGui::ProgressBar(invincibleTimer_ / InvincibleDuration, ImVec2(-1, 0));
+            }
+
+            ImGui::Checkbox("Knockback", (bool*)&knockback_);
+            if (knockback_) {
+                ImGui::SameLine();
+                ImGui::Text("(%.2fs)", knockbackTimer_);
+                ImGui::ProgressBar(knockbackTimer_ / 0.15f, ImVec2(-1, 0));
+            }
+
+            ImGui::Checkbox("Shake", (bool*)&shake_);
+            if (shake_) {
+                ImGui::SameLine();
+                ImGui::Text("(%d frames, power: %.2f)", shakeFrames_, shakePower_);
+            }
+
+            ImGui::Checkbox("Scale Pulse", (bool*)&scalePulse_);
+            if (scalePulse_) {
+                ImGui::SameLine();
+                ImGui::Text("(%.2fs / %.2fs)", pulseTimer_, pulseDuration_);
+                ImGui::ProgressBar(pulseTimer_ / pulseDuration_, ImVec2(-1, 0));
+            }
+        }
+
+        // 死亡演出
+        if (dying_ && ImGui::CollapsingHeader("Death Animation", ImGuiTreeNodeFlags_DefaultOpen)) {
+            ImGui::Text("Timer: %.2fs / %.2fs", deathTimer_, DeathDuration);
+            ImGui::ProgressBar(deathTimer_ / DeathDuration, ImVec2(-1, 0));
+
+            float progress = deathTimer_ / DeathDuration;
+            if (progress < 0.3f) {
+                ImGui::Text("Phase: Expansion");
+            } else {
+                ImGui::Text("Phase: Shrink & Fade");
+            }
+        }
+
+        // ターゲット情報
+        if (ImGui::CollapsingHeader("Target & Movement")) {
+            if (target_) {
+                Vector3 targetPos = target_->GetPosition();
+                ImGui::Text("Target: Present");
+                ImGui::Text("Target Pos: (%.2f, %.2f, %.2f)", targetPos.x, targetPos.y, targetPos.z);
+
+                Vector3 toTarget = targetPos - position_;
+                float distance = toTarget.Length();
+                ImGui::Text("Distance: %.2f", distance);
+
+                if (distance > 0.01f) {
+                    Vector3 direction = toTarget.Normalize();
+                    ImGui::Text("Direction: (%.2f, %.2f, %.2f)", direction.x, direction.y, direction.z);
+                }
+            } else {
+                ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Target: None");
+            }
+
+            ImGui::Text("Move Command: %s", moveCommand_ ? "Set" : "None");
+            ImGui::Text("Movement: %s", movement_ ? "Active" : "Inactive");
+        }
+
+        ImGui::TreePop();
+    }
+#endif
 }
 
 void Enemy::OnCollision(const Collision::Collider* _collider) {

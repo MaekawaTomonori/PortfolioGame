@@ -1,7 +1,8 @@
 #include "Stage.hpp"
 
-void Stage::Initialize(ParticleSystem* _particle) {
+void Stage::Initialize(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
     particle_ = _particle;
+    postEffect_ = _postEffect;
 
     if (!particle_) Utils::Alert("ParticleSystem is null");
 
@@ -18,20 +19,22 @@ void Stage::Initialize(ParticleSystem* _particle) {
     terrain_->SetTexture("tile.png");
 
     player_ = std::make_unique<Player>();
-    player_->Initialize(particle_);
+    player_->Initialize(particle_, postEffect_);
 
     enemies_ = std::make_unique<Enemies>();
-
     enemies_->Initialize(particle_);
     enemies_->SetTarget(player_.get());
 }
-
 
 void Stage::Update() {
     skybox_->Update();
     terrain_->Update();
     enemies_->Update();
-    player_->SetTargetPosition(enemies_->GetNearest(player_->GetPosition()));
+
+    if (!enemies_->Empty()) {
+        player_->SetTargetPosition(enemies_->GetNearest(player_->GetPosition()));
+    }
+
     player_->Update(1.f / 60.f);
 }
 
@@ -49,6 +52,10 @@ void Stage::Debug() const {
 
 Player* Stage::GetPlayer() const {
     return player_.get();
+}
+
+Enemies* Stage::GetEnemies() const {
+    return enemies_.get();
 }
 
 void Stage::SetCamera(FollowCamera* _camera) const {

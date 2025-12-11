@@ -15,6 +15,13 @@
 #include "ParticleSystem/ParticleSystem.hpp"
 
 class Player : public GameObject {
+    ParticleSystem* particle_ = nullptr;
+    FollowCamera* camera_ = nullptr;
+    PostProcessExecutor* postEffect_ = nullptr;
+    // プレイヤーの基本色
+    const Vector4 BaseColor = {0.3f, 0.3f, 1.f, 1.f};
+    const Vector4 DamageFlashColor = {2.f, 2.f, 2.f, 1.f};
+
     std::unique_ptr<Movement> movement_;
     std::unique_ptr<Attack> attack_;
 
@@ -37,25 +44,17 @@ class Player : public GameObject {
     float invulnerabilityTimer_ = 1.f;
     const float InvulnerabilityDuration = 1.f;
 
-    FollowCamera* camera_ = nullptr;
-
-    ParticleSystem* particle_ = nullptr;
-
-    // プレイヤーの基本色
-    const Vector4 BaseColor = {0.3f, 0.3f, 1.f, 1.f};
-    const Vector4 DamageFlashColor = {2.f, 2.f, 2.f, 1.f};
-
-# ifdef _DEBUG
-//#define NO_ATK 
-//#define NO_MOVE
+# ifdef _DEBUG  
+    bool no_atk = false;
+    bool no_move = false;
 #endif
 
 
 public:
-    void Initialize(ParticleSystem* _particle);
+    void Initialize(ParticleSystem* _particle, PostProcessExecutor* _postEffect);
     void Update(float deltaTime) override;
     void Draw() override;
-    void Debug() const override;
+    void Debug() override;
 
     void SetTargetPosition(Vector3 _position);
 
@@ -66,5 +65,6 @@ public:
 private:
     void Initialize() override;
     void UpdateInvulnerability(float deltaTime);
+    void UpdateAttack();
 };
 #endif // PLAYER_HPP_

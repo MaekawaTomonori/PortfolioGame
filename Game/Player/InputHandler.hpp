@@ -3,6 +3,7 @@
 
 #include "Movement/MovementContext.hpp"
 #include "Input.hpp"
+#include "Scene/Result/GameClear.hpp"
 
 /**
  * @brief プレイヤー入力をMovementContextに変換
@@ -22,6 +23,9 @@ public:
      * @param currentPos プレイヤーの現在位置
      */
     void UpdateContext(MovementContext& context, const Vector3& currentPos);
+
+private:
+    Vector3 GetMouseInWorld();
 };
 
 #endif // INPUT_HANDLER_HPP_

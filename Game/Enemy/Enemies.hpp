@@ -25,8 +25,11 @@ class Enemies {
     const float Interval = 2.f;
     float timer_ = 0.f;
 
+    Vector2 distance_ = { 5.f, 10.f };
+
 #ifdef _DEBUG
     bool autoSpawn_ = true;
+    Line line_;
 #endif
 
 public:
@@ -39,6 +42,11 @@ public:
     void SetTarget(GameObject* _target);
 
     void Debug();
+
+    bool Empty() const;
+
+    // カメラ調整用の情報取得
+    [[nodiscard]] float GetFarthestEnemyDistance(Vector3 referencePos) const;
 
 private:
     void Spawn();
