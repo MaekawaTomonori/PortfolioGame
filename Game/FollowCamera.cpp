@@ -55,7 +55,7 @@ void FollowCamera::Load() {
     } else {
         distance_ = 15.0f;
         yaw_ = 0.0f;
-        pitch_ = -0.785f;  // -45度（斜め上から見下ろす）
+        pitch_ = -0.785f;
     }
 }
 
@@ -89,14 +89,14 @@ void FollowCamera::UpdateCameraDistance() {
 
         float halfFov = fov * 0.5f;
         float verticalViewDistance = maxEnemyDistance / tanf(halfFov);
-        float pitchFactor = 1.0f / std::max(0.3f, cosf(pitch_));
+        float pitchFactor = 1.0f / std::max(0.65f, cosf(pitch_));
 
         targetDistance = (verticalViewDistance * pitchFactor + maxEnemyDistance * 0.3f) * zoomSensitivity_;
     }
 
     targetDistance = std::clamp(targetDistance, minDistance_, maxDistance_);
 
-    float lerpSpeed = (targetDistance > distance_) ? 0.15f : 0.03f;
+    float lerpSpeed = (targetDistance > distance_) ? 0.1f : 0.03f;
     distance_ = MathUtils::Lerp(distance_, targetDistance, lerpSpeed);
 }
 
@@ -115,17 +115,22 @@ void FollowCamera::Debug() {
     ImGui::Text("Distance");
     ImGui::DragFloat("##Distance", &distance_, 0.1f, 1.0f, 100.0f);
     ImGui::Text("Angle (Yaw, Pitch)");
-    ImGui::SetNextItemWidth(120.0f);
+    ImGui::SetNextItemWidth(120.f);
     ImGui::DragFloat("##Yaw", &yaw_, 0.01f, -MathUtils::F_PI/2.f, MathUtils::F_PI/2.f);
     ImGui::SameLine();
-    ImGui::SetNextItemWidth(120.0f);
+    ImGui::SetNextItemWidth(120.f);
     ImGui::DragFloat("##Pitch", &pitch_, 0.01f, -MathUtils::F_PI/2.f, MathUtils::F_PI/2.f);
 
     ImGui::Separator();
 
     ImGui::Text("Dynamic Zoom Settings");
-    ImGui::DragFloat("Min Distance", &minDistance_, 0.1f, 1.0f, maxDistance_ - 1.f);
-    ImGui::DragFloat("Max Distance", &maxDistance_, 0.1f, minDistance_ + 1.f, 100.0f);
+    ImGui::Text("Distance Range (Min, Max)");
+    ImGui::SetNextItemWidth(120.f);
+    ImGui::DragFloat("##Min Distance", &minDistance_, 0.1f, 1.0f, maxDistance_ - 1.f);
+    ImGui::SameLine();
+    ImGui::SetNextItemWidth(120.f);
+    ImGui::DragFloat("##Max Distance", &maxDistance_, 0.1f, minDistance_ + 1.f, 100.0f);
+
     ImGui::DragFloat("Zoom Sensitivity", &zoomSensitivity_, 0.01f, 0.1f, 2.0f);
 
     ImGui::Separator();

@@ -45,10 +45,10 @@ void Enemies::Initialize(ParticleSystem* _particle) {
         });
 #ifdef _DEBUG
     line_.Initialize();
+    line_.SetName("Enemies");
     line_.SetColor({0.3f, 1.f, 0.3f, 1.f});
 #endif
 }
-
 
 void Enemies::Update() {
     constexpr float DeltaTime = 1.f / 60.f;
