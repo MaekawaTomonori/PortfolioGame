@@ -5,14 +5,19 @@
 
 #include "imgui.h"
 #include "Command/Move/ToTargetCommand.hpp"
+#include "Json/Json.hpp"
 #include "Player/Movement/WalkBehavior.hpp"
 #include "Player/Movement/DashBehavior.hpp"
+#include "Pattern/Singleton.hpp"
 
 void Enemies::Initialize(ParticleSystem* _particle) {
     timer_ = 0.f;
     particle_ = _particle;
 
     if (!particle_) Utils::Alert("ParticleSystem is null");
+
+    // パラメータの読み込み
+    LoadParams();
 
     // 共有Behaviorを生成（Flyweight Pattern）
     walkBehavior_ = std::make_unique<WalkBehavior>(3.0f);
@@ -150,29 +155,8 @@ void Enemies::Debug() {
 #ifdef _DEBUG
     ImGui::Begin("Enemies");
 
-    ImGui::Text("Spawn Distance Range");
-
-    ImGui::SetNextItemWidth(120.0f);
-    bool minChanged = ImGui::DragFloat("##Min", &distance_.x, 0.1f, 0.0f, 24.9f, "%.1f");
-    ImGui::SameLine();
-    ImGui::SetNextItemWidth(120.0f);
-    bool maxChanged = ImGui::DragFloat("##Max", &distance_.y, 0.1f, 0.1f, 25.0f, "%.1f");
-
-    // Minを動かしたときの処理
-    if (minChanged && !maxChanged) {
-        distance_.x = std::clamp(distance_.x, 0.0f, 24.9f);
-        if (distance_.x >= distance_.y) {
-            distance_.y = std::min(distance_.x + 0.1f, 25.0f);
-        }
-    }
-
-    // Maxを動かしたときの処理
-    if (maxChanged && !minChanged) {
-        distance_.y = std::clamp(distance_.y, 0.1f, 25.0f);
-        if (distance_.y <= distance_.x) {
-            distance_.x = std::max(distance_.y - 0.1f, 0.f);
-        }
-    }
+    // Display current enemy count
+    ImGui::Text("Active Enemies: %zu / %hu", enemies_.size(), MaxEnemies);
 
     ImGui::Separator();
 
@@ -187,15 +171,88 @@ void Enemies::Debug() {
         ImGui::ProgressBar(timer_ / Interval, ImVec2(-1.0f, 0.0f));
     }
 
-    ImGui::Separator();
-
     // Manual spawn button
     if (ImGui::Button("Spawn Enemy")) {
         Spawn();
     }
 
-    // Display current enemy count
-    ImGui::Text("Active Enemies: %zu / %hu", enemies_.size(), MaxEnemies);
+    ImGui::Separator();
+
+    if (ImGui::CollapsingHeader("Enemy Parameters", ImGuiTreeNodeFlags_DefaultOpen)) {
+        constexpr float inputWidth = 150.0f;
+
+        // Spawn
+        ImGui::TextColored(ImVec4(0.4f, 0.8f, 1.0f, 1.0f), "Spawn");
+        ImGui::Text("Distance Range");
+        ImGui::SetNextItemWidth(inputWidth * 0.5f);
+        bool minChanged = ImGui::DragFloat("##Min", &distance_.x, 0.1f, 0.0f, 24.9f, "Min: %.1f");
+        ImGui::SameLine();
+        ImGui::SetNextItemWidth(inputWidth * 0.5f);
+        bool maxChanged = ImGui::DragFloat("##Max", &distance_.y, 0.1f, 0.1f, 25.0f, "Max: %.1f");
+
+        if (minChanged && !maxChanged) {
+            distance_.x = std::clamp(distance_.x, 0.0f, 24.9f);
+            if (distance_.x >= distance_.y) distance_.y = std::min(distance_.x + 0.1f, 25.0f);
+        }
+        if (maxChanged && !minChanged) {
+            distance_.y = std::clamp(distance_.y, 0.1f, 25.0f);
+            if (distance_.y <= distance_.x) distance_.x = std::max(distance_.y - 0.1f, 0.f);
+        }
+
+        ImGui::Separator();
+
+        // Stats
+        ImGui::TextColored(ImVec4(0.4f, 0.8f, 1.0f, 1.0f), "Stats");
+        ImGui::SetNextItemWidth(inputWidth);
+        ImGui::DragFloat("Max HP", &enemyParams_.maxHp, 0.1f, 1.0f, 10.0f, "%.1f");
+
+        ImGui::Separator();
+
+        // Combat
+        ImGui::TextColored(ImVec4(0.4f, 0.8f, 1.0f, 1.0f), "Combat");
+        ImGui::SetNextItemWidth(inputWidth);
+        ImGui::DragFloat("Invincible Duration", &enemyParams_.invincibleDuration, 0.05f, 0.1f, 2.0f, "%.2fs");
+        ImGui::SetNextItemWidth(inputWidth);
+        ImGui::DragFloat("Knockback Decay", &enemyParams_.knockbackDecay, 0.05f, 0.1f, 1.0f, "%.2f");
+        ImGui::SetNextItemWidth(inputWidth);
+        ImGui::DragFloat("Death Duration", &enemyParams_.deathDuration, 0.05f, 0.1f, 3.0f, "%.2fs");
+
+        ImGui::Separator();
+
+        // Dash
+        ImGui::TextColored(ImVec4(0.4f, 0.8f, 1.0f, 1.0f), "Dash");
+        ImGui::SetNextItemWidth(inputWidth);
+        ImGui::DragFloat("Charge Time", &enemyParams_.dash.chargeMaxTime, 0.1f, 0.1f, 5.0f, "%.2fs");
+        ImGui::SetNextItemWidth(inputWidth);
+        ImGui::DragFloat("Dash Duration", &enemyParams_.dash.duration, 0.05f, 0.1f, 2.0f, "%.2fs");
+        ImGui::SetNextItemWidth(inputWidth);
+        ImGui::DragFloat("Dash Speed", &enemyParams_.dash.speed, 0.5f, 5.0f, 50.0f, "%.1f");
+        ImGui::SetNextItemWidth(inputWidth);
+        ImGui::DragFloat("Trigger Interval", &enemyParams_.dash.triggerInterval, 0.1f, 0.5f, 10.0f, "%.2fs");
+        ImGui::SetNextItemWidth(inputWidth);
+        float chancePercent = enemyParams_.dash.triggerChance * 100.0f;
+        if (ImGui::SliderFloat("Trigger Chance", &chancePercent, 0.0f, 100.0f, "%.0f%%")) {
+            enemyParams_.dash.triggerChance = chancePercent / 100.0f;
+        }
+
+        ImGui::Spacing();
+        ImGui::Text("Prediction Line");
+        ImGui::Indent();
+        ImGui::SetNextItemWidth(inputWidth);
+        ImGui::DragFloat("Enemy Offset", &enemyParams_.dash.enemyOffset, 0.1f, 0.0f, 5.0f, "%.2f");
+        ImGui::SetNextItemWidth(inputWidth);
+        ImGui::DragFloat("Line Length", &enemyParams_.dash.lineLength, 0.05f, 0.1f, 2.0f, "%.2f");
+        ImGui::SetNextItemWidth(inputWidth);
+        ImGui::DragFloat("Line Width", &enemyParams_.dash.lineWidth, 0.1f, 0.5f, 5.0f, "%.2f");
+        ImGui::SetNextItemWidth(inputWidth);
+        ImGui::DragFloat("Center Offset", &enemyParams_.dash.lineCenterOffset, 0.05f, 0.0f, 1.0f, "%.2f");
+        ImGui::Unindent();
+
+        ImGui::Separator();
+
+        if (ImGui::Button("Save to JSON", ImVec2(-1, 0))) SaveParams();
+        ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 1.0f), "Assets/Data/EnemyParams.json");
+    }
 
     ImGui::Separator();
 
@@ -248,6 +305,9 @@ void Enemies::Spawn() {
     enemy->SetParticleSystem(particle_);
     enemy->SetTarget(target_);
 
+    // 共通パラメータへのポインタを設定（すべてのEnemyが同じパラメータを参照）
+    enemy->SetParams(&enemyParams_);
+
     // 共有Commandを設定（ポインタのみ）
     enemy->SetMoveCommand(toTargetCommand_.get());
 
@@ -273,4 +333,67 @@ float Enemies::GetFarthestEnemyDistance(Vector3 referencePos) const {
     }
 
     return maxDistance;
+}
+
+void Enemies::LoadParams() {
+    const auto& json = Singleton<Json>::GetInstance();
+
+    if (json->Load("EnemyParams")) {
+        // 基本ステータス
+        enemyParams_.maxHp = std::get<float>(json->GetValue("EnemyParams", "Basic", "MaxHp"));
+
+        distance_ = std::get<Vector2>(json->GetValue("EnemyParams", "Basic", "SpawnDistance"));
+
+        // 無敵時間
+        enemyParams_.invincibleDuration = std::get<float>(json->GetValue("EnemyParams", "Invincible", "Duration"));
+
+        // ノックバック
+        enemyParams_.knockbackDecay = std::get<float>(json->GetValue("EnemyParams", "Knockback", "Decay"));
+
+        // 死亡演出
+        enemyParams_.deathDuration = std::get<float>(json->GetValue("EnemyParams", "Death", "Duration"));
+
+        // ダッシュアクション
+        enemyParams_.dash.chargeMaxTime = std::get<float>(json->GetValue("EnemyParams", "Dash", "ChargeMaxTime"));
+        enemyParams_.dash.duration = std::get<float>(json->GetValue("EnemyParams", "Dash", "Duration"));
+        enemyParams_.dash.speed = std::get<float>(json->GetValue("EnemyParams", "Dash", "Speed"));
+        enemyParams_.dash.triggerInterval = std::get<float>(json->GetValue("EnemyParams", "Dash", "TriggerInterval"));
+        enemyParams_.dash.triggerChance = std::get<float>(json->GetValue("EnemyParams", "Dash", "TriggerChance"));
+        enemyParams_.dash.enemyOffset = std::get<float>(json->GetValue("EnemyParams", "Dash", "EnemyOffset"));
+        enemyParams_.dash.lineLength = std::get<float>(json->GetValue("EnemyParams", "Dash", "LineLength"));
+        enemyParams_.dash.lineWidth = std::get<float>(json->GetValue("EnemyParams", "Dash", "LineWidth"));
+        enemyParams_.dash.lineCenterOffset = std::get<float>(json->GetValue("EnemyParams", "Dash", "LineCenterOffset"));
+    }
+    // JSONファイルが存在しない場合はデフォルト値を使用
+}
+
+void Enemies::SaveParams() {
+    const auto& json = Singleton<Json>::GetInstance();
+
+    // 基本ステータス
+    json->SetValue("EnemyParams", "Basic", "MaxHp", enemyParams_.maxHp);
+
+    json->SetValue("EnemyParams", "Basic", "SpawnDistance", distance_);
+
+    // 無敵時間
+    json->SetValue("EnemyParams", "Invincible", "Duration", enemyParams_.invincibleDuration);
+
+    // ノックバック
+    json->SetValue("EnemyParams", "Knockback", "Decay", enemyParams_.knockbackDecay);
+
+    // 死亡演出
+    json->SetValue("EnemyParams", "Death", "Duration", enemyParams_.deathDuration);
+
+    // ダッシュアクション
+    json->SetValue("EnemyParams", "Dash", "ChargeMaxTime", enemyParams_.dash.chargeMaxTime);
+    json->SetValue("EnemyParams", "Dash", "Duration", enemyParams_.dash.duration);
+    json->SetValue("EnemyParams", "Dash", "Speed", enemyParams_.dash.speed);
+    json->SetValue("EnemyParams", "Dash", "TriggerInterval", enemyParams_.dash.triggerInterval);
+    json->SetValue("EnemyParams", "Dash", "TriggerChance", enemyParams_.dash.triggerChance);
+    json->SetValue("EnemyParams", "Dash", "EnemyOffset", enemyParams_.dash.enemyOffset);
+    json->SetValue("EnemyParams", "Dash", "LineLength", enemyParams_.dash.lineLength);
+    json->SetValue("EnemyParams", "Dash", "LineWidth", enemyParams_.dash.lineWidth);
+    json->SetValue("EnemyParams", "Dash", "LineCenterOffset", enemyParams_.dash.lineCenterOffset);
+
+    json->Save("EnemyParams");
 }

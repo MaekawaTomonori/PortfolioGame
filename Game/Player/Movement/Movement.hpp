@@ -26,10 +26,10 @@ public:
 
     /**
      * @brief 更新処理
-     * @param context 移動コンテキスト
+     * @param _context 移動コンテキスト
      * @param _deltaTime フレーム時間
      */
-    void Update(MovementContext& context, float _deltaTime);
+    void Update(MovementContext& _context, float _deltaTime);
 
     void Debug() const;
 

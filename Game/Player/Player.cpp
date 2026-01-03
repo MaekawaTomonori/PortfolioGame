@@ -120,7 +120,10 @@ void Player::Draw() {
     if (!active_ || !model_) return;
 
     if (attack_) {
-        attack_->Draw();
+#ifdef _DEBUG
+        if (!no_atk) 
+#endif
+          attack_->Draw();
     }
 
     model_->Draw();

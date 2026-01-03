@@ -6,10 +6,10 @@ void Movement::Initialize(GameObject* _owner) {
     owner_ = _owner;
 }
 
-void Movement::Update(MovementContext& context, const float _deltaTime) {
+void Movement::Update(MovementContext& _context, const float _deltaTime) {
     if (!owner_) return;
 
-    context.owner = owner_;
+    _context.owner = owner_;
 
     // 優先度順にソート（降順：高い優先度が先）
     std::ranges::sort(behaviors_,
@@ -19,8 +19,8 @@ void Movement::Update(MovementContext& context, const float _deltaTime) {
 
     // 実行可能な動作を探して実行
     for (auto* behavior : behaviors_) {
-        if (behavior->CanExecute(context)) {
-            Vector3 velocity = behavior->Calculate(context, _deltaTime);
+        if (behavior->CanExecute(_context)) {
+            Vector3 velocity = behavior->Calculate(_context, _deltaTime);
             owner_->SetVelocity(velocity);
             return;
         }

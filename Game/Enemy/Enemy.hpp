@@ -11,10 +11,47 @@
 #include "ParticleSystem/ParticleSystem.hpp"
 
 class Enemy : public GameObject {
+    enum class DashState {
+        Idle,       // 通常状態
+        Charging,   // ダッシュ準備中
+        Dashing     // ダッシュ実行中
+    };
+
     struct Status {
         float hp;
         float damage;
     };
+
+public:
+    // 敵の共通パラメータ構造体
+    struct Params {
+        // 基本ステータス
+        float maxHp = 3.0f;
+
+        // 無敵時間
+        float invincibleDuration = 0.4f;
+
+        // ノックバック
+        float knockbackDecay = 0.4f;
+
+        // 死亡演出
+        float deathDuration = 0.8f;
+
+        // ダッシュアクション
+        struct {
+            float chargeMaxTime = 2.0f;        // チャージ時間
+            float duration = 0.4f;              // ダッシュ持続時間
+            float speed = 20.0f;                // ダッシュ速度
+            float triggerInterval = 3.0f;       // トリガー間隔
+            float triggerChance = 0.3f;         // 発動確率（0.0~1.0）
+            float enemyOffset = 1.5f;           // 予測線の敵からのオフセット
+            float lineLength = 0.7f;            // 予測線の長さ倍率
+            float lineWidth = 1.5f;             // 予測線の幅
+            float lineCenterOffset = 0.6f;      // 予測線の中心位置オフセット倍率
+        } dash;
+    };
+
+private:
 
     ParticleSystem* particle_ = nullptr;
 
@@ -28,13 +65,14 @@ class Enemy : public GameObject {
 
     std::unique_ptr<Collision::Collider> collider_;
 
+    // 共通パラメータ（参照）
+    const Params* params_ = nullptr;
+
     bool invincible_ = false;
     float invincibleTimer_ = 0.4f;
-    const float InvincibleDuration = 0.4f;
 
     bool knockback_ = false;
     float knockbackTimer_ = 0.f;
-    const float KnockbackDecay = 0.4f;
 
     bool shake_ = false;
     uint16_t shakeFrames_ = 0;
@@ -47,7 +85,14 @@ class Enemy : public GameObject {
 
     bool dying_ = false;
     float deathTimer_ = 0.f;
-    const float DeathDuration = 0.8f;
+
+    // ダッシュアクション関連
+    DashState dashState_ = DashState::Idle;
+    float dashChargeTime_ = 0.f;
+    float dashTimer_ = 0.f;
+    Vector3 dashDirection_ {};
+    std::unique_ptr<Model> prediction_;
+    float dashTriggerTimer_ = 0.f;
 
 public:
     void Initialize() override;
@@ -62,13 +107,17 @@ public:
 
     void SetMoveCommand(ICommand* command) { moveCommand_ = command; }
 
-    Movement* GetMovement() { return movement_.get(); }
+    Movement* GetMovement() const { return movement_.get(); }
 
     void OnCollision(const Collision::Collider* _collider);
 
     void SetParticleSystem(ParticleSystem* _particle) { particle_ = _particle; }
 
     bool IsDead() const { return dying_; }
+
+    // パラメータの設定・取得
+    void SetParams(const Params* _params) { params_ = _params; }
+    const Params* GetParams() const { return params_; }
 
 private:
     void ApplyKnockback(Vector3 _direction, float _force, float _duration);
@@ -81,6 +130,13 @@ private:
     void UpdateKnockback(float _deltaTime);
     void UpdateInvincible(float _deltaTime);
     void UpdateMovement(float _deltaTime);
+
+    // ダッシュアクション関連
+    void UpdateDashAction(float _deltaTime);
+    void TryStartDash();
+    void UpdateCharging(float _deltaTime);
+    void UpdateDashing(float _deltaTime);
+    void UpdatePredictionLine();
 };
 
 #endif // ENEMY_HPP_

@@ -27,6 +27,9 @@ class Enemies {
 
     Vector2 distance_ = { 5.f, 10.f };
 
+    // 敵の共通パラメータ
+    Enemy::Params enemyParams_;
+
 #ifdef _DEBUG
     bool autoSpawn_ = true;
     Line line_;
@@ -50,6 +53,8 @@ public:
 
 private:
     void Spawn();
+    void LoadParams();
+    void SaveParams();
 
 }; // class Enemies
 

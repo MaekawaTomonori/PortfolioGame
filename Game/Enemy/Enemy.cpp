@@ -9,7 +9,7 @@ void Enemy::Initialize() {
     model_->SetColor({1.f, 0.3f, 0.3f, 1.f});
 
     status_ = {
-        .hp = 3.f,
+        .hp = params_ ? params_->maxHp : 3.0f,
         .damage = 0.f
     };
 
@@ -25,6 +25,11 @@ void Enemy::Initialize() {
 
     movement_ = std::make_unique<Movement>();
     movement_->Initialize(this);
+
+    // ダッシュ予測線の初期化
+    prediction_ = std::make_unique<Model>();
+    prediction_->Initialize("plane");
+    prediction_->SetTexture("white_x16.png");
 }
 
 void Enemy::Update(float deltaTime) {
@@ -38,6 +43,7 @@ void Enemy::Update(float deltaTime) {
     }
 
     // 各状態の更新
+    UpdateDashAction(deltaTime);
     UpdateMovement(deltaTime);
     UpdateInvincible(deltaTime);
     UpdateShake();
@@ -55,6 +61,10 @@ void Enemy::Draw() {
 
     model_->Draw();
 
+    // チャージ中は予測線を描画
+    if (dashState_ == DashState::Charging) {
+        prediction_->Draw();
+    }
 }
 
 void Enemy::Debug() {
@@ -109,10 +119,10 @@ void Enemy::Debug() {
         // 状態フラグ
         if (ImGui::CollapsingHeader("State Flags")) {
             ImGui::Checkbox("Invincible", (bool*)&invincible_);
-            if (invincible_) {
+            if (invincible_ && params_) {
                 ImGui::SameLine();
                 ImGui::Text("(%.2fs)", invincibleTimer_);
-                ImGui::ProgressBar(invincibleTimer_ / InvincibleDuration, ImVec2(-1, 0));
+                ImGui::ProgressBar(invincibleTimer_ / params_->invincibleDuration, ImVec2(-1, 0));
             }
 
             ImGui::Checkbox("Knockback", (bool*)&knockback_);
@@ -137,11 +147,11 @@ void Enemy::Debug() {
         }
 
         // 死亡演出
-        if (dying_ && ImGui::CollapsingHeader("Death Animation", ImGuiTreeNodeFlags_DefaultOpen)) {
-            ImGui::Text("Timer: %.2fs / %.2fs", deathTimer_, DeathDuration);
-            ImGui::ProgressBar(deathTimer_ / DeathDuration, ImVec2(-1, 0));
+        if (dying_ && params_ && ImGui::CollapsingHeader("Death Animation", ImGuiTreeNodeFlags_DefaultOpen)) {
+            ImGui::Text("Timer: %.2fs / %.2fs", deathTimer_, params_->deathDuration);
+            ImGui::ProgressBar(deathTimer_ / params_->deathDuration, ImVec2(-1, 0));
 
-            float progress = deathTimer_ / DeathDuration;
+            float progress = deathTimer_ / params_->deathDuration;
             if (progress < 0.3f) {
                 ImGui::Text("Phase: Expansion");
             } else {
@@ -170,6 +180,72 @@ void Enemy::Debug() {
 
             ImGui::Text("Move Command: %s", moveCommand_ ? "Set" : "None");
             ImGui::Text("Movement: %s", movement_ ? "Active" : "Inactive");
+        }
+
+        // ダッシュアクション情報
+        if (params_ && ImGui::CollapsingHeader("Dash Action", ImGuiTreeNodeFlags_DefaultOpen)) {
+            // 現在の状態
+            const char* stateStr = "Unknown";
+            ImVec4 stateColor = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
+            switch (dashState_) {
+                case DashState::Idle:
+                    stateStr = "Idle";
+                    stateColor = ImVec4(0.5f, 0.5f, 0.5f, 1.0f);
+                    break;
+                case DashState::Charging:
+                    stateStr = "Charging";
+                    stateColor = ImVec4(1.0f, 1.0f, 0.0f, 1.0f);
+                    break;
+                case DashState::Dashing:
+                    stateStr = "Dashing";
+                    stateColor = ImVec4(1.0f, 0.0f, 0.0f, 1.0f);
+                    break;
+            }
+            ImGui::TextColored(stateColor, "State: %s", stateStr);
+
+            ImGui::Separator();
+
+            // タイマー情報
+            if (dashState_ == DashState::Idle) {
+                ImGui::Text("Next Dash Check: %.2fs", params_->dash.triggerInterval - dashTriggerTimer_);
+                ImGui::ProgressBar(dashTriggerTimer_ / params_->dash.triggerInterval, ImVec2(-1, 0));
+            } else if (dashState_ == DashState::Charging) {
+                ImGui::Text("Charge Time: %.2fs / %.2fs", dashChargeTime_, params_->dash.chargeMaxTime);
+                ImGui::ProgressBar(dashChargeTime_ / params_->dash.chargeMaxTime, ImVec2(-1, 0));
+            } else if (dashState_ == DashState::Dashing) {
+                ImGui::Text("Dash Time: %.2fs / %.2fs", dashTimer_, params_->dash.duration);
+                ImGui::ProgressBar(dashTimer_ / params_->dash.duration, ImVec2(-1, 0));
+            }
+
+            ImGui::Separator();
+
+            // ダッシュ方向
+            if (dashState_ != DashState::Idle) {
+                ImGui::Text("Dash Direction: (%.2f, %.2f, %.2f)",
+                    dashDirection_.x, dashDirection_.y, dashDirection_.z);
+            }
+
+            ImGui::Separator();
+
+            // パラメータ表示（共通パラメータはEnemiesで調整）
+            ImGui::Text("Parameters (adjust in Enemies panel):");
+            ImGui::Text("Charge Time: %.2fs", params_->dash.chargeMaxTime);
+            ImGui::Text("Dash Duration: %.2fs", params_->dash.duration);
+            ImGui::Text("Dash Speed: %.1f", params_->dash.speed);
+            ImGui::Text("Trigger Interval: %.2fs", params_->dash.triggerInterval);
+            ImGui::Text("Trigger Chance: %.0f%%", params_->dash.triggerChance * 100.0f);
+
+            ImGui::Separator();
+
+            // 計算値表示
+            float dashDistance = params_->dash.speed * params_->dash.duration;
+            ImGui::Text("Calculated Values:");
+            ImGui::BulletText("Dash Distance: %.2f", dashDistance);
+
+            // デバッグ用：強制トリガー
+            if (dashState_ == DashState::Idle && ImGui::Button("Force Dash")) {
+                dashTriggerTimer_ = params_->dash.triggerInterval;
+            }
         }
 
         ImGui::TreePop();
@@ -291,29 +367,34 @@ void Enemy::UpdatePulse(float _deltaTime) {
 }
 
 void Enemy::UpdateMovement(float _deltaTime) {
+    // ダッシュ中やノックバック中は通常の移動を停止
+    if (dashState_ != DashState::Idle) return;
     if (knockback_) {
         UpdateKnockback(_deltaTime);
-    } else {
-        movementContext_.Reset();
-        movementContext_.position = position_;
-        movementContext_.target = target_;
+        return;
+    }
 
-        if (moveCommand_) {
-            moveCommand_->Execute(movementContext_);
-        }
+    movementContext_.Reset();
+    movementContext_.position = position_;
+    movementContext_.target = target_;
 
-        if (movement_) {
-            movement_->Update(movementContext_, _deltaTime);
-        }
+    if (moveCommand_) {
+        moveCommand_->Execute(movementContext_);
+    }
 
-        if (invincible_) {
-            velocity_ *= 0.3f;
-        }
+    if (movement_) {
+        movement_->Update(movementContext_, _deltaTime);
+    }
+
+    if (invincible_) {
+        velocity_ *= 0.3f;
     }
 }
 
 void Enemy::UpdateKnockback(float _deltaTime) {
-    velocity_ *= KnockbackDecay;
+    if (params_) {
+        velocity_ *= params_->knockbackDecay;
+    }
     knockbackTimer_ -= _deltaTime;
 
     if (knockbackTimer_ <= 0.f) {
@@ -323,12 +404,12 @@ void Enemy::UpdateKnockback(float _deltaTime) {
 }
 
 void Enemy::UpdateInvincible(float _deltaTime) {
-    if (!invincible_) return;
+    if (!invincible_ || !params_) return;
 
     invincibleTimer_ -= _deltaTime;
 
     // 進行度を計算 (1.0 → 0.0)
-    float progress = invincibleTimer_ / InvincibleDuration;
+    float progress = invincibleTimer_ / params_->invincibleDuration;
 
     // 白(2.0, 2.0, 2.0) → 赤(1.0, 0.3, 0.3) にグラデーション
     float r = MathUtils::Lerp(1.0f, 2.0f, progress);
@@ -338,21 +419,23 @@ void Enemy::UpdateInvincible(float _deltaTime) {
 
     if (invincibleTimer_ <= 0.f) {
         invincible_ = false;
-        invincibleTimer_ = InvincibleDuration;
+        invincibleTimer_ = params_->invincibleDuration;
         model_->SetColor({1.f, 0.3f, 0.3f, 1.f});
     }
 }
 
 void Enemy::UpdateDeath(float _deltaTime) {
+    if (!params_) return;
+
     deathTimer_ += _deltaTime;
 
-    if (deathTimer_ >= DeathDuration) {
+    if (deathTimer_ >= params_->deathDuration) {
         // 演出終了、敵を削除
         active_ = false;
         return;
     }
 
-    float progress = deathTimer_ / DeathDuration;  // 0.0 → 1.0
+    float progress = deathTimer_ / params_->deathDuration;  // 0.0 → 1.0
 
     // フェーズ1 (0.0-0.3): 膨張しながら光る
     // フェーズ2 (0.3-0.8): 縮小しながらフェードアウト
@@ -389,5 +472,155 @@ void Enemy::UpdateDeath(float _deltaTime) {
         // 位置: 少し浮き上がる
         position_.y += _deltaTime * 2.0f;
     }
+}
+
+void Enemy::UpdateDashAction(float _deltaTime) {
+    switch (dashState_) {
+        case DashState::Idle:
+            TryStartDash();
+            break;
+        case DashState::Charging:
+            UpdateCharging(_deltaTime);
+            break;
+        case DashState::Dashing:
+            UpdateDashing(_deltaTime);
+            break;
+    }
+}
+
+void Enemy::TryStartDash() {
+    // ターゲットがいない、またはノックバック中、無敵中はダッシュしない
+    if (!target_ || knockback_ || invincible_ || !params_) {
+        return;
+    }
+
+    if (dashState_ != DashState::Idle) {
+        dashTriggerTimer_ = 0.f;
+        return;
+    }
+
+    // ランダムなタイミングでダッシュを試行
+    dashTriggerTimer_ += 1.f / 60.f;
+    if (dashTriggerTimer_ < params_->dash.triggerInterval) {
+        return;
+    }
+
+    // 確率でダッシュを開始
+    if (MathUtils::Random(0.f, 1.f) < params_->dash.triggerChance) {
+        // ターゲットへの方向を計算
+        Vector3 toTarget = target_->GetPosition() - position_;
+        toTarget.y = 0.f; // 水平方向のみ
+
+        if (toTarget.Length() > 0.001f) {
+            dashDirection_ = toTarget.Normalize();
+            dashState_ = DashState::Charging;
+            dashChargeTime_ = 0.f;
+            dashTriggerTimer_ = 0.f;
+
+            // 予測線の初期設定
+            float dashDistance = params_->dash.speed * params_->dash.duration;
+            float yaw = atan2f(dashDirection_.x, dashDirection_.z);
+
+            // 予測線の長さを短めに
+            float lineLength = dashDistance * params_->dash.lineLength;
+
+            // planeは正面向きなのでY軸を伸ばし、X軸で幅を広げる
+            prediction_->SetScale({ params_->dash.lineWidth, lineLength, 1.f });
+            // X軸で-90度回転して真上に向け、Y軸でyaw回転
+            prediction_->SetRotate({ -MathUtils::F_PI / 2.f, yaw, 0.f });
+
+            // 敵と重ならないように、敵の前方から開始し、ターゲット側に寄せる
+            Vector3 startPos = position_ + dashDirection_ * params_->dash.enemyOffset;
+            Vector3 centerPos = startPos + dashDirection_ * (lineLength * params_->dash.lineCenterOffset);
+            centerPos.y = 0.1f;
+            prediction_->SetTranslate(centerPos);
+
+            // チャージ開始時のエフェクト
+            ApplyShake(5, 0.3f, false);
+        }
+    } else {
+        // 次の判定までリセット
+        dashTriggerTimer_ = 0.f;
+    }
+}
+
+void Enemy::UpdateCharging(float _deltaTime) {
+    if (!params_) return;
+
+    dashChargeTime_ += _deltaTime;
+
+    // チャージ中は完全に停止
+    velocity_ = Vector3{0.f, 0.f, 0.f};
+
+    // チャージ進行度 (0.0 → 1.0)
+    float progress = dashChargeTime_ / params_->dash.chargeMaxTime;
+
+    // チャージ中の視覚効果
+    // 1. 色の変化: 赤 → 黄色
+    float r = MathUtils::Lerp(1.0f, 1.5f, progress);
+    float g = MathUtils::Lerp(0.3f, 1.5f, progress);
+    float b = MathUtils::Lerp(0.3f, 0.3f, progress);
+    model_->SetColor({r, g, b, 1.f});
+
+    // 2. スケールパルス（溜めている感じ）
+    float pulseFrequency = 10.0f;
+    float pulse = std::sin(dashChargeTime_ * pulseFrequency) * 0.05f * progress;
+    float scaleValue = 1.0f + pulse;
+    scale_ = Vector3{scaleValue, scaleValue, scaleValue};
+
+    // 3. 予測線の更新
+    UpdatePredictionLine();
+
+    // チャージ完了 → ダッシュ実行
+    if (dashChargeTime_ >= params_->dash.chargeMaxTime) {
+        dashState_ = DashState::Dashing;
+        dashTimer_ = 0.f;
+
+        // ダッシュ開始時のエフェクト
+        ApplyShake(8, 0.5f, true);
+        model_->SetColor({2.f, 2.f, 2.f, 1.f}); // 白く光る
+    }
+}
+
+void Enemy::UpdateDashing(float _deltaTime) {
+    if (!params_) return;
+
+    dashTimer_ += _deltaTime;
+
+    // ダッシュ速度を適用
+    velocity_ = dashDirection_ * params_->dash.speed;
+
+    // ダッシュ終了
+    if (dashTimer_ >= params_->dash.duration) {
+        dashState_ = DashState::Idle;
+        dashTimer_ = 0.f;
+        velocity_ = Vector3{0.f, 0.f, 0.f};
+
+        // 元の色に戻す
+        model_->SetColor({1.f, 0.3f, 0.3f, 1.f});
+        scale_ = Vector3{1.f, 1.f, 1.f};
+    }
+}
+
+void Enemy::UpdatePredictionLine() {
+    if (!prediction_ || !params_) return;
+
+    // チャージ進行度
+    float progress = dashChargeTime_ / params_->dash.chargeMaxTime;
+
+    // 色の変化（黄→赤）
+    float r = MathUtils::Lerp(1.0f, 1.5f, progress);
+    float g = MathUtils::Lerp(1.0f, 0.3f, progress);
+    float b = MathUtils::Lerp(0.3f, 0.3f, progress);
+    prediction_->SetColor({ r, g, b, 0.6f });
+
+    // スケールのパルス（進行度に応じて強くなる）
+    float dashDistance = params_->dash.speed * params_->dash.duration;
+    float lineLength = dashDistance * params_->dash.lineLength;
+    float pulseScale = 1.0f + std::sin(dashChargeTime_ * 15.0f) * 0.1f * progress;
+    // Y軸を伸ばす（planeは正面向きなので）、X軸で幅を広げる
+    prediction_->SetScale({ params_->dash.lineWidth * pulseScale, lineLength, 1.0f });
+
+    prediction_->Update();
 }
 
