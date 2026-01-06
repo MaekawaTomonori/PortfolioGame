@@ -15,7 +15,7 @@
             "LineLength": 0.44999998807907104,
             "LineWidth": 1.5,
             "Speed": 34.0,
-            "TriggerChance": 1.0,
+            "TriggerChance": 0.4000000059604645,
             "TriggerInterval": 3.200000047683716
         },
         "Death": {
