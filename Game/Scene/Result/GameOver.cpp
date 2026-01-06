@@ -17,7 +17,7 @@ void GameOver::Initialize() {
 
     alpha_ = 0.f;
 
-    postEffects_->ApplyPreset("DarkScene");
+    PostEffect()->ApplyPreset("DarkScene");
 }
 
 void GameOver::Update() {
@@ -27,7 +27,7 @@ void GameOver::Update() {
     sprite_->Update();
     //bg_->Update();
 
-    sprite_->SetColor({1.f, 1.f, 1.f, alpha_});
+    sprite_->SetColor({ 1.f, 1.f, 1.f, alpha_ });
 }
 
 void GameOver::Draw() {

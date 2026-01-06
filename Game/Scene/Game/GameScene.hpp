@@ -3,10 +3,11 @@
 #include "IScene.hpp"
 
 #include "FollowCamera.hpp"
+#include "Outro/Outro.hpp"
 #include "Performance/Intro/Intro.hpp"
 #include "Stage/Stage.hpp"
 
-class GameScene : public IScene{
+class GameScene : public IScene {
     std::unique_ptr<FollowCamera> followCamera_;
     std::unique_ptr<Stage> stage_;
 
@@ -19,10 +20,14 @@ class GameScene : public IScene{
 
     bool outro_ = false;
 
+    std::unique_ptr<Outro> outroAnim_;
+    bool clear_ = false;
+
 public:
     void Initialize() override;
     void Update() override;
     void Draw() override;
+    void Debug() override;
 
 private:
 

@@ -1,0 +1,31 @@
+{
+    "EnemyParams": {
+        "Basic": {
+            "MaxHp": 3.0,
+            "SpawnDistance": [
+                10.300000190734863,
+                12.300000190734863
+            ]
+        },
+        "Dash": {
+            "ChargeMaxTime": 1.7000000476837158,
+            "Duration": 0.5,
+            "EnemyOffset": 3.9000000953674316,
+            "LineCenterOffset": 0.6000000238418579,
+            "LineLength": 0.44999998807907104,
+            "LineWidth": 1.5,
+            "Speed": 34.0,
+            "TriggerChance": 0.4000000059604645,
+            "TriggerInterval": 3.200000047683716
+        },
+        "Death": {
+            "Duration": 0.800000011920929
+        },
+        "Invincible": {
+            "Duration": 0.4000000059604645
+        },
+        "Knockback": {
+            "Decay": 0.4000000059604645
+        }
+    }
+}

@@ -18,7 +18,7 @@ public:
     void Draw() override;
 
 private:
-        
+
 }; // class GameOver
 
 #endif // GameOver_HPP_

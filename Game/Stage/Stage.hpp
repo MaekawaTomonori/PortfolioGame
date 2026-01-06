@@ -8,7 +8,8 @@
 #include "Player/Player.hpp"
 
 class Stage {
-    DebugUI* debug_ = nullptr;
+    ParticleSystem* particle_ = nullptr;
+    PostProcessExecutor* postEffect_ = nullptr;
 
     std::unique_ptr<Skybox> skybox_;
     std::unique_ptr<Model> terrain_;
@@ -16,17 +17,16 @@ class Stage {
     std::unique_ptr<Enemies> enemies_;
 
 public:
-    void Initialize();
+    void Initialize(ParticleSystem* _particle, PostProcessExecutor* _postEffect);
     void Update();
     void Draw() const;
-
-    void SetDebug(DebugUI* _debug) {
-        debug_ = _debug;
-    }
+    void Debug() const;
 
     //Getter
     [[nodiscard]] Player* GetPlayer() const;
+    [[nodiscard]] Enemies* GetEnemies() const;
 
+    void SetCamera(FollowCamera* _camera) const;
 }; // class Stage
 
 #endif // Stage_HPP_

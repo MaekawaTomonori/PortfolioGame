@@ -4,8 +4,7 @@
 
 class MyGame final : public IGame{
 public:
-    MyGame();
-    ~MyGame() override;
+    void Initialize(GameEngine::Config& _config) override;
 }; // class MyGame
 
 #endif // MyGame_HPP_

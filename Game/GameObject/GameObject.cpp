@@ -16,7 +16,7 @@ void GameObject::SetScale(const Vector3& scale) {
 }
 
 void GameObject::UpdateTransform() {
-    transform_.translate = position_;
+    transform_.translate = position_ + offset_;
     transform_.rotate = rotation_;
     transform_.scale = scale_;
 }
@@ -32,12 +32,15 @@ void GameObject::SetModel(const std::string& _name) {
     model_->SetEnvironmentTexture("skybox.dds");
 }
 
-void GameObject::UpdateModel() const {
+void GameObject::UpdateModel() {
+    UpdateTransform();
     // モデル更新
     if (model_){
-        model_->SetScale(scale_);
-        model_->SetRotate(rotation_);
-        model_->SetTranslate(position_);
+        model_->SetScale(transform_.scale);
+        model_->SetRotate(std::get<Vector3>(transform_.rotate));
+        model_->SetTranslate(transform_.translate);
         model_->Update();
     }
+
+    offset_ = {};
 }
