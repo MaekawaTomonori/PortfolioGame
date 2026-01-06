@@ -1,9 +1,7 @@
 #include "GameScene.hpp"
 
 #include "Collision/CollisionManager.h"
-#include "Light/LightManager.hpp"
 #include "Pattern/Singleton.hpp"
-#include "PostProcess/Executor/PostProcessExecutor.hpp"
 
 void GameScene::Initialize() {
     name_ = "game";

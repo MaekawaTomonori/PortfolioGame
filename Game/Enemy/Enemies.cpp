@@ -32,7 +32,7 @@ void Enemies::Initialize(ParticleSystem* _particle) {
             .active = false,
             .frequency = 0.5f,
             .duration = 0.7f,
-            .spawnCount = 15,
+            .spawnCount = 20,
             .size = {0.3f, 0.3f, 0.3f},
             .velocity = {0.f, 0.f, 0.f},
             .color = { 1.f, 0.2f, 0.2f, 0.9f },

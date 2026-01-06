@@ -8,6 +8,7 @@
 #include <memory>
 
 #include "Collision/Collider.h"
+#include "HpBar/HpBar.hpp"
 #include "ParticleSystem/ParticleSystem.hpp"
 
 class Enemy : public GameObject {
@@ -93,6 +94,8 @@ private:
     Vector3 dashDirection_ {};
     std::unique_ptr<Model> prediction_;
     float dashTriggerTimer_ = 0.f;
+
+    std::unique_ptr<HpBar> hpBar_;
 
 public:
     void Initialize() override;

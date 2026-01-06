@@ -30,15 +30,22 @@ void Enemy::Initialize() {
     prediction_ = std::make_unique<Model>();
     prediction_->Initialize("plane");
     prediction_->SetTexture("white_x16.png");
+
+    hpBar_ = std::make_unique<HpBar>();
+    hpBar_->Initialize("white_x16.png", &position_);
+    hpBar_->SetFrontColor({1.f, 0.f, 0.f, 1.f});
+    hpBar_->SetBackColor({0.f, 0.f, 0.f, 0.6f});
 }
 
 void Enemy::Update(float deltaTime) {
     if (!active_) return;
 
+
     // 死亡演出中は特別処理
     if (dying_) {
         UpdateDeath(deltaTime);
         UpdateModel();
+        hpBar_->Update(status_.hp / params_->maxHp);
         return;
     }
 
@@ -51,6 +58,8 @@ void Enemy::Update(float deltaTime) {
 
     ApplyVelocity(deltaTime);
     collider_->SetTranslate({position_.x, position_.y, position_.z});
+
+    hpBar_->Update(status_.hp / params_->maxHp);
 
     // 描画更新
     UpdateModel();
@@ -65,6 +74,8 @@ void Enemy::Draw() {
     if (dashState_ == DashState::Charging) {
         prediction_->Draw();
     }
+
+    hpBar_->Draw();
 }
 
 void Enemy::Debug() {
@@ -258,6 +269,14 @@ void Enemy::OnCollision(const Collision::Collider* _collider) {
     if (_collider->GetAttribute() & static_cast<uint32_t>(CollisionType::Player)) {
         active_ = false;
         collider_->Disable();
+
+        // Particle
+        if (particle_) {
+            Vector3 p = position_;
+            p.y += 1.5f;
+            particle_->Edit("enemy_hit").SetPosition(p).Emit();
+        }
+
         return;
     }
 
