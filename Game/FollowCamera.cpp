@@ -20,6 +20,7 @@ void FollowCamera::Initialize() {
     cameraManager_ = Singleton<CameraController>::GetInstance();
 
     Load();
+    UpdateCameraDistance();
     UpdateCameraPosition();
 }
 

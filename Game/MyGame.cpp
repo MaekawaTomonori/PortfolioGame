@@ -6,7 +6,7 @@
 void MyGame::Initialize(GameEngine::Config& _config) {
     _config = { 
         .title = "GameTemplate",
-        .defaultScene = "game",
+        .defaultScene = "title",
         .fps = 60,
     };
 

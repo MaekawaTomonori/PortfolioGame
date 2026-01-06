@@ -14,23 +14,23 @@ void GameScene::Initialize() {
     stage_->Initialize(Particle(), PostEffect());
 
     followCamera_ = std::make_unique<FollowCamera>();
+    followCamera_->SetTarget(stage_->GetPlayer());
     followCamera_->Initialize();
     followCamera_->SetActive(true);
-    followCamera_->SetTarget(stage_->GetPlayer());
     followCamera_->SetEnemies(stage_->GetEnemies());
 
     stage_->SetCamera(followCamera_.get());
 
-    //intro_ = std::make_unique<Intro>();
-    //intro_->Initialize();
+    intro_ = std::make_unique<Intro>();
+    intro_->Initialize();
 }
 
 void GameScene::Update() {
-    //if (!introD_) {
-    //    intro_->Update();
-    //    introD_ = intro_->IsFinish();
-    //    followCamera_->SetActive(intro_->IsCameraDone());
-    //}
+    if (!introD_) {
+        intro_->Update();
+        introD_ = intro_->IsFinish();
+        followCamera_->SetActive(intro_->IsCameraDone());
+    }
     //
     //if (introD_ && !clear_ && !outro_) {
     //    if (!stage_->GetPlayer()->IsActive() && !outro_) {
@@ -69,9 +69,9 @@ void GameScene::Update() {
 void GameScene::Draw() {
     stage_->Draw();
 
-    //if (!introD_) {
-    //    intro_->Draw();
-    //}
+    if (!introD_) {
+        intro_->Draw();
+    }
 }
 
 void GameScene::Debug() {
