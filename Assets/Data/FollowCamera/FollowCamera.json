@@ -1,13 +1,12 @@
 {
     "FollowCamera": {
         "Settings": {
-            "Offset": [
-                0.0,
-                38.29999923706055,
-                -8.5
-            ],
+            "Distance": 21.299991607666016,
+            "MaxDistance": 50.29999923706055,
+            "MinDistance": 21.299999237060547,
             "Pitch": 1.350000023841858,
-            "Yaw": 0.0
+            "Yaw": 0.0,
+            "ZoomSensitivity": 0.9300000071525574
         }
     }
 }
