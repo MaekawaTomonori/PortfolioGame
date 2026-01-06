@@ -8,7 +8,7 @@ class GameObject;
 class Enemies;
 
 class FollowCamera {
-    CameraController* cameraManager_;
+    CameraController* cameraController_;
     
     GameObject* target_ = nullptr;
     Enemies* enemies_ = nullptr;
@@ -46,7 +46,7 @@ public:
     void SetTarget(GameObject* _target) { target_ = _target; }
     void SetEnemies(Enemies* _enemies) { enemies_ = _enemies; }
 
-    const Camera* GetCamera() const { return cameraManager_ ? cameraManager_->GetActive() : nullptr; }
+    const Camera* GetCamera() const { return cameraController_ ? cameraController_->GetActive() : nullptr; }
 
     void Shake(float _time, float _power);
 

@@ -10,14 +10,15 @@
 #include "Math/MathUtils.hpp"
 
 FollowCamera::FollowCamera() : 
-    cameraManager_(nullptr) {
+    cameraController_(nullptr) {
 }
 
 FollowCamera::~FollowCamera() {
 }
 
 void FollowCamera::Initialize() {
-    cameraManager_ = Singleton<CameraController>::GetInstance();
+    cameraController_ = Singleton<CameraController>::GetInstance();
+    cameraController_->GetActive()->transform_.translate = {0.f, 2.2f, -20.7f};
 
     Load();
     UpdateCameraDistance();
@@ -26,7 +27,7 @@ void FollowCamera::Initialize() {
 
 void FollowCamera::Update() {
     if (!active_) return;
-    if (!cameraManager_) return;
+    if (!cameraController_) return;
 
     UpdateCameraDistance();
     UpdateCameraPosition();
@@ -82,7 +83,7 @@ void FollowCamera::UpdateCameraDistance() {
     float targetDistance = minDistance_;
 
     if (0.f < maxEnemyDistance) {
-        auto* camera = cameraManager_->GetActive();
+        auto* camera = cameraController_->GetActive();
         float fov = 0.45f;
         if (camera) {
             fov = camera->GetFov();
@@ -150,10 +151,10 @@ void FollowCamera::Debug() {
 }
 
 void FollowCamera::UpdateCameraPosition() {
-    if (!cameraManager_) return;
+    if (!cameraController_) return;
     if (!target_) return;
 
-    auto active = cameraManager_->GetActive();
+    auto active = cameraController_->GetActive();
 
     float cp = cosf(pitch_ + MathUtils::F_PI/2.f);
     float sp = sinf(pitch_ + MathUtils::F_PI/2.f);
@@ -181,6 +182,6 @@ void FollowCamera::ApplyShake() {
 
     shakeTimer_ -= 1.f / 60.f;
     shake = Vector3::Random() * shakePower_;
-    cameraManager_->GetActive()->transform_.translate += shake;
+    cameraController_->GetActive()->transform_.translate += shake;
     shakePower_ *= 0.9f;
 }
