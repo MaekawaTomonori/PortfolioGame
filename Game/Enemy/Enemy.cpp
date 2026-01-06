@@ -295,6 +295,8 @@ void Enemy::OnCollision(const Collision::Collider* _collider) {
                 dying_ = true;
                 deathTimer_ = 0.f;
                 collider_->Disable();
+
+                dashState_ = DashState::Idle;
             }
         }
     }
