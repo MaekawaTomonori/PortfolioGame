@@ -3,25 +3,41 @@
 #include "IScene.hpp"
 
 #include "FollowCamera.hpp"
+#include "GameTimer/GameTimer.hpp"
 #include "Outro/Outro.hpp"
 #include "Performance/Intro/Intro.hpp"
 #include "Stage/Stage.hpp"
+#include "Status/GameStatus.hpp"
 
 class GameScene : public IScene {
+    enum State {
+        INTRO,
+        PLAY,
+        UPGRADE,
+        OUTRO
+    };
+
+    State state_ = INTRO;
+
     std::unique_ptr<FollowCamera> followCamera_;
     std::unique_ptr<Stage> stage_;
 
     std::unique_ptr<Intro> intro_;
-    bool introD_ = false;
 
     std::unique_ptr<Sprite> sprite_;
 
     Collision::Manager* cManager_ = nullptr;
 
-    bool outro_ = false;
-
-    std::unique_ptr<Outro> outroAnim_;
+    std::unique_ptr<Outro> outro_;
     bool clear_ = false;
+    
+    // Status --
+    GameStatus status_ {};
+
+    std::unique_ptr<GameTimer> gameTimer_;
+
+    bool pause_ = false;
+    std::unique_ptr<Sprite> pauseSprite_;
 
 public:
     void Initialize() override;

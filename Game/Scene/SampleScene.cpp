@@ -163,19 +163,17 @@ void SampleScene::Initialize() {
             }
         }); 
 
-    sprite_ = std::make_unique<Sprite>();
-    sprite_->Initialize("title.png");
-    sprite_->SetAnchorPoint({0.5f, 0.5f});
-    sprite_->SetPosition({640.f, 360.f});
+    gameTimer_ = std::make_unique<GameTimer>();
+    gameTimer_->Initialize();
+    
 }
 
 void SampleScene::Update() {
-    sprite_->Update();
-
+    gameTimer_->Update(1.f/60.f);
 }
 
 void SampleScene::Draw() {
-    sprite_->Draw();
+    gameTimer_->Draw();
 }
 
 void SampleScene::Debug() {
@@ -207,4 +205,6 @@ void SampleScene::Debug() {
 
 
     ImGui::End();
+
+    gameTimer_->Debug();
 }

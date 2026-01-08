@@ -1,7 +1,9 @@
 #include "GameScene.hpp"
 
+#include "imgui_internal.h"
 #include "Collision/CollisionManager.h"
 #include "Pattern/Singleton.hpp"
+#include "PostProcess/Executor/PostProcessExecutor.hpp"
 
 void GameScene::Initialize() {
     name_ = "game";
@@ -10,71 +12,133 @@ void GameScene::Initialize() {
 
     cManager_ = Singleton<Collision::Manager>::GetInstance();
 
+    status_ ={
+        .point = 0,
+        .time = 15,
+        .maxEnemyCount = 5,
+        .enemySpawnInterval = 2.f,
+        .playerStatus = {
+            .hp = 10.f,
+            .damage = 1.f,
+            .ms = 1.f,
+            .as = 1.f
+        }
+    };
+
     stage_ = std::make_unique<Stage>();
-    stage_->Initialize(Particle(), PostEffect());
+    stage_->Setup(Particle(), PostEffect());
+    stage_->Initialize(status_);
 
     followCamera_ = std::make_unique<FollowCamera>();
     followCamera_->SetTarget(stage_->GetPlayer());
     followCamera_->Initialize();
-    followCamera_->SetActive(true);
     followCamera_->SetEnemies(stage_->GetEnemies());
+    followCamera_->SetActive(false);
 
     stage_->SetCamera(followCamera_.get());
 
     intro_ = std::make_unique<Intro>();
     intro_->Initialize();
+
+    outro_ = std::make_unique<Outro>();
+
+    gameTimer_ = std::make_unique<GameTimer>();
+    gameTimer_->Initialize();
+    gameTimer_->SetDuration(status_.time);
+    gameTimer_->SetPosition({640.f, 69.f});
+
+    pauseSprite_ = std::make_unique<Sprite>();
+    pauseSprite_->Initialize("white_x16.png");
+    pauseSprite_->SetColor({0.3f, 0.3f, 0.3f, 0.9f});
+    pauseSprite_->SetAnchorPoint({});
+    pauseSprite_->SetPosition({});
+    pauseSprite_->SetSize({1920.f, 1080.f});
+    pauseSprite_->Update();
 }
 
 void GameScene::Update() {
-    if (!introD_) {
-        intro_->Update();
-        introD_ = intro_->IsFinish();
-        followCamera_->SetActive(intro_->IsCameraDone());
+
+    if (Singleton<Input>::GetInstance()->IsTrigger(DIK_ESCAPE)) {
+        pause_ = !pause_;
     }
-    //
-    //if (introD_ && !clear_ && !outro_) {
-    //    if (!stage_->GetPlayer()->IsActive() && !outro_) {
-    //        next_ = "gameover";
-    //        PostEffect()->ApplyPreset("DarkScene", "replace", {}, [this]() {
-    //            Change();
-    //            });
-    //        outro_ = true;
-    //    }
-    //
-    //    if (Singleton<Input>::GetInstance()->IsTrigger(DIK_SPACE)) {
-    //        clear_ = true;
-    //        outro_ = true;
-    //        outroAnim_ = std::make_unique<Outro>();
-    //        outroAnim_->Run();
-    //    }
-    //}
-    //
-    //if (clear_ && !outro_) {
-    //    next_ = "gameclear";
-    //    Change();
-    //}
-    //
-    //if (clear_ && outro_) {
-    //    followCamera_->SetActive(false);
-    //    outro_ = !outroAnim_->IsFinish();
-    //}
+    if (pause_)return;
 
-    stage_->Update();
-    followCamera_->Update();
+    switch (state_) {
+    case INTRO:
+        if (!intro_)break;
+        intro_->Update();
+        if (intro_->IsFinish()) {
+            state_ = PLAY;
+            followCamera_->SetActive(true);
+        }
+        break;
+    case PLAY:
+        gameTimer_->Update(1.f/ 60.f);
+        stage_->Update();
+        followCamera_->Update();
+        cManager_->Detect();
+        cManager_->ProcessEvent();
 
-    cManager_->Detect();
-    cManager_->ProcessEvent();
+        if (gameTimer_->IsDone()) {
+             state_ = UPGRADE;
+        }
+
+        // is clear
+        if (stage_->IsClear()) {
+            state_ = OUTRO;
+            PostEffect()->ApplyPreset("DarkScene", "replace", {}, [&] {
+                next_ = "gameclear";
+                Change();
+            });
+        }
+
+        break;
+    case UPGRADE:
+        if (Singleton<Input>::GetInstance()->IsTrigger(DIK_SPACE)) {
+            gameTimer_->SetDuration(status_.time);
+            stage_->Initialize(status_);
+            state_ = PLAY;
+        }
+        break;
+    default: ;
+    }
 }
 
 void GameScene::Draw() {
-    stage_->Draw();
-
-    if (!introD_) {
+    switch (state_) {
+    case INTRO:
         intro_->Draw();
+        stage_->Draw();
+        break;
+    case PLAY:
+        gameTimer_->Draw();
+        stage_->Draw();
+        break;
+    case UPGRADE:
+    
+        break;
+    case OUTRO:
+        stage_->Draw();
+        break;
+    default: ;
+    }
+
+    if (pause_) {
+        pauseSprite_->Draw();
     }
 }
 
 void GameScene::Debug() {
     followCamera_->Debug();
+    gameTimer_->Debug();
     stage_->Debug();
+
+    ImGui::Begin("Status");
+    ImGui::DragFloat("Timer", &status_.time, 1.f, 0.f, 300.f);
+    int tmp = static_cast<int>(status_.maxEnemyCount);
+    if (ImGui::DragInt("Max Enemy Count", &tmp, 1, 1, 100)){
+        status_.maxEnemyCount = static_cast<uint16_t>(tmp);
+    }
+    ImGui::DragFloat("Enemy Spawn Interval", &status_.enemySpawnInterval, 0.1f, 0.f, 10.f);
+    ImGui::End();
 }

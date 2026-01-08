@@ -145,6 +145,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Components\BehaviorComponent.hpp" />
     <ClInclude Include="Enemy\Enemy.hpp" />
     <ClInclude Include="GameObject\GameObject.hpp" />
+    <ClInclude Include="GameTimer\GameTimer.hpp" />
     <ClInclude Include="HpBar\HpBar.hpp" />
     <ClInclude Include="MyGame.hpp" />
     <ClInclude Include="Outro\Outro.hpp" />
@@ -168,6 +169,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Scene\Title\TitleScene.hpp" />
     <ClInclude Include="Showcase\ItemShowcase.hpp" />
     <ClInclude Include="Stage\Stage.hpp" />
+    <ClInclude Include="Status\GameStatus.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Bullet\Bullet.cpp" />
@@ -178,6 +180,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Components\BehaviorComponent.cpp" />
     <ClCompile Include="Enemy\Enemy.cpp" />
     <ClCompile Include="GameObject\GameObject.cpp" />
+    <ClCompile Include="GameTimer\GameTimer.cpp" />
     <ClCompile Include="HpBar\HpBar.cpp" />
     <ClCompile Include="MyGame.cpp" />
     <ClCompile Include="Outro\Outro.cpp" />

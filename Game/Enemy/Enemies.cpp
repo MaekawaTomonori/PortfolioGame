@@ -10,10 +10,8 @@
 #include "Player/Movement/DashBehavior.hpp"
 #include "Pattern/Singleton.hpp"
 
-void Enemies::Initialize(ParticleSystem* _particle) {
-    timer_ = 0.f;
+Enemies::Enemies(ParticleSystem* _particle) {
     particle_ = _particle;
-
     if (!particle_) Utils::Alert("ParticleSystem is null");
 
     // パラメータの読み込み
@@ -48,6 +46,7 @@ void Enemies::Initialize(ParticleSystem* _particle) {
                 color.w = 0.9f * (.7f - t);
             }
         });
+
 #ifdef _DEBUG
     line_.Initialize();
     line_.SetName("Enemies");
@@ -55,10 +54,19 @@ void Enemies::Initialize(ParticleSystem* _particle) {
 #endif
 }
 
+void Enemies::Initialize() {
+    timer_ = 0.f;
+    deathCount_ = 0;
+    enemies_.clear();
+}
+
 void Enemies::Update() {
     constexpr float DeltaTime = 1.f / 60.f;
 
+    const auto pre = enemies_.size();
     std::erase_if(enemies_, [](const auto& _enemy) {return !_enemy->IsActive();});
+    const auto after = enemies_.size();
+    deathCount_ += static_cast<uint16_t>(pre - after);
 
 #ifdef _DEBUG
 
@@ -107,7 +115,7 @@ void Enemies::Update() {
 
     if (autoSpawn_) {
 #endif
-        if (Interval <= timer_) {
+        if (interval_ <= timer_) {
             timer_ = 0.f;
             Spawn();
         } else {
@@ -156,7 +164,7 @@ void Enemies::Debug() {
     ImGui::Begin("Enemies");
 
     // Display current enemy count
-    ImGui::Text("Active Enemies: %zu / %hu", enemies_.size(), MaxEnemies);
+    ImGui::Text("Active Enemies: %zu / %hu", enemies_.size(), maxCount_);
 
     ImGui::Separator();
 
@@ -167,8 +175,8 @@ void Enemies::Debug() {
 
     // Show spawn timer when auto spawn is enabled
     if (autoSpawn_) {
-        ImGui::Text("Next spawn in: %.1fs", Interval - timer_);
-        ImGui::ProgressBar(timer_ / Interval, ImVec2(-1.0f, 0.0f));
+        ImGui::Text("Next spawn in: %.1fs", interval_ - timer_);
+        ImGui::ProgressBar(timer_ / interval_, ImVec2(-1.0f, 0.0f));
     }
 
     // Manual spawn button
@@ -293,7 +301,7 @@ bool Enemies::Empty() const {
 
 void Enemies::Spawn() {
     if (!target_) return;
-    if (MaxEnemies <= enemies_.size()) return;
+    if (maxCount_ <= enemies_.size()) return;
 
     Vector3 position = target_->GetPosition();
     position += Vector3::Random().Normalize() * MathUtils::Random(distance_.x, distance_.y);
@@ -333,6 +341,10 @@ float Enemies::GetFarthestEnemyDistance(Vector3 referencePos) const {
     }
 
     return maxDistance;
+}
+
+uint16_t Enemies::GetDeathCount() const {
+    return deathCount_;
 }
 
 void Enemies::LoadParams() {

@@ -5,10 +5,11 @@
 #include "IScene.hpp"
 #include "Model.hpp"
 #include "Sprite.hpp"
+#include "GameTimer/GameTimer.hpp"
 
 class SampleScene final : public IScene{
     bool smoke_ = false;
-    std::unique_ptr<Sprite> sprite_;
+    std::unique_ptr<GameTimer> gameTimer_;
 
 public:
     void Initialize() override;

@@ -9,15 +9,9 @@
 #include "Math/MathUtils.hpp"
 #include "PostProcess/Executor/PostProcessExecutor.hpp"
 
-void Player::Initialize() {
-    status_ = {
-        10.f,
-        1.f,
-        1.f,
-        1.f
-    };
-
-    position_ = {0.f, 1.5f,-5.f};
+Player::Player(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
+    particle_ = _particle;
+    postEffect_ = _postEffect;
 
     inputHandler_ = std::make_unique<InputHandler>();
     inputHandler_->Initialize();
@@ -32,26 +26,6 @@ void Player::Initialize() {
     for (auto& behavior : behaviors_) {
         movement_->AddBehavior(behavior.get());
     }
-
-    attack_ = std::make_unique<Attack>();
-    attack_->Initialize();
-    attack_->SetOwner(this);
-
-    SetModel("animatedcube");
-    model_->SetTexture("white_x16.png");
-    model_->SetColor(BaseColor);
-
-    collider_ = std::make_unique<Collision::Collider>();
-    collider_->SetEvent(Collision::EventType::Trigger, [this](const Collision::Collider* _collider) {OnCollision(_collider); })
-        ->SetTranslate({ position_.x, position_.y, position_.z })
-        ->SetType(Collision::Type::AABB)
-        ->SetSize(Collision::Vec3{ 1.f, 1.f, 1.f })
-        ->SetOwner(this)
-        ->AddAttribute(static_cast<uint32_t>(CollisionType::Player))
-        ->AddIgnore(static_cast<uint32_t>(CollisionType::P_Bullet))
-        ->Enable();
-
-    Singleton<LightManager>::GetInstance()->SetPosition(forlight_);
 
     particle_->Register("hit", { 3.f, 2.f, 0.f })
         .AddEmitter({
@@ -75,14 +49,39 @@ void Player::Initialize() {
                 color.w = 0.9f * (.7f - t);
             }
         });
+    
+    collider_ = std::make_unique<Collision::Collider>();
+    collider_->SetEvent(Collision::EventType::Trigger, [this](const Collision::Collider* _collider) {OnCollision(_collider); })
+        ->SetTranslate({ position_.x, position_.y, position_.z })
+        ->SetType(Collision::Type::AABB)
+        ->SetSize(Collision::Vec3{ 1.f, 1.f, 1.f })
+        ->SetOwner(this)
+        ->AddAttribute(static_cast<uint32_t>(CollisionType::Player))
+        ->AddIgnore(static_cast<uint32_t>(CollisionType::P_Bullet))
+        ->Enable();
+
+    SetModel("animatedcube");
+    model_->SetTexture("white_x16.png");
+    model_->SetColor(BaseColor);
+
+    attack_ = std::make_unique<Attack>();
 }
 
-void Player::Initialize(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
-    particle_ = _particle;
-    postEffect_ = _postEffect;
-    Initialize();
-}
+void Player::Initialize() {
+    status_ = {
+        10.f,
+        1.f,
+        1.f,
+        1.f
+    };
 
+    position_ = {0.f, 1.5f,-5.f};
+
+    attack_->Initialize();
+    attack_->SetOwner(this);
+
+    Singleton<LightManager>::GetInstance()->SetPosition(forlight_);
+}
 
 void Player::Update(float deltaTime) {
     if (!active_) return;
@@ -173,6 +172,10 @@ void Player::OnCollision(const Collision::Collider* _collider) {
 
 void Player::SetCamera(FollowCamera* _camera) {
     camera_ = _camera;
+}
+
+void Player::SetStatus(const PlayerStatus& _status) {
+    status_ = _status;
 }
 
 void Player::UpdateInvulnerability(float deltaTime) {

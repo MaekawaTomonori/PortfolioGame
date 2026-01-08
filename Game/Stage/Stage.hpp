@@ -6,8 +6,11 @@
 #include "Enemy/Enemies.hpp"
 #include "Sky/Skybox.hpp"
 #include "Player/Player.hpp"
+#include "Status/GameStatus.hpp"
 
 class Stage {
+    const uint16_t RequirementKills = 3;
+
     ParticleSystem* particle_ = nullptr;
     PostProcessExecutor* postEffect_ = nullptr;
 
@@ -17,7 +20,8 @@ class Stage {
     std::unique_ptr<Enemies> enemies_;
 
 public:
-    void Initialize(ParticleSystem* _particle, PostProcessExecutor* _postEffect);
+    void Setup(ParticleSystem* _particle, PostProcessExecutor* _postEffect);
+    void Initialize(const GameStatus& _status);
     void Update();
     void Draw() const;
     void Debug() const;
@@ -27,6 +31,8 @@ public:
     [[nodiscard]] Enemies* GetEnemies() const;
 
     void SetCamera(FollowCamera* _camera) const;
+
+    bool IsClear() const;
 }; // class Stage
 
 #endif // Stage_HPP_
