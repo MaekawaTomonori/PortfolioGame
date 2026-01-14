@@ -54,6 +54,13 @@ void GameScene::Initialize() {
     pauseSprite_->SetPosition({});
     pauseSprite_->SetSize({1920.f, 1080.f});
     pauseSprite_->Update();
+
+    keyGuide_ = std::make_unique<KeyGuide>();
+    keyGuide_->Initialize();
+
+    sprite_ = std::make_unique<Sprite>();
+    sprite_->Initialize("wip.png");
+    sprite_->SetPosition({640.f, 360.f});
 }
 
 void GameScene::Update() {
@@ -67,6 +74,7 @@ void GameScene::Update() {
     case INTRO:
         if (!intro_)break;
         intro_->Update();
+        followCamera_->Update();
         if (intro_->IsFinish()) {
             state_ = PLAY;
             followCamera_->SetActive(true);
@@ -76,6 +84,7 @@ void GameScene::Update() {
         gameTimer_->Update(1.f/ 60.f);
         stage_->Update();
         followCamera_->Update();
+        keyGuide_->Update();
         cManager_->Detect();
         cManager_->ProcessEvent();
 
@@ -99,6 +108,7 @@ void GameScene::Update() {
             stage_->Initialize(status_);
             state_ = PLAY;
         }
+        sprite_->Update();
         break;
     default: ;
     }
@@ -113,9 +123,10 @@ void GameScene::Draw() {
     case PLAY:
         gameTimer_->Draw();
         stage_->Draw();
+        keyGuide_->Draw();
         break;
     case UPGRADE:
-    
+        sprite_->Draw();
         break;
     case OUTRO:
         stage_->Draw();

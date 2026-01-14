@@ -25,6 +25,7 @@ void GameTimer::Initialize() {
 }
 
 void GameTimer::Update(const float _deltaTime) {
+    if (!active_) return;
     time_ -= _deltaTime;
     done_ = false;
 
@@ -54,6 +55,10 @@ void GameTimer::Draw() const {
 void GameTimer::Debug() {
 #ifdef _DEBUG
     ImGui::Begin("Game Timer Debug");
+
+    ImGui::Text("Active ");
+    ImGui::SameLine();
+    ImGui::Checkbox("##Active", &active_);
 
     ImGui::Text("Time");
     ImGui::SetNextItemWidth(150.f);

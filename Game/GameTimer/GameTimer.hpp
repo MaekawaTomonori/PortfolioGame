@@ -24,6 +24,8 @@ class GameTimer {
 
     bool done_ = false;
 
+    bool active_ = true;
+
 public:
     void Initialize();
     void Update(float _deltaTime);

@@ -8,6 +8,7 @@
 #include "Performance/Intro/Intro.hpp"
 #include "Stage/Stage.hpp"
 #include "Status/GameStatus.hpp"
+#include "Ui/KeyGuide/KeyGuide.hpp"
 
 class GameScene : public IScene {
     enum State {
@@ -38,6 +39,8 @@ class GameScene : public IScene {
 
     bool pause_ = false;
     std::unique_ptr<Sprite> pauseSprite_;
+
+    std::unique_ptr<KeyGuide> keyGuide_;
 
 public:
     void Initialize() override;
