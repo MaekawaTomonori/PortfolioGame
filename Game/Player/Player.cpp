@@ -65,6 +65,8 @@ Player::Player(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
     model_->SetColor(BaseColor);
 
     attack_ = std::make_unique<Attack>();
+
+    SetScale({0.4f, 0.4f, 0.4f});
 }
 
 void Player::Initialize() {
@@ -137,6 +139,11 @@ void Player::Debug() {
     ImGui::Begin("Player");
     ImGui::Checkbox("No Move", &no_move);
     ImGui::Checkbox("No Attack", &no_atk);
+    Vector3 scale = GetScale();
+    if (ImGui::DragFloat3("Scale", &scale.x, 0.1f)) {
+        SetScale(scale);
+    }
+
     ImGui::End();
 #endif
 }

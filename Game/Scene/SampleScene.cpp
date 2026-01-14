@@ -163,17 +163,17 @@ void SampleScene::Initialize() {
             }
         }); 
 
-    gameTimer_ = std::make_unique<GameTimer>();
-    gameTimer_->Initialize();
-    
+    keyGuide_ = std::make_unique<KeyGuide>();
+    keyGuide_->Initialize();
+
 }
 
 void SampleScene::Update() {
-    gameTimer_->Update(1.f/60.f);
+    keyGuide_->Update();
 }
 
 void SampleScene::Draw() {
-    gameTimer_->Draw();
+    keyGuide_->Draw();
 }
 
 void SampleScene::Debug() {
@@ -206,5 +206,5 @@ void SampleScene::Debug() {
 
     ImGui::End();
 
-    gameTimer_->Debug();
+    keyGuide_->Debug();
 }

@@ -23,7 +23,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -73,6 +73,7 @@
       <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
       <SDLCheck>true</SDLCheck>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -170,6 +171,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Showcase\ItemShowcase.hpp" />
     <ClInclude Include="Stage\Stage.hpp" />
     <ClInclude Include="Status\GameStatus.hpp" />
+    <ClInclude Include="Ui\KeyGuide\KeyGuide.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Bullet\Bullet.cpp" />
@@ -202,6 +204,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Scene\Title\TitleScene.cpp" />
     <ClCompile Include="Showcase\ItemShowcase.cpp" />
     <ClCompile Include="Stage\Stage.cpp" />
+    <ClCompile Include="Ui\KeyGuide\KeyGuide.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Engine\Engine.vcxproj">

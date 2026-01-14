@@ -26,7 +26,7 @@ void InputHandler::UpdateContext(MovementContext& context, const Vector3& curren
     }
 
     // ダッシュ
-    context.isDashRequested = input_->IsPress(DIK_LSHIFT);
+    context.isDashRequested = input_->IsPress(DIK_SPACE);
 
     // フラッシュ (Fキー)
     context.isFlashRequested = input_->IsTrigger(DIK_F);

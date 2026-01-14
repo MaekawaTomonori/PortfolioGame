@@ -34,7 +34,7 @@ void FollowCamera::Update() {
     ApplyShake();
 }
 
-void FollowCamera::SetActive(bool _state) {
+void FollowCamera::SetActive(const bool _state) {
     active_ = _state;
 }
 
@@ -120,9 +120,10 @@ void FollowCamera::Debug() {
     ImGui::SetNextItemWidth(120.f);
     ImGui::DragFloat("##Yaw", &yaw_, 0.01f, -MathUtils::F_PI/2.f, MathUtils::F_PI/2.f);
     ImGui::SameLine();
-    ImGui::SetNextItemWidth(120.f);
     ImGui::DragFloat("##Pitch", &pitch_, 0.01f, -MathUtils::F_PI/2.f, MathUtils::F_PI/2.f);
-
+    ImGui::Text("Interpolation Time");
+    ImGui::SetNextItemWidth(120.f);
+    ImGui::DragFloat("##InterpolationTime", &interpolationTime_, 0.01f, 0.0f, 1.0f);
     ImGui::Separator();
 
     ImGui::Text("Dynamic Zoom Settings");
@@ -154,21 +155,22 @@ void FollowCamera::UpdateCameraPosition() {
     if (!cameraController_) return;
     if (!target_) return;
 
-    auto active = cameraController_->GetActive();
+    auto& active = cameraController_->GetActive()->transform_;
 
-    float cp = cosf(pitch_ + MathUtils::F_PI/2.f);
-    float sp = sinf(pitch_ + MathUtils::F_PI/2.f);
-    float cy = cosf(yaw_);
-    float sy = sinf(yaw_);
+    float cosPitch = cosf(pitch_ + MathUtils::F_PI/2.f);
+    float sinPitch = sinf(pitch_ + MathUtils::F_PI/2.f);
+    float cosYaw = cosf(yaw_);
+    float sinYaw = sinf(yaw_);
 
     offset_ = Vector3{
-        sy * sp,
-        -cp,
-        -cy * sp
+        sinYaw * sinPitch,
+        -cosPitch,
+        -cosYaw * sinPitch
     };
 
-    active->transform_.translate = target_->GetPosition() + offset_ * distance_;
-    active->transform_.rotate = Vector3{ pitch_, yaw_, 0.f };
+    Vector3 destination = target_->GetPosition() + offset_ * distance_;
+    active.translate = MathUtils::Lerp(active.translate, destination, interpolationTime_);
+    active.rotate = Vector3{ pitch_, yaw_, 0.f };
 }
 
 void FollowCamera::ApplyShake() {
