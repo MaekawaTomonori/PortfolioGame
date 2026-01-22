@@ -7,3 +7,9 @@ indent_size = 4
 
 [*.{hpp,cpp,hlsl,hlsli}]
 charset = utf-8
+
+spelling_error_severity = error
+spelling_checkable_types = comments,strings,identifiers
+spelling_language = en_US
+spelling_use_default_exclusion_dictionary = true
+spelling_exclusion_path = ./exclusion.dic
