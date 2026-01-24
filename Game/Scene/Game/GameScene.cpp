@@ -68,7 +68,10 @@ void GameScene::Update() {
     if (Singleton<Input>::GetInstance()->IsTrigger(DIK_ESCAPE)) {
         pause_ = !pause_;
     }
-    if (pause_)return;
+    if (pause_) {
+        pauseSprite_->Update();
+        return;
+    }
 
     switch (state_) {
     case INTRO:

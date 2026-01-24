@@ -5,8 +5,8 @@
 
 void MyGame::Initialize(GameEngine::Config& _config) {
     _config = { 
-        .title = "GameTemplate",
-        .defaultScene = "title",
+        .title = "DarkRun",
+        .defaultScene = "sample",
         .fps = 60,
     };
 

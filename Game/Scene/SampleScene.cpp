@@ -163,17 +163,16 @@ void SampleScene::Initialize() {
             }
         }); 
 
-    keyGuide_ = std::make_unique<KeyGuide>();
-    keyGuide_->Initialize();
+    userInterface_ = std::make_unique<Ui::UserInterface>();
 
 }
 
 void SampleScene::Update() {
-    keyGuide_->Update();
+    userInterface_->Update();
 }
 
 void SampleScene::Draw() {
-    keyGuide_->Draw();
+    userInterface_->Draw();
 }
 
 void SampleScene::Debug() {
@@ -206,5 +205,5 @@ void SampleScene::Debug() {
 
     ImGui::End();
 
-    keyGuide_->Debug();
+    userInterface_->Debug();
 }

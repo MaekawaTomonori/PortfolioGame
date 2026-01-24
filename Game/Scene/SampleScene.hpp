@@ -5,11 +5,11 @@
 #include "IScene.hpp"
 #include "Model.hpp"
 #include "Sprite.hpp"
-#include "Ui/KeyGuide/KeyGuide.hpp"
+#include "Ui/UserInterface.hpp"
 
 class SampleScene final : public IScene{
     bool smoke_ = false;
-    std::unique_ptr<KeyGuide> keyGuide_;
+    std::unique_ptr<Ui::UserInterface> userInterface_;
 
 public:
     void Initialize() override;

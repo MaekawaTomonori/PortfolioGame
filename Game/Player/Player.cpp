@@ -60,7 +60,7 @@ Player::Player(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
         ->AddIgnore(static_cast<uint32_t>(CollisionType::P_Bullet))
         ->Enable();
 
-    SetModel("animatedcube");
+    SetModel("animatedCube");
     model_->SetTexture("white_x16.png");
     model_->SetColor(BaseColor);
 
@@ -82,10 +82,10 @@ void Player::Initialize() {
     attack_->Initialize();
     attack_->SetOwner(this);
 
-    Singleton<LightManager>::GetInstance()->SetPosition(forlight_);
+    Singleton<LightManager>::GetInstance()->SetPosition(forLight_);
 }
 
-void Player::Update(float deltaTime) {
+void Player::Update(const float _deltaTime) {
     if (!active_) return;
 
     if (inputHandler_) {
@@ -96,7 +96,7 @@ void Player::Update(float deltaTime) {
     if (!no_move)
 #endif
         if (movement_) {
-            movement_->Update(movementContext_, deltaTime);
+            movement_->Update(movementContext_, _deltaTime);
         }
 
 #ifdef _DEBUG
@@ -104,13 +104,13 @@ void Player::Update(float deltaTime) {
 #endif
         UpdateAttack();
 
-    UpdateInvulnerability(deltaTime);
+    UpdateInvulnerability(_deltaTime);
 
-    ApplyVelocity(deltaTime);
+    ApplyVelocity(_deltaTime);
 
-    forlight_ = position_;
-    forlight_.y += 3.0f;
-    Singleton<LightManager>::GetInstance()->SetPosition(forlight_);
+    forLight_ = position_;
+    forLight_.y += 3.0f;
+    Singleton<LightManager>::GetInstance()->SetPosition(forLight_);
 
     collider_->SetTranslate({ position_.x, position_.y, position_.z });
 
@@ -185,10 +185,10 @@ void Player::SetStatus(const PlayerStatus& _status) {
     status_ = _status;
 }
 
-void Player::UpdateInvulnerability(float deltaTime) {
+void Player::UpdateInvulnerability(const float _deltaTime) {
     if (!invulnerability_) return;
 
-    invulnerabilityTimer_ -= deltaTime;
+    invulnerabilityTimer_ -= _deltaTime;
 
     // 進行度を計算 (1.0 → 0.0)
     float progress = invulnerabilityTimer_ / InvulnerabilityDuration;

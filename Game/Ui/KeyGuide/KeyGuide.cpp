@@ -6,7 +6,7 @@
 #include "Log.hpp"
 #include "Utils.hpp"
 #include "Input.hpp"
-#include "vendor/json/json.hpp"
+#include "externals/json/json.hpp"
 #include "Pattern/Singleton.hpp"
 
 void KeyGuide::Initialize() {
