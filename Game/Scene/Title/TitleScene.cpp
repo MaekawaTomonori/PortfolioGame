@@ -9,7 +9,8 @@ void TitleScene::Initialize() {
     exitTransition_ = Transition::Type::Fade;
 
     stage_ = std::make_unique<Stage>();
-    stage_->Initialize(Particle(), PostEffect());
+    stage_->Setup(Particle(), PostEffect());
+    stage_->Initialize({});
 
     titleLogo_ = std::make_unique<Sprite>();
     titleLogo_->Initialize("title.png");
@@ -30,7 +31,7 @@ void TitleScene::Initialize() {
 }
 
 void TitleScene::Update() {
-    if (Singleton<Input>::GetInstance()->IsPress(DIK_SPACE)) {
+    if (Singleton<Input>::GetInstance()->IsTrigger(DIK_SPACE)) {
         // Start the game
         next_ = "game";
         Change();

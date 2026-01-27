@@ -9,15 +9,9 @@
 #include "Math/MathUtils.hpp"
 #include "PostProcess/Executor/PostProcessExecutor.hpp"
 
-void Player::Initialize() {
-    status_ = {
-        10.f,
-        1.f,
-        1.f,
-        1.f
-    };
-
-    position_ = {0.f, 1.5f,-5.f};
+Player::Player(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
+    particle_ = _particle;
+    postEffect_ = _postEffect;
 
     inputHandler_ = std::make_unique<InputHandler>();
     inputHandler_->Initialize();
@@ -32,26 +26,6 @@ void Player::Initialize() {
     for (auto& behavior : behaviors_) {
         movement_->AddBehavior(behavior.get());
     }
-
-    attack_ = std::make_unique<Attack>();
-    attack_->Initialize();
-    attack_->SetOwner(this);
-
-    SetModel("animatedcube");
-    model_->SetTexture("white_x16.png");
-    model_->SetColor(BaseColor);
-
-    collider_ = std::make_unique<Collision::Collider>();
-    collider_->SetEvent(Collision::EventType::Trigger, [this](const Collision::Collider* _collider) {OnCollision(_collider); })
-        ->SetTranslate({ position_.x, position_.y, position_.z })
-        ->SetType(Collision::Type::AABB)
-        ->SetSize(Collision::Vec3{ 1.f, 1.f, 1.f })
-        ->SetOwner(this)
-        ->AddAttribute(static_cast<uint32_t>(CollisionType::Player))
-        ->AddIgnore(static_cast<uint32_t>(CollisionType::P_Bullet))
-        ->Enable();
-
-    Singleton<LightManager>::GetInstance()->SetPosition(forlight_);
 
     particle_->Register("hit", { 3.f, 2.f, 0.f })
         .AddEmitter({
@@ -75,16 +49,43 @@ void Player::Initialize() {
                 color.w = 0.9f * (.7f - t);
             }
         });
+    
+    collider_ = std::make_unique<Collision::Collider>();
+    collider_->SetEvent(Collision::EventType::Trigger, [this](const Collision::Collider* _collider) {OnCollision(_collider); })
+        ->SetTranslate({ position_.x, position_.y, position_.z })
+        ->SetType(Collision::Type::AABB)
+        ->SetSize(Collision::Vec3{ 1.f, 1.f, 1.f })
+        ->SetOwner(this)
+        ->AddAttribute(static_cast<uint32_t>(CollisionType::Player))
+        ->AddIgnore(static_cast<uint32_t>(CollisionType::P_Bullet))
+        ->Enable();
+
+    SetModel("animatedCube");
+    model_->SetTexture("white_x16.png");
+    model_->SetColor(BaseColor);
+
+    attack_ = std::make_unique<Attack>();
+
+    SetScale({0.4f, 0.4f, 0.4f});
 }
 
-void Player::Initialize(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
-    particle_ = _particle;
-    postEffect_ = _postEffect;
-    Initialize();
+void Player::Initialize() {
+    status_ = {
+        10.f,
+        1.f,
+        1.f,
+        1.f
+    };
+
+    position_ = {0.f, 1.5f,-5.f};
+
+    attack_->Initialize();
+    attack_->SetOwner(this);
+
+    Singleton<LightManager>::GetInstance()->SetPosition(forLight_);
 }
 
-
-void Player::Update(float deltaTime) {
+void Player::Update(const float _deltaTime) {
     if (!active_) return;
 
     if (inputHandler_) {
@@ -95,7 +96,7 @@ void Player::Update(float deltaTime) {
     if (!no_move)
 #endif
         if (movement_) {
-            movement_->Update(movementContext_, deltaTime);
+            movement_->Update(movementContext_, _deltaTime);
         }
 
 #ifdef _DEBUG
@@ -103,13 +104,13 @@ void Player::Update(float deltaTime) {
 #endif
         UpdateAttack();
 
-    UpdateInvulnerability(deltaTime);
+    UpdateInvulnerability(_deltaTime);
 
-    ApplyVelocity(deltaTime);
+    ApplyVelocity(_deltaTime);
 
-    forlight_ = position_;
-    forlight_.y += 3.0f;
-    Singleton<LightManager>::GetInstance()->SetPosition(forlight_);
+    forLight_ = position_;
+    forLight_.y += 3.0f;
+    Singleton<LightManager>::GetInstance()->SetPosition(forLight_);
 
     collider_->SetTranslate({ position_.x, position_.y, position_.z });
 
@@ -138,6 +139,11 @@ void Player::Debug() {
     ImGui::Begin("Player");
     ImGui::Checkbox("No Move", &no_move);
     ImGui::Checkbox("No Attack", &no_atk);
+    Vector3 scale = GetScale();
+    if (ImGui::DragFloat3("Scale", &scale.x, 0.1f)) {
+        SetScale(scale);
+    }
+
     ImGui::End();
 #endif
 }
@@ -175,10 +181,14 @@ void Player::SetCamera(FollowCamera* _camera) {
     camera_ = _camera;
 }
 
-void Player::UpdateInvulnerability(float deltaTime) {
+void Player::SetStatus(const PlayerStatus& _status) {
+    status_ = _status;
+}
+
+void Player::UpdateInvulnerability(const float _deltaTime) {
     if (!invulnerability_) return;
 
-    invulnerabilityTimer_ -= deltaTime;
+    invulnerabilityTimer_ -= _deltaTime;
 
     // 進行度を計算 (1.0 → 0.0)
     float progress = invulnerabilityTimer_ / InvulnerabilityDuration;

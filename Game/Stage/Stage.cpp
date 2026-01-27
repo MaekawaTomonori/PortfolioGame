@@ -1,10 +1,11 @@
 #include "Stage.hpp"
 
-void Stage::Initialize(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
+void Stage::Setup(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
+    // 初回限定
     particle_ = _particle;
     postEffect_ = _postEffect;
-
     if (!particle_) Utils::Alert("ParticleSystem is null");
+    if (!postEffect_) Utils::Alert("PostProcessExecutor is null");
 
     skybox_ = std::make_unique<Skybox>();
     skybox_->Initialize("rostock.dds");
@@ -18,12 +19,18 @@ void Stage::Initialize(ParticleSystem* _particle, PostProcessExecutor* _postEffe
     terrain_->SetEnvironmentTexture("rostock.dds");
     terrain_->SetTexture("tile.png");
 
-    player_ = std::make_unique<Player>();
-    player_->Initialize(particle_, postEffect_);
+    player_ = std::make_unique<Player>(particle_, postEffect_);
+    enemies_ = std::make_unique<Enemies>(particle_);
+}
 
-    enemies_ = std::make_unique<Enemies>();
-    enemies_->Initialize(particle_);
+void Stage::Initialize(const GameStatus& _status) { 
+    player_->Initialize();
+    player_->SetStatus(_status.playerStatus);
+
+    enemies_->Initialize();
     enemies_->SetTarget(player_.get());
+    enemies_->SetMaxCount(_status.maxEnemyCount);
+    enemies_->SetInterval(_status.enemySpawnInterval);
 }
 
 void Stage::Update() {
@@ -60,4 +67,8 @@ Enemies* Stage::GetEnemies() const {
 
 void Stage::SetCamera(FollowCamera* _camera) const {
     player_->SetCamera(_camera);
+}
+
+bool Stage::IsClear() const {
+    return RequirementKills <= enemies_->GetDeathCount();
 }

@@ -1,0 +1,15 @@
+{
+    "Position" : [ 0.0, 0.0],
+    "Size" : [ 100.0, 100.0 ],
+    "Color" : [0.3, 0.3, 0.3, 0.8],
+
+    "Keys" : [
+        {
+            "Key" : 0,
+            "FrameOffset" : [ 0.0, 0.0 ],
+            "FrameSize" : [ 100.0, 100.0 ],
+            "Texture" : "w.png",
+            "LabelSize" : [80.0, 80.0]
+        }
+    ]
+}

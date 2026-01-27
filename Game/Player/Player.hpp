@@ -36,7 +36,7 @@ class Player : public GameObject {
     bool targetExist_ = false;
     Vector3 targetPosition_ = {};
 
-    Vector3 forlight_ = {};
+    Vector3 forLight_ = {};
 
     PlayerStatus status_{};
 
@@ -51,8 +51,9 @@ class Player : public GameObject {
 
 
 public:
-    void Initialize(ParticleSystem* _particle, PostProcessExecutor* _postEffect);
-    void Update(float deltaTime) override;
+    Player(ParticleSystem* _particle, PostProcessExecutor* _postEffect);
+    void Initialize() override;
+    void Update(float _deltaTime) override;
     void Draw() override;
     void Debug() override;
 
@@ -62,9 +63,10 @@ public:
 
     void SetCamera(FollowCamera* _camera);
 
+    void SetStatus(const PlayerStatus& _status);
+
 private:
-    void Initialize() override;
-    void UpdateInvulnerability(float deltaTime);
+    void UpdateInvulnerability(float _deltaTime);
     void UpdateAttack();
 };
 #endif // PLAYER_HPP_

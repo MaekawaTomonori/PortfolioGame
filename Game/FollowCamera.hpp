@@ -8,7 +8,7 @@ class GameObject;
 class Enemies;
 
 class FollowCamera {
-    CameraController* cameraManager_;
+    CameraController* cameraController_;
     
     GameObject* target_ = nullptr;
     Enemies* enemies_ = nullptr;
@@ -19,6 +19,7 @@ class FollowCamera {
     float distance_ = 15.f;           // カメラとターゲットの距離
     float yaw_ = 0.f;                 // 水平角度（ラジアン）
     float pitch_ = -0.785f;           // 垂直角度（ラジアン、デフォルト-45度：斜め上から見下ろす）
+    float interpolationTime_ = 0.1f;                  // 補間係数
 
     // 動的ズーム設定
     float minDistance_ = 12.f;  // 最小距離
@@ -46,7 +47,7 @@ public:
     void SetTarget(GameObject* _target) { target_ = _target; }
     void SetEnemies(Enemies* _enemies) { enemies_ = _enemies; }
 
-    const Camera* GetCamera() const { return cameraManager_ ? cameraManager_->GetActive() : nullptr; }
+    const Camera* GetCamera() const { return cameraController_ ? cameraController_->GetActive() : nullptr; }
 
     void Shake(float _time, float _power);
 

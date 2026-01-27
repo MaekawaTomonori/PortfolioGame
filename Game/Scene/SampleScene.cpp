@@ -163,19 +163,16 @@ void SampleScene::Initialize() {
             }
         }); 
 
-    sprite_ = std::make_unique<Sprite>();
-    sprite_->Initialize("title.png");
-    sprite_->SetAnchorPoint({0.5f, 0.5f});
-    sprite_->SetPosition({640.f, 360.f});
+    userInterface_ = std::make_unique<Ui::UserInterface>();
+
 }
 
 void SampleScene::Update() {
-    sprite_->Update();
-
+    userInterface_->Update();
 }
 
 void SampleScene::Draw() {
-    sprite_->Draw();
+    userInterface_->Draw();
 }
 
 void SampleScene::Debug() {
@@ -207,4 +204,6 @@ void SampleScene::Debug() {
 
 
     ImGui::End();
+
+    userInterface_->Debug();
 }

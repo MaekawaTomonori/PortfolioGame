@@ -4,13 +4,12 @@
 
 #include "Sprite.hpp"
 
-
 class Intro {
     bool cameraDone_ = false;
     bool spriteDone_ = false;
 
     std::unique_ptr<Sprite> sprite_;
-    float duration_ = 3.f;
+    float duration_ = 2.f;
     float time_ = 0.f;
 
 public:
