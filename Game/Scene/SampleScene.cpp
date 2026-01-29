@@ -163,15 +163,20 @@ void SampleScene::Initialize() {
             }
         }); 
 
-    userInterface_ = std::make_unique<Ui::UserInterface>();
+    userInterface_ = std::make_unique<SkillTree>();
+    userInterface_->Initialize();
 
+    model_ = std::make_unique<Model>();
+    model_->Initialize("animatedcube");
 }
 
 void SampleScene::Update() {
     userInterface_->Update();
+    model_->Update();
 }
 
 void SampleScene::Draw() {
+    model_->Draw();
     userInterface_->Draw();
 }
 

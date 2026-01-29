@@ -2,18 +2,18 @@
 #define UiElement_HPP_
 #include <array>
 #include <memory>
+#include <unordered_map>
+#include <vector>
 
 #include "Sprite.hpp"
-
+#include "Ui/EventSystem.hpp"
 
 namespace Ui{
-    /**
-     * @brief UIの最小単位要素
-     */
     class Element {
     public:
         struct Data{
             std::string texture = "white_x16.png";
+            bool visible = true;
             Vector2 position {};
             Vector2 size{64.f, 64.f};
             Vector4 color{1.f, 1.f, 1.f, 1.f};
@@ -25,9 +25,11 @@ namespace Ui{
 
         std::unique_ptr<Sprite> sprite_ = nullptr;
 
-        bool visible_ = true;
+        Vector2 parent_ {};
 
         Data data_{};
+
+        std::unordered_map<EventKey, std::string> events_;
 
         bool isOpen_ = true;
         bool aspectLock_ = false;
@@ -40,15 +42,24 @@ namespace Ui{
         void Update();
         void Draw() const;
 
-        void Debug();
+        void Debug(const std::vector<std::string>& _availableActions = {});
 
         bool IsVisible() const;
         std::string GetName() const;
+        void SetName(const std::string& _name);
         std::string GetUUID() const;
         bool& IsOpen();
 
         Data GetData() const;
         void SetData(const Data& _data);
+
+        void SetEvent(EventKey _event, const std::string& _actionKey);
+        const std::string& GetActionKey(EventKey _event) const;
+        bool HasEvent(EventKey _event) const;
+        bool HasAnyEvent() const;
+        const std::unordered_map<EventKey, std::string>& GetEvents() const;
+
+        void SetParent(const Vector2& _pos);
     }; // class Element
 } // namespace Ui
 

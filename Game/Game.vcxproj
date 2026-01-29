@@ -173,7 +173,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Status\GameStatus.hpp" />
     <ClInclude Include="Ui\Element\Element.hpp" />
     <ClInclude Include="Ui\KeyGuide\KeyGuide.hpp" />
+    <ClInclude Include="Ui\Pause\Pause.hpp" />
     <ClInclude Include="Ui\SkillTree\SkillTree.hpp" />
+    <ClInclude Include="Ui\EventSystem.hpp" />
     <ClInclude Include="Ui\UserInterface.hpp" />
   </ItemGroup>
   <ItemGroup>
@@ -209,7 +211,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Stage\Stage.cpp" />
     <ClCompile Include="Ui\Element\Element.cpp" />
     <ClCompile Include="Ui\KeyGuide\KeyGuide.cpp" />
+    <ClCompile Include="Ui\Pause\Pause.cpp" />
     <ClCompile Include="Ui\SkillTree\SkillTree.cpp" />
+    <ClCompile Include="Ui\EventSystem.cpp" />
     <ClCompile Include="Ui\UserInterface.cpp" />
   </ItemGroup>
   <ItemGroup>

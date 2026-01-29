@@ -47,13 +47,10 @@ void GameScene::Initialize() {
     gameTimer_->SetDuration(status_.time);
     gameTimer_->SetPosition({640.f, 69.f});
 
-    pauseSprite_ = std::make_unique<Sprite>();
-    pauseSprite_->Initialize("white_x16.png");
-    pauseSprite_->SetColor({0.3f, 0.3f, 0.3f, 0.9f});
-    pauseSprite_->SetAnchorPoint({});
-    pauseSprite_->SetPosition({});
-    pauseSprite_->SetSize({1920.f, 1080.f});
-    pauseSprite_->Update();
+    pause_ = std::make_unique<Pause>();
+    pause_->Initialize();
+    pause_->SetOnRetry([this]{ next_ = "game"; Change(); });
+    pause_->SetOnQuit([this]{ next_ = "title"; Change(); });
 
     keyGuide_ = std::make_unique<KeyGuide>();
     keyGuide_->Initialize();
@@ -64,14 +61,9 @@ void GameScene::Initialize() {
 }
 
 void GameScene::Update() {
+    pause_->Update();
 
-    if (Singleton<Input>::GetInstance()->IsTrigger(DIK_ESCAPE)) {
-        pause_ = !pause_;
-    }
-    if (pause_) {
-        pauseSprite_->Update();
-        return;
-    }
+    if (pause_->IsOpen())return;
 
     switch (state_) {
     case INTRO:
@@ -136,16 +128,14 @@ void GameScene::Draw() {
         break;
     default: ;
     }
-
-    if (pause_) {
-        pauseSprite_->Draw();
-    }
+    pause_->Draw();
 }
 
 void GameScene::Debug() {
     followCamera_->Debug();
     gameTimer_->Debug();
     stage_->Debug();
+    pause_->Debug();
 
     ImGui::Begin("Status");
     ImGui::DragFloat("Timer", &status_.time, 1.f, 0.f, 300.f);

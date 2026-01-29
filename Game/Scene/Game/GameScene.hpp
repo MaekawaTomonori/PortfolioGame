@@ -9,6 +9,7 @@
 #include "Stage/Stage.hpp"
 #include "Status/GameStatus.hpp"
 #include "Ui/KeyGuide/KeyGuide.hpp"
+#include "Ui/Pause/Pause.hpp"
 
 class GameScene : public IScene {
     enum State {
@@ -37,8 +38,7 @@ class GameScene : public IScene {
 
     std::unique_ptr<GameTimer> gameTimer_;
 
-    bool pause_ = false;
-    std::unique_ptr<Sprite> pauseSprite_;
+    std::unique_ptr<Pause> pause_;
 
     std::unique_ptr<KeyGuide> keyGuide_;
 

@@ -1,0 +1,41 @@
+{
+    "Elements": [
+        {
+            "Name": "Background",
+            "Texture": "white_x16.png",
+            "Position": [640, 360],
+            "Size": [300, 250],
+            "Color": [0.1, 0.1, 0.1, 0.8]
+        },
+        {
+            "Name": "Resume",
+            "Texture": "white_x16.png",
+            "Position": [640, 280],
+            "Size": [180, 40],
+            "Color": [0.3, 0.6, 0.3, 1.0],
+            "Events": {
+                "Execute": "Pause.Resume"
+            }
+        },
+        {
+            "Name": "Retry",
+            "Texture": "white_x16.png",
+            "Position": [640, 340],
+            "Size": [180, 40],
+            "Color": [0.3, 0.3, 0.6, 1.0],
+            "Events": {
+                "Execute": "Pause.Retry"
+            }
+        },
+        {
+            "Name": "Quit",
+            "Texture": "white_x16.png",
+            "Position": [640, 400],
+            "Size": [180, 40],
+            "Color": [0.6, 0.3, 0.3, 1.0],
+            "Events": {
+                "Execute": "Pause.Quit"
+            }
+        }
+    ]
+}

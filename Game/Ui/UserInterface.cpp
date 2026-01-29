@@ -1,13 +1,38 @@
+#define NOMINMAX
 #include "UserInterface.hpp"
 
 #include <filesystem>
+#include <fstream>
 
 #include "imgui_internal.h"
-#include "Scene/Title/TitleScene.hpp"
+#include "json/json.hpp"
+#include "Log.hpp"
 
 namespace Ui {
-    void UserInterface::Update() const {
+    void UserInterface::Setup(const std::string& _name) {
+        if (_name.empty()) return;
+
+        constexpr std::string_view ext = ".json";
+
+        name_ = _name;
+
+        auto len = std::min(name_.size(), buffName_.size() - 1);
+        std::copy_n(name_.begin(), len, buffName_.begin());
+        buffName_[len] = '\0';
+
+        Load(_name + ext.data());
+    }
+
+    void UserInterface::Update() {
+        if (reload_) {
+            reload_ = false;
+
+            elements_.clear();
+            Load(name_ + ".json");
+        }
+
         for (auto& element : elements_) {
+            element->SetParent(position_);
             element->Update();
         }
     }
@@ -19,12 +44,10 @@ namespace Ui {
         }
     }
 
-    void UserInterface::Debug() {
+    void UserInterface::StandaloneDebug() {
         ImGui::Begin("UI");
 
-        if (ImGui::Button("Open UI Editor")) {
-            editing_ = true;
-        }
+        Debug();
 
         ImGui::End();
 
@@ -33,18 +56,105 @@ namespace Ui {
         }
     }
 
-    void UserInterface::RegisterAction(const std::string& _actionId, const std::function<void()>& _action) {
-        if (!actions_.actions.contains(_actionId)) {
-            actions_.actions[_actionId] = _action;
+    void UserInterface::Debug() {
+        HeaderUiParams();
+        ElementCommonParams();
+        ElementsParam();
+    }
+
+    void UserInterface::RegisterAction(const std::string& _actionKey, const std::function<void()>& _action) {
+        eventSystem_.Register(_actionKey, _action);
+    }
+
+    void UserInterface::SetActive(bool _active) {
+        active_ = _active;
+    }
+
+    bool UserInterface::IsActive() const {
+        return active_;
+    }
+
+    bool UserInterface::IsDirty() const {
+        return dirty_;
+    }
+
+    std::vector<size_t> UserInterface::GetIndicesWithEvent(EventKey _event) const {
+        std::vector<size_t> indices;
+        for (size_t i = 0; i < elements_.size(); ++i) {
+            if (elements_[i]->HasEvent(_event)) {
+                indices.push_back(i);
+            }
+        }
+        return indices;
+    }
+
+    void UserInterface::ExecuteAction(const std::string& _actionKey) {
+        eventSystem_.Execute(_actionKey);
+    }
+
+    void UserInterface::ExecuteActionAt(size_t _elementIndex, EventKey _event) {
+        if (_elementIndex >= elements_.size()) return;
+        const auto& actionKey = elements_[_elementIndex]->GetActionKey(_event);
+        if (!actionKey.empty()) {
+            eventSystem_.Execute(actionKey);
         }
     }
 
+    UserInterface::ElementRect UserInterface::GetElementRect(size_t _elementIndex) const {
+        if (_elementIndex >= elements_.size()) {
+            return {};
+        }
+        auto data = elements_[_elementIndex]->GetData();
+        return {data.position, data.size};
+    }
+
+    std::vector<std::string> UserInterface::GetActionKeys() const {
+        return eventSystem_.GetActionKeys();
+    }
+
     void UserInterface::Editor() {
-        ImGui::Begin("Editor", &editing_);
+        std::string title = "Editor";
+        if (!name_.empty()) {
+            title = name_ + " Editor";
+        }
 
+        ImGui::Begin(title.c_str(), &editing_);
+
+        HeaderUiParams();
+        ElementCommonParams();
+
+        ElementsParam();
+        ImGui::End();
+    }
+
+    void UserInterface::HeaderUiParams() {
+        ImGui::InputText("##name", buffName_.data(), buffName_.size());
+        name_ = buffName_.data();
+
+        const char* active = active_ ? "Active" : "Inactive";
+        if (ImGui::Button(active, ImVec2(100.f, 0.f))) {
+            active_ = !active_;
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Save", ImVec2(100.f, 0.f))) {
+            Save();
+        }
+        ImGui::SameLine();
+        if (ImGui::SmallButton("Re")) {
+            reload_ = true;
+        }
+        if (ImGui::IsItemHovered()) {
+            ImGui::SetTooltip("Reload Json");
+        }
+        ImGui::Text("Position");
+        ImGui::SameLine();
+        ImGui::SetNextItemWidth(100.f);
+        ImGui::DragFloat2("##pos", &position_.x);
+
+    }
+
+    void UserInterface::ElementCommonParams() {
         ImGui::Text("Editing UI Element");
-
-        ImGui::Checkbox("Default Open", &defaultOpen_);
 
         if (ImGui::Button("Add Element", ImVec2(100.f, 0.f))) {
             auto element = std::make_unique<Element>();
@@ -52,16 +162,31 @@ namespace Ui {
             element->IsOpen() = defaultOpen_;
             elements_.emplace_back(std::move(element));
         }
-        ImGui::SameLine();
-        if (ImGui::Button("Save", ImVec2(100.f, 0.f))) {
-            //Save to Json
-        }
 
-        // TODO: Delete
-        
+        bool exe = false;
+        bool open = true;
+        if (ImGui::Button("Open")) {
+            exe = true;
+            open = true;
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Close")) {
+            exe = true;
+            open = false;
+        }
+        ImGui::SameLine();
+        ImGui::Checkbox("Default Open", &defaultOpen_);
+
+        if (exe) {
+            for (auto& element : elements_) {
+                element->IsOpen() = open;
+            }
+        }
+    }
+
+    void UserInterface::ElementsParam() {
         ImGui::BeginChild("Elements", ImVec2(0.f, 0.f), true, ImGuiWindowFlags_NoMove);
-        
-        // Buffer for duplicated elements
+
         std::vector<Element::Data> duplicated;
 
         for (auto itr = elements_.begin(); itr != elements_.end(); ++itr) {
@@ -83,22 +208,21 @@ namespace Ui {
 
             ImGui::BeginDisabled(itr == elements_.begin());
             if (ImGui::SmallButton("^")) {
-                // Move Up
                 std::iter_swap(itr, std::prev(itr));
+                dirty_ = true;
             }
             ImGui::EndDisabled();
             ImGui::SameLine();
 
             ImGui::BeginDisabled(itr == std::prev(elements_.end()));
             if (ImGui::SmallButton("v")) {
-                // Move Down
                 std::iter_swap(itr, std::next(itr));
+                dirty_ = true;
             }
             ImGui::EndDisabled();
 
             ImGui::SameLine();
             if (ImGui::SmallButton("[+]")) {
-                // Duplicate
                 duplicated.push_back((*itr)->GetData());
             }
 
@@ -108,8 +232,7 @@ namespace Ui {
 
             ImGui::EndGroup();
 
-            // Body
-            (*itr)->Debug();
+            (*itr)->Debug(GetActionKeys());
 
             ImGui::PopID();
         }
@@ -118,9 +241,6 @@ namespace Ui {
 
         ImGui::EndChild();
 
-        ImGui::End();
-
-        // Add duplicated elements after iteration is complete
         for (auto& data : duplicated) {
             auto element = std::make_unique<Element>();
             element->Initialize();
@@ -128,5 +248,122 @@ namespace Ui {
             element->IsOpen() = defaultOpen_;
             elements_.push_back(std::move(element));
         }
+    }
+
+    void UserInterface::Load(const std::string& _name) {
+        std::ifstream file(JSON_PATH + _name);
+        if (!file.is_open()) {
+            Log::Send(Log::Level::WARNING, "UserInterface: JSON file not found - " + _name);
+            return;
+        }
+
+        nlohmann::json root;
+        try {
+            file >> root;
+            file.close();
+        }
+        catch (const nlohmann::json::parse_error& e) {
+            Log::Send(Log::Level::ERR, "UserInterface: JSON parse error - " + std::string(e.what()));
+            file.close();
+            return;
+        }
+
+        if (root.contains("Elements") && root["Elements"].is_array()) {
+            elements_.clear();
+
+            for (const auto& elementData : root["Elements"]) {
+                Element::Data data;
+
+                data.texture = elementData.value("Texture", "white_x16.png");
+
+                if (elementData.contains("Position") && elementData["Position"].is_array() && elementData["Position"].size() >= 2) {
+                    data.position = {
+                        elementData["Position"][0].get<float>(),
+                        elementData["Position"][1].get<float>()
+                    };
+                }
+
+                if (elementData.contains("Size") && elementData["Size"].is_array() && elementData["Size"].size() >= 2) {
+                    data.size = {
+                        elementData["Size"][0].get<float>(),
+                        elementData["Size"][1].get<float>()
+                    };
+                }
+
+                if (elementData.contains("Color") && elementData["Color"].is_array() && elementData["Color"].size() >= 4) {
+                    data.color = {
+                        elementData["Color"][0].get<float>(),
+                        elementData["Color"][1].get<float>(),
+                        elementData["Color"][2].get<float>(),
+                        elementData["Color"][3].get<float>()
+                    };
+                }
+
+                std::string name = elementData.value("Name", "NoName");
+
+                auto element = std::make_unique<Element>();
+                element->Initialize();
+                element->SetName(name);
+                element->SetData(data);
+                element->IsOpen() = defaultOpen_;
+
+                if (elementData.contains("Events") && elementData["Events"].is_object()) {
+                    for (auto& [eventKeyStr, actionKeyVal] : elementData["Events"].items()) {
+                        EventKey eventKey = StringToEventKey(eventKeyStr);
+                        element->SetEvent(eventKey, actionKeyVal.get<std::string>());
+                    }
+                }
+
+                elements_.push_back(std::move(element));
+            }
+        }
+
+        Log::Send(Log::Level::INFO, "UserInterface: Loaded " + _name + " (" + std::to_string(elements_.size()) + " elements)");
+    }
+
+    void UserInterface::Save() {
+        if (name_.empty()) {
+            Log::Send(Log::Level::WARNING, "UserInterface: Cannot save - no name specified");
+            return;
+        }
+
+        nlohmann::json root;
+        nlohmann::json elementsArray = nlohmann::json::array();
+
+        for (const auto& element : elements_) {
+            nlohmann::json elementJson;
+            auto data = element->GetData();
+
+            elementJson["Name"] = element->GetName();
+            elementJson["Texture"] = data.texture;
+            elementJson["Position"] = { data.position.x, data.position.y };
+            elementJson["Size"] = { data.size.x, data.size.y };
+            elementJson["Color"] = { data.color.x, data.color.y, data.color.z, data.color.w };
+
+            const auto& events = element->GetEvents();
+            if (!events.empty()) {
+                nlohmann::json eventsJson;
+                for (const auto& [eventKey, actionKey] : events) {
+                    eventsJson[EventKeyToString(eventKey)] = actionKey;
+                }
+                elementJson["Events"] = eventsJson;
+            }
+
+            elementsArray.push_back(elementJson);
+        }
+
+        root["Elements"] = elementsArray;
+
+        std::string filePath = JSON_PATH + name_ + ".json";
+        std::ofstream file(filePath);
+        if (!file.is_open()) {
+            Log::Send(Log::Level::ERR, "UserInterface: Failed to open file for saving - " + filePath);
+            return;
+        }
+
+        file << root.dump(4);
+        file.close();
+
+        Log::Send(Log::Level::INFO, "UserInterface: Saved " + name_ + ".json (" + std::to_string(elements_.size()) + " elements)");
     }
 }
