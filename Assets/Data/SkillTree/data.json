@@ -1,0 +1,84 @@
+{
+    "Skills": [
+        {
+            "Id": "root",
+            "Name": "Start",
+            "Icon": "heart.png",
+            "DisplayValue": 2,
+            "Cost": 0,
+            "Effect": { "hp": 2.0, "damage": 0.1 }
+        },
+        {
+            "Id": "atk_up",
+            "Name": "Attack Up",
+            "Icon": "sword.png",
+            "DisplayValue": 5,
+            "Cost": 1,
+            "Effect": { "damage": 0.5 }
+        },
+        {
+            "Id": "hp_up",
+            "Name": "HP Up",
+            "Icon": "heart.png",
+            "DisplayValue": 5,
+            "Cost": 1,
+            "Effect": { "hp": 5.0 }
+        },
+        {
+            "Id": "spd_up",
+            "Name": "Speed Up",
+            "Icon": "ms.png",
+            "DisplayValue": 3,
+            "Cost": 1,
+            "Effect": { "ms": 0.3 }
+        },
+        {
+            "Id": "as_up",
+            "Name": "AtkSpd Up",
+            "Icon": "as.png",
+            "DisplayValue": 2,
+            "Cost": 1,
+            "Effect": { "as": 0.2 }
+        },
+        {
+            "Id": "time_up",
+            "Name": "Time Up",
+            "Icon": "clock.png",
+            "DisplayValue": 5,
+            "Cost": 1,
+            "Effect": { "time": 5.0 }
+        },
+        {
+            "Id": "enemy_up",
+            "Name": "More Enemies",
+            "Icon": "enemy.png",
+            "DisplayValue": 2,
+            "Cost": 1,
+            "Effect": { "maxEnemyCount": 2 }
+        },
+        {
+            "Id": "atk_up_2",
+            "Name": "Attack Up II",
+            "Icon": "sword.png",
+            "DisplayValue": 15,
+            "Cost": 2,
+            "Effect": { "damage": 1.5 }
+        },
+        {
+            "Id": "hp_up_2",
+            "Name": "HP Up II",
+            "Icon": "heart.png",
+            "DisplayValue": 15,
+            "Cost": 2,
+            "Effect": { "hp": 15.0 }
+        },
+        {
+            "Id": "spawn_down",
+            "Name": "Fast Spawn",
+            "Icon": "enemy.png",
+            "DisplayValue": -3,
+            "Cost": 2,
+            "Effect": { "enemySpawnInterval": -0.3 }
+        }
+    ]
+}
