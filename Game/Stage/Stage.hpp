@@ -9,10 +9,10 @@
 #include "Status/GameStatus.hpp"
 
 class Stage {
-    const uint16_t RequirementKills = 3;
-
     ParticleSystem* particle_ = nullptr;
     PostProcessExecutor* postEffect_ = nullptr;
+
+    GameStatus& status_;
 
     std::unique_ptr<Skybox> skybox_;
     std::unique_ptr<Model> terrain_;
@@ -20,8 +20,9 @@ class Stage {
     std::unique_ptr<Enemies> enemies_;
 
 public:
+    Stage(GameStatus& _status) : status_(_status) {}
     void Setup(ParticleSystem* _particle, PostProcessExecutor* _postEffect);
-    void Initialize(const GameStatus& _status);
+    void Initialize();
     void Update();
     void Draw() const;
     void Debug() const;

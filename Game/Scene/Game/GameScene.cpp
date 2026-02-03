@@ -15,6 +15,7 @@ void GameScene::Initialize() {
     status_ ={
         .point = 0,
         .time = 15,
+        .requirementKill = 10,
         .maxEnemyCount = 5,
         .enemySpawnInterval = 2.f,
         .playerStatus = {
@@ -25,9 +26,9 @@ void GameScene::Initialize() {
         }
     };
 
-    stage_ = std::make_unique<Stage>();
+    stage_ = std::make_unique<Stage>(status_);
     stage_->Setup(Particle(), PostEffect());
-    stage_->Initialize(status_);
+    stage_->Initialize();
 
     followCamera_ = std::make_unique<FollowCamera>();
     followCamera_->SetTarget(stage_->GetPlayer());
@@ -59,7 +60,7 @@ void GameScene::Initialize() {
     skillTree_->Initialize(&status_);
     skillTree_->SetOnContinue([this] {
         gameTimer_->SetDuration(status_.time);
-        stage_->Initialize(status_);
+        stage_->Initialize();
         state_ = PLAY;
         skillTree_->Close();
     });
@@ -89,8 +90,9 @@ void GameScene::Update() {
         cManager_->ProcessEvent();
 
         if (gameTimer_->IsDone()) {
-             state_ = UPGRADE;
-             skillTree_->Open();
+            state_ = UPGRADE;
+            status_.point += stage_->GetEnemies()->GetDeathCount();
+            skillTree_->Open();
         }
 
         // is clear

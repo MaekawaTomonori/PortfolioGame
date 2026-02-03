@@ -7,9 +7,11 @@
 #include "ParticleSystem/ParticleSystem.hpp"
 #include "Player/Movement/IMovementBehavior.hpp"
 #include "Command/ICommand.hpp"
+#include "Status/GameStatus.hpp"
 
 class Enemies {
     ParticleSystem* particle_ = nullptr;
+    const GameStatus& status_;
 
     GameObject* target_ = nullptr;
     std::vector<std::unique_ptr<Enemy>> enemies_;
@@ -19,8 +21,8 @@ class Enemies {
 
     std::unique_ptr<ICommand> toTargetCommand_;
 
-    uint16_t maxCount_ = 3;
-    float interval_ = 2.f;
+    bool done_ = false;
+
     float timer_ = 0.f;
     uint16_t deathCount_ = 0;
 
@@ -35,7 +37,7 @@ class Enemies {
 #endif
 
 public:
-    Enemies(ParticleSystem* _particle);
+    Enemies(ParticleSystem* _particle, const GameStatus& _status);
     void Initialize();
     void Update();
     void Draw() const;
@@ -43,11 +45,10 @@ public:
     [[nodiscard]] Vector3 GetNearest(Vector3 _pos) const;
 
     void SetTarget(GameObject* _target);
-    void SetMaxCount(uint16_t _count) { maxCount_ = _count; }
-    void SetInterval(float _sec) { interval_ = _sec; }
 
     void Debug();
 
+    bool IsDone() const;
     bool Empty() const;
 
     // カメラ調整用の情報取得

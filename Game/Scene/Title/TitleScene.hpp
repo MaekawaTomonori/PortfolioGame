@@ -8,6 +8,7 @@
 #include "Stage/Stage.hpp"
 
 class TitleScene : public IScene{
+    GameStatus status_{};
     std::unique_ptr<Stage> stage_;
     std::unique_ptr<Sprite> titleLogo_;
     std::unique_ptr<Sprite> pushtoStart_;

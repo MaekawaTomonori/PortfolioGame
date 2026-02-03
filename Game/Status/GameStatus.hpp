@@ -7,6 +7,7 @@
 struct GameStatus {
     uint32_t point;
     float time;
+    uint16_t requirementKill;
     uint16_t maxEnemyCount;
     float enemySpawnInterval;
     PlayerStatus playerStatus;

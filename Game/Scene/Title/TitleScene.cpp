@@ -8,9 +8,9 @@ void TitleScene::Initialize() {
 
     exitTransition_ = Transition::Type::Fade;
 
-    stage_ = std::make_unique<Stage>();
+    stage_ = std::make_unique<Stage>(status_);
     stage_->Setup(Particle(), PostEffect());
-    stage_->Initialize({});
+    stage_->Initialize();
 
     titleLogo_ = std::make_unique<Sprite>();
     titleLogo_->Initialize("title.png");

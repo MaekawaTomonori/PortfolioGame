@@ -20,17 +20,15 @@ void Stage::Setup(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
     terrain_->SetTexture("tile.png");
 
     player_ = std::make_unique<Player>(particle_, postEffect_);
-    enemies_ = std::make_unique<Enemies>(particle_);
+    enemies_ = std::make_unique<Enemies>(particle_, status_);
 }
 
-void Stage::Initialize(const GameStatus& _status) { 
+void Stage::Initialize() { 
     player_->Initialize();
-    player_->SetStatus(_status.playerStatus);
+    player_->SetStatus(status_.playerStatus);
 
     enemies_->Initialize();
     enemies_->SetTarget(player_.get());
-    enemies_->SetMaxCount(_status.maxEnemyCount);
-    enemies_->SetInterval(_status.enemySpawnInterval);
 }
 
 void Stage::Update() {
@@ -70,5 +68,5 @@ void Stage::SetCamera(FollowCamera* _camera) const {
 }
 
 bool Stage::IsClear() const {
-    return RequirementKills <= enemies_->GetDeathCount();
+    return enemies_->IsDone();
 }
