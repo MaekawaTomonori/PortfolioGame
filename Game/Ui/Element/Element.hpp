@@ -17,6 +17,8 @@ namespace Ui{
             Vector2 position {};
             Vector2 size{64.f, 64.f};
             Vector4 color{1.f, 1.f, 1.f, 1.f};
+            Vector2 textureLeftTop{};
+            Vector2 textureSize{};
         };
 
     private:

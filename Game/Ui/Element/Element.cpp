@@ -40,6 +40,10 @@ namespace Ui {
         sprite_->SetPosition(data_.position + parent_);
         sprite_->SetSize(data_.size);
         sprite_->SetColor(data_.color);
+        if (data_.textureSize.x > 0.f && data_.textureSize.y > 0.f) {
+            sprite_->SetTextureLeftTop(data_.textureLeftTop);
+            sprite_->SetTextureSize(data_.textureSize);
+        }
         sprite_->Update();
     }
 

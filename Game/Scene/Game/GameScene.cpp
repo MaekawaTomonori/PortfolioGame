@@ -55,9 +55,14 @@ void GameScene::Initialize() {
     keyGuide_ = std::make_unique<KeyGuide>();
     keyGuide_->Initialize();
 
-    sprite_ = std::make_unique<Sprite>();
-    sprite_->Initialize("wip.png");
-    sprite_->SetPosition({640.f, 360.f});
+    skillTree_ = std::make_unique<SkillTree>();
+    skillTree_->Initialize(&status_);
+    skillTree_->SetOnContinue([this] {
+        gameTimer_->SetDuration(status_.time);
+        stage_->Initialize(status_);
+        state_ = PLAY;
+        skillTree_->Close();
+    });
 }
 
 void GameScene::Update() {
@@ -85,6 +90,7 @@ void GameScene::Update() {
 
         if (gameTimer_->IsDone()) {
              state_ = UPGRADE;
+             skillTree_->Open();
         }
 
         // is clear
@@ -98,12 +104,7 @@ void GameScene::Update() {
 
         break;
     case UPGRADE:
-        if (Singleton<Input>::GetInstance()->IsTrigger(DIK_SPACE)) {
-            gameTimer_->SetDuration(status_.time);
-            stage_->Initialize(status_);
-            state_ = PLAY;
-        }
-        sprite_->Update();
+        skillTree_->Update();
         break;
     default: ;
     }
@@ -121,7 +122,7 @@ void GameScene::Draw() {
         keyGuide_->Draw();
         break;
     case UPGRADE:
-        sprite_->Draw();
+        skillTree_->Draw();
         break;
     case OUTRO:
         stage_->Draw();
@@ -136,6 +137,7 @@ void GameScene::Debug() {
     gameTimer_->Debug();
     stage_->Debug();
     pause_->Debug();
+    skillTree_->Debug();
 
     ImGui::Begin("Status");
     ImGui::DragFloat("Timer", &status_.time, 1.f, 0.f, 300.f);

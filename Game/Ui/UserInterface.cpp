@@ -112,6 +112,24 @@ namespace Ui {
         return eventSystem_.GetActionKeys();
     }
 
+    Element* UserInterface::FindElementByName(const std::string& _name) {
+        for (auto& element : elements_) {
+            if (element->GetName() == _name) {
+                return element.get();
+            }
+        }
+        return nullptr;
+    }
+
+    Element* UserInterface::GetElement(size_t _index) const {
+        if (_index >= elements_.size()) return nullptr;
+        return elements_[_index].get();
+    }
+
+    size_t UserInterface::GetElementCount() const {
+        return elements_.size();
+    }
+
     void UserInterface::Editor() {
         std::string title = "Editor";
         if (!name_.empty()) {
@@ -299,6 +317,24 @@ namespace Ui {
                     };
                 }
 
+                if (elementData.contains("Visible") && elementData["Visible"].is_boolean()) {
+                    data.visible = elementData["Visible"].get<bool>();
+                }
+
+                if (elementData.contains("TextureLeftTop") && elementData["TextureLeftTop"].is_array() && elementData["TextureLeftTop"].size() >= 2) {
+                    data.textureLeftTop = {
+                        elementData["TextureLeftTop"][0].get<float>(),
+                        elementData["TextureLeftTop"][1].get<float>()
+                    };
+                }
+
+                if (elementData.contains("TextureSize") && elementData["TextureSize"].is_array() && elementData["TextureSize"].size() >= 2) {
+                    data.textureSize = {
+                        elementData["TextureSize"][0].get<float>(),
+                        elementData["TextureSize"][1].get<float>()
+                    };
+                }
+
                 std::string name = elementData.value("Name", "NoName");
 
                 auto element = std::make_unique<Element>();
@@ -339,6 +375,15 @@ namespace Ui {
             elementJson["Position"] = { data.position.x, data.position.y };
             elementJson["Size"] = { data.size.x, data.size.y };
             elementJson["Color"] = { data.color.x, data.color.y, data.color.z, data.color.w };
+
+            if (!data.visible) {
+                elementJson["Visible"] = false;
+            }
+
+            if (data.textureSize.x > 0.f && data.textureSize.y > 0.f) {
+                elementJson["TextureLeftTop"] = { data.textureLeftTop.x, data.textureLeftTop.y };
+                elementJson["TextureSize"] = { data.textureSize.x, data.textureSize.y };
+            }
 
             const auto& events = element->GetEvents();
             if (!events.empty()) {

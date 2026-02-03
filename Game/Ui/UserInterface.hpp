@@ -49,6 +49,10 @@ namespace Ui {
 
         std::vector<std::string> GetActionKeys() const;
 
+        Element* FindElementByName(const std::string& _name);
+        Element* GetElement(size_t _index) const;
+        size_t GetElementCount() const;
+
     private:
         void Editor();
 

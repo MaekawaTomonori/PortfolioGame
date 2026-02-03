@@ -10,6 +10,7 @@
 #include "Status/GameStatus.hpp"
 #include "Ui/KeyGuide/KeyGuide.hpp"
 #include "Ui/Pause/Pause.hpp"
+#include "Ui/SkillTree/SkillTree.hpp"
 
 class GameScene : public IScene {
     enum State {
@@ -26,7 +27,7 @@ class GameScene : public IScene {
 
     std::unique_ptr<Intro> intro_;
 
-    std::unique_ptr<Sprite> sprite_;
+    std::unique_ptr<SkillTree> skillTree_;
 
     Collision::Manager* cManager_ = nullptr;
 

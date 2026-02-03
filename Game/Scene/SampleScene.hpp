@@ -10,8 +10,10 @@
 
 class SampleScene final : public IScene{
     bool smoke_ = false;
-    std::unique_ptr<SkillTree> userInterface_;
+    std::unique_ptr<Ui::UserInterface> userInterface_;
     std::unique_ptr<Model> model_;
+
+    std::unique_ptr<GameStatus> status_;
 
 public:
     void Initialize() override;
