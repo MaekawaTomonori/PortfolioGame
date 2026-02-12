@@ -63,7 +63,7 @@
       <WarningLevel>Level4</WarningLevel>
       <TreatWarningAsError>true</TreatWarningAsError>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir).;$(SolutionDir)Engine\include;$(SolutionDir)Engine\src;$(SolutionDir)Engine\externals\assimp\include;$(SolutionDir)Engine\externals\imgui;$(SolutionDir)Engine\externals\DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir).;$(SolutionDir)Engine\;$(SolutionDir)Engine\include;$(SolutionDir)Engine\src;$(SolutionDir)Engine\externals\assimp\include;$(SolutionDir)Engine\externals\imgui;$(SolutionDir)Engine\externals\DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -101,7 +101,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <WarningLevel>Level4</WarningLevel>
       <TreatWarningAsError>true</TreatWarningAsError>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir).;$(SolutionDir)Engine\include;$(SolutionDir)Engine\src;$(SolutionDir)Engine\externals\assimp\include;$(SolutionDir)Engine\externals\imgui;$(SolutionDir)Engine\externals\DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir).;$(SolutionDir)Engine\;$(SolutionDir)Engine\include;$(SolutionDir)Engine\src;$(SolutionDir)Engine\externals\assimp\include;$(SolutionDir)Engine\externals\imgui;$(SolutionDir)Engine\externals\DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>MinSpace</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -162,7 +162,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Factory\PostEffectFactory.hpp" />
     <ClInclude Include="Player\InputHandler.hpp" />
     <ClInclude Include="Player\Status\PlayerStatus.hpp" />
-    <ClInclude Include="SceneRegister.hpp" />
     <ClInclude Include="Scene\Game\GameScene.hpp" />
     <ClInclude Include="Scene\Result\GameClear.hpp" />
     <ClInclude Include="Scene\Result\GameOver.hpp" />
@@ -173,6 +172,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Status\GameStatus.hpp" />
     <ClInclude Include="Ui\Element\Element.hpp" />
     <ClInclude Include="Ui\KeyGuide\KeyGuide.hpp" />
+    <ClInclude Include="Ui\KillCount\KillCounter.hpp" />
     <ClInclude Include="Ui\Pause\Pause.hpp" />
     <ClInclude Include="Ui\SkillTree\SkillTree.hpp" />
     <ClInclude Include="Ui\EventSystem.hpp" />
@@ -200,7 +200,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Player\Player.cpp" />
     <ClCompile Include="Player\InputHandler.cpp" />
     <ClCompile Include="PostEffectFactory.cpp" />
-    <ClCompile Include="SceneRegister.cpp" />
     <ClCompile Include="Scene\Game\GameScene.cpp" />
     <ClCompile Include="Scene\Result\GameClear.cpp" />
     <ClCompile Include="Scene\Result\GameOver.cpp" />
@@ -211,6 +210,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Stage\Stage.cpp" />
     <ClCompile Include="Ui\Element\Element.cpp" />
     <ClCompile Include="Ui\KeyGuide\KeyGuide.cpp" />
+    <ClCompile Include="Ui\KillCount\KillCounter.cpp" />
     <ClCompile Include="Ui\Pause\Pause.cpp" />
     <ClCompile Include="Ui\SkillTree\SkillTree.cpp" />
     <ClCompile Include="Ui\EventSystem.cpp" />

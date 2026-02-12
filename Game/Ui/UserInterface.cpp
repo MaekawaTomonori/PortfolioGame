@@ -286,6 +286,15 @@ namespace Ui {
             return;
         }
 
+        if (root.contains("Position") && root["Position"].is_array() && root["Position"].size() >= 2) {
+            position_ = {
+                root["Position"][0].get<float>(),
+                root["Position"][1].get<float>()
+            };
+        } else {
+            position_ = {0.f, 0.f};
+        }
+
         if (root.contains("Elements") && root["Elements"].is_array()) {
             elements_.clear();
 
@@ -364,6 +373,8 @@ namespace Ui {
         }
 
         nlohmann::json root;
+        root["Position"] = { position_.x, position_.y };
+
         nlohmann::json elementsArray = nlohmann::json::array();
 
         for (const auto& element : elements_) {

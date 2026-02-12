@@ -62,6 +62,7 @@ private:
     void ApplySkill(const std::string& _id);
     void PositionCursorAtSelected();
     void UpdatePreview();
+    void UpdatePointDisplay();
     void CollectNavigableIndices();
     const SkillDef* FindSkillByElementIndex(size_t _elemIndex) const;
     const SkillDef* FindSkillByName(const std::string& _name) const;

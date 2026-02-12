@@ -9,6 +9,7 @@
 #include "Stage/Stage.hpp"
 #include "Status/GameStatus.hpp"
 #include "Ui/KeyGuide/KeyGuide.hpp"
+#include "Ui/KillCount/KillCounter.hpp"
 #include "Ui/Pause/Pause.hpp"
 #include "Ui/SkillTree/SkillTree.hpp"
 
@@ -42,6 +43,8 @@ class GameScene : public IScene {
     std::unique_ptr<Pause> pause_;
 
     std::unique_ptr<KeyGuide> keyGuide_;
+
+    std::unique_ptr<KillCounter> killCounter_;
 
 public:
     void Initialize() override;

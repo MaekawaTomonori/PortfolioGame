@@ -216,6 +216,7 @@ void SkillTree::Refresh() {
     }
 
     UpdatePreview();
+    UpdatePointDisplay();
 }
 
 void SkillTree::LoadSkills(const std::string& _path) {
@@ -362,6 +363,26 @@ void SkillTree::UpdatePreview() {
         setDigit("pv_pt_d1", 0, false);
         setIcon("pv_acquired", "white_x16.png", false);
     }
+}
+
+void SkillTree::UpdatePointDisplay() {
+    if (!status_) return;
+
+    constexpr Vector2 DIGIT_TEX_SIZE = {64.f, 96.f};
+
+    auto setDigit = [this, &DIGIT_TEX_SIZE](const std::string& _name, int32_t _digit) {
+        auto* elem = ui_->FindElementByName(_name);
+        if (!elem) return;
+        auto d = elem->GetData();
+        d.texture = "numbers.png";
+        d.textureLeftTop = {static_cast<float>(std::abs(_digit) % 10) * DIGIT_TEX_SIZE.x, 0.f};
+        d.textureSize = DIGIT_TEX_SIZE;
+        elem->SetData(d);
+    };
+
+    int32_t pt = static_cast<int32_t>(status_->point);
+    setDigit("point_d0", pt / 10);
+    setDigit("point_d1", pt % 10);
 }
 
 void SkillTree::CollectNavigableIndices() {

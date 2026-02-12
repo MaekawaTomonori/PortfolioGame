@@ -56,11 +56,15 @@ void GameScene::Initialize() {
     keyGuide_ = std::make_unique<KeyGuide>();
     keyGuide_->Initialize();
 
+    killCounter_ = std::make_unique<KillCounter>();
+    killCounter_->Initialize(stage_->GetEnemies(), status_.requirementKill);
+
     skillTree_ = std::make_unique<SkillTree>();
     skillTree_->Initialize(&status_);
     skillTree_->SetOnContinue([this] {
         gameTimer_->SetDuration(status_.time);
         stage_->Initialize();
+        killCounter_->Initialize(stage_->GetEnemies(), status_.requirementKill);
         state_ = PLAY;
         skillTree_->Close();
     });
@@ -86,6 +90,7 @@ void GameScene::Update() {
         stage_->Update();
         followCamera_->Update();
         keyGuide_->Update();
+        killCounter_->Update();
         cManager_->Detect();
         cManager_->ProcessEvent();
 
@@ -122,6 +127,7 @@ void GameScene::Draw() {
         gameTimer_->Draw();
         stage_->Draw();
         keyGuide_->Draw();
+        killCounter_->Draw();
         break;
     case UPGRADE:
         skillTree_->Draw();
@@ -140,6 +146,7 @@ void GameScene::Debug() {
     stage_->Debug();
     pause_->Debug();
     skillTree_->Debug();
+    killCounter_->Debug();
 
     ImGui::Begin("Status");
     ImGui::DragFloat("Timer", &status_.time, 1.f, 0.f, 300.f);
