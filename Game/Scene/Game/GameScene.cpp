@@ -145,6 +145,7 @@ void GameScene::Debug() {
     gameTimer_->Debug();
     stage_->Debug();
     pause_->Debug();
+    keyGuide_->Debug();
     skillTree_->Debug();
     killCounter_->Debug();
 
