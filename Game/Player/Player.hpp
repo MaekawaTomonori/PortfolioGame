@@ -47,6 +47,8 @@ class Player : public GameObject {
 # ifdef _DEBUG  
     bool no_atk = false;
     bool no_move = false;
+
+    std::unique_ptr<Model> reticle_;
 #endif
 
 

@@ -67,6 +67,14 @@ Player::Player(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
     attack_ = std::make_unique<Attack>();
 
     SetScale({0.4f, 0.4f, 0.4f});
+
+#ifdef _DEBUG
+    reticle_ = std::make_unique<Model>();
+    reticle_->Initialize("animatedCube");
+    reticle_->SetTexture("white_x16.png");
+    reticle_->SetColor({1.f, 0.f, 0.f, 1.f});
+    reticle_->SetScale({0.3f, 0.3f, 0.3f});
+#endif
 }
 
 void Player::Initialize() {
@@ -93,6 +101,12 @@ void Player::Update(const float _deltaTime) {
     }
 
 #ifdef _DEBUG
+
+    if (reticle_) {
+        reticle_->SetTranslate(movementContext_.targetPosition);
+        reticle_->Update();
+    }
+
     if (!no_move)
 #endif
         if (movement_) {
@@ -126,6 +140,12 @@ void Player::Draw() {
 #endif
           attack_->Draw();
     }
+
+#ifdef _DEBUG
+    if (reticle_) {
+        reticle_->Draw();
+    }
+#endif
 
     model_->Draw();
 }

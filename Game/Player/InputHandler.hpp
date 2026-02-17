@@ -11,6 +11,10 @@
 class InputHandler {
     Input* input_ = nullptr;
 
+    // ViewPort
+    // TODO: 固定としているが、全画面に対応するべき
+    const Vector2 Viewport = {1280.f, 720.f};
+
 public:
     /**
      * @brief 初期化
@@ -25,7 +29,7 @@ public:
     void UpdateContext(MovementContext& context, const Vector3& currentPos);
 
 private:
-    Vector3 GetMouseInWorld();
+    Vector3 GetMouseInWorld() const;
 };
 
 #endif // INPUT_HANDLER_HPP_
