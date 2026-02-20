@@ -6,6 +6,7 @@
 #include "Enemy/Enemies.hpp"
 #include "Sky/Skybox.hpp"
 #include "Player/Player.hpp"
+#include "Skill/SkillManager.hpp"
 #include "Status/GameStatus.hpp"
 
 class Stage {
@@ -18,6 +19,7 @@ class Stage {
     std::unique_ptr<Model> terrain_;
     std::unique_ptr<Player> player_;
     std::unique_ptr<Enemies> enemies_;
+    std::unique_ptr<SkillManager> skillManager_;
 
 public:
     Stage(GameStatus& _status) : status_(_status) {}
@@ -25,7 +27,7 @@ public:
     void Initialize();
     void Update();
     void Draw() const;
-    void Debug() const;
+    void Debug();
 
     //Getter
     [[nodiscard]] Player* GetPlayer() const;

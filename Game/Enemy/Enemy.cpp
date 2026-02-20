@@ -274,7 +274,7 @@ void Enemy::OnCollision(const Collision::Collider* _collider) {
         if (particle_) {
             Vector3 p = position_;
             p.y += 1.5f;
-            particle_->Edit("enemy_hit").SetPosition(p).Emit();
+            particle_->Emit("enemy_hit", p);
         }
 
         return;
@@ -306,7 +306,7 @@ void Enemy::OnCollision(const Collision::Collider* _collider) {
             if (particle_) {
                 Vector3 p = position_;
                 p.y += 1.5f;
-                particle_->Edit("enemy_hit").SetPosition(p).Emit();
+                particle_->Emit("enemy_hit", p);
             }
 
             if (status_.hp <= 0.f) {
@@ -410,6 +410,9 @@ void Enemy::UpdateMovement(float _deltaTime) {
     if (invincible_) {
         velocity_ *= 0.3f;
     }
+
+    velocity_ += externalForce_;
+    externalForce_ = {};
 }
 
 void Enemy::UpdateKnockback(float _deltaTime) {

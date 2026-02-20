@@ -31,6 +31,9 @@ void InputHandler::UpdateContext(MovementContext& context, const Vector3& curren
 
     // フラッシュ
     context.isFlashRequested = input_->IsTrigger(DIK_F);
+
+    // スキル (Qキー)
+    context.isSkillRequested = input_->IsTrigger(DIK_Q);
 }
 
 Vector3 InputHandler::GetMouseInWorld() const {

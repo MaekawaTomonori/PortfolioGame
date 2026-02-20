@@ -27,27 +27,24 @@ Player::Player(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
         movement_->AddBehavior(behavior.get());
     }
 
-    particle_->Register("hit", { 3.f, 2.f, 0.f })
+    particle_->RegisterUpdateFunc("hit_explosion", [](float t, const Vector3&, Vector3& pos, Vector3& velocity, Vector4& color) {
+        (void)pos;
+        if (t < 0.01f) {
+            velocity = Vector3::Random() * 8.0f;
+        }
+        velocity = velocity * 0.92f;
+        velocity.y -= 0.05f;
+        color.w = 0.9f * (.7f - t);
+    });
+
+    particle_->Register("hit")
         .AddEmitter({
             .texture = "white_x16.png",
-            .active = false,
-            .frequency = 0.5f,
             .duration = 0.7f,
             .spawnCount = 15,
             .size = {0.3f, 0.3f, 0.3f},
-            .velocity = {0.f, 0.f, 0.f},
-            .color = { 0.f, 0.2f, 1.f, 0.9f },
-            .updateFunc = [](float t, Vector3& velocity, Vector4& color) {
-                // ランダムな方向に爆発（初回のみ設定）
-                if (t < 0.01f) {
-                    velocity = Vector3::Random() * 8.0f;
-                }
-                // 減速と重力
-                velocity = velocity * 0.92f;
-                velocity.y -= 0.05f;
-                // フェードアウト
-                color.w = 0.9f * (.7f - t);
-            }
+            .color = {0.f, 0.2f, 1.f, 0.9f},
+            .updateFuncKey = "hit_explosion",
         });
     
     collider_ = std::make_unique<Collision::Collider>();
@@ -118,6 +115,15 @@ void Player::Update(const float _deltaTime) {
 #endif
         UpdateAttack();
 
+    // スキル発動
+    if (movementContext_.isSkillRequested && onSkillRequest_) {
+        Vector3 dir = (movementContext_.targetPosition - position_);
+        dir.y = 0.f;
+        if (dir.Length() > 0.01f) {
+            onSkillRequest_(position_, dir.Normalize());
+        }
+    }
+
     UpdateInvulnerability(_deltaTime);
 
     ApplyVelocity(_deltaTime);
@@ -184,7 +190,7 @@ void Player::OnCollision(const Collision::Collider* _collider) {
 
             Vector3 p = position_;
             p.y += 1.5f;
-            particle_->Edit("hit").SetPosition(p).Emit();
+            particle_->Emit("hit", p);
 
             model_->SetColor(DamageFlashColor);
 

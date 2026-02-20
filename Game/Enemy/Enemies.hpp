@@ -56,6 +56,8 @@ public:
 
     [[nodiscard]] uint16_t GetDeathCount() const;
 
+    [[nodiscard]] const std::vector<std::unique_ptr<Enemy>>& GetAll() const { return enemies_; }
+
 private:
     void Spawn();
     void LoadParams();

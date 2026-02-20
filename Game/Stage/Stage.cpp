@@ -21,14 +21,24 @@ void Stage::Setup(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
 
     player_ = std::make_unique<Player>(particle_, postEffect_);
     enemies_ = std::make_unique<Enemies>(particle_, status_);
+
+    skillManager_ = std::make_unique<SkillManager>();
+    skillManager_->SetEnemies(enemies_.get());
+    skillManager_->SetParticle(particle_);
+
+    player_->SetOnSkillRequest([this](const Vector3& _pos, const Vector3& _dir) {
+        skillManager_->SpawnBlackHole(_pos, _dir);
+    });
 }
 
-void Stage::Initialize() { 
+void Stage::Initialize() {
     player_->Initialize();
     player_->SetStatus(status_.playerStatus);
 
     enemies_->Initialize();
     enemies_->SetTarget(player_.get());
+
+    skillManager_->Initialize();
 }
 
 void Stage::Update() {
@@ -41,6 +51,8 @@ void Stage::Update() {
     }
 
     player_->Update(1.f / 60.f);
+
+    skillManager_->Update();
 }
 
 void Stage::Draw() const {
@@ -48,11 +60,13 @@ void Stage::Draw() const {
     terrain_->Draw();
     player_->Draw();
     enemies_->Draw();
+    skillManager_->Draw();
 }
 
-void Stage::Debug() const {
+void Stage::Debug() {
     player_->Debug();
     enemies_->Debug();
+    skillManager_->Debug();
 }
 
 Player* Stage::GetPlayer() const {

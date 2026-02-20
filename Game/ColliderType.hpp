@@ -6,6 +6,7 @@ enum class CollisionType {
     Player = 0b1,
     Enemy = 0b1 << 1,
     P_Bullet = 0b1 << 2,
+    Skill = 0b1 << 3,
 
 };
 

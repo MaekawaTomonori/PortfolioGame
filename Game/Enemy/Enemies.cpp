@@ -25,27 +25,24 @@ Enemies::Enemies(ParticleSystem* _particle, const GameStatus& _status) :status_(
     // 共有Commandを生成
     toTargetCommand_ = std::make_unique<ToTargetCommand>(3.0f, 0.5f);
 
-    particle_->Register("enemy_hit", {3.f, 2.f, 0.f})
+    particle_->RegisterUpdateFunc("enemy_hit_explosion", [](float t, const Vector3&, Vector3& pos, Vector3& velocity, Vector4& color) {
+        (void)pos;
+        if (t < 0.01f) {
+            velocity = Vector3::Random() * 6.0f;
+        }
+        velocity = velocity * 0.92f;
+        velocity.y -= 0.05f;
+        color.w = 0.9f * (.7f - t);
+    });
+
+    particle_->Register("enemy_hit")
         .AddEmitter({
             .texture = "white_x16.png",
-            .active = false,
-            .frequency = 0.5f,
             .duration = 0.7f,
             .spawnCount = 20,
             .size = {0.3f, 0.3f, 0.3f},
-            .velocity = {0.f, 0.f, 0.f},
             .color = {1.f, 0.2f, 0.2f, 0.9f},
-            .updateFunc = [](float t, Vector3& velocity, Vector4& color) {
-                // ランダムな方向に爆発（初回のみ設定）
-                if (t < 0.01f) {
-                    velocity = Vector3::Random() * 6.0f;
-                }
-                // 減速と重力
-                velocity = velocity * 0.92f;
-                velocity.y -= 0.05f;
-                // フェードアウト
-                color.w = 0.9f * (.7f - t);
-            }
+            .updateFuncKey = "enemy_hit_explosion",
         });
 
 #ifdef _DEBUG

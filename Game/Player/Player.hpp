@@ -13,6 +13,7 @@
 #include "Status/PlayerStatus.hpp"
 #include "InputHandler.hpp"
 #include "ParticleSystem/ParticleSystem.hpp"
+#include <functional>
 
 class Player : public GameObject {
     ParticleSystem* particle_ = nullptr;
@@ -67,7 +68,14 @@ public:
 
     void SetStatus(const PlayerStatus& _status);
 
+    /** @brief スキル発動時のコールバックを設定
+     ** @param _callback (発射位置, 発射方向) を受け取るコールバック
+     **/
+    void SetOnSkillRequest(std::function<void(const Vector3&, const Vector3&)> _callback) { onSkillRequest_ = std::move(_callback); }
+
 private:
+    std::function<void(const Vector3&, const Vector3&)> onSkillRequest_;
+
     void UpdateInvulnerability(float _deltaTime);
     void UpdateAttack();
 };

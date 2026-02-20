@@ -177,6 +177,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Ui\SkillTree\SkillTree.hpp" />
     <ClInclude Include="Ui\EventSystem.hpp" />
     <ClInclude Include="Ui\UserInterface.hpp" />
+    <ClInclude Include="Skill\ISkillEntity.hpp" />
+    <ClInclude Include="Skill\SkillManager.hpp" />
+    <ClInclude Include="Skill\BlackHole\BlackHole.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Bullet\Bullet.cpp" />
@@ -215,6 +218,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Ui\SkillTree\SkillTree.cpp" />
     <ClCompile Include="Ui\EventSystem.cpp" />
     <ClCompile Include="Ui\UserInterface.cpp" />
+    <ClCompile Include="Skill\SkillManager.cpp" />
+    <ClCompile Include="Skill\BlackHole\BlackHole.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Engine\Engine.vcxproj">
