@@ -22,7 +22,7 @@ void TitleScene::Initialize() {
     pushtoStart_->SetAnchorPoint({ .5f, 0.5f });
     pushtoStart_->SetPosition({ 640.f, 500.f });
 
-    Singleton<CameraDirector>::GetInstance()->Run("title", true);
+    Singleton<CameraDirector>::GetInstance()->Run("cp", true);
 
     //PostProcessExecutor* postProcessor_ = game_->GetPostProcessor();
     //postProcessor_->Add(std::make_unique<Grayscale>(),"Grayscale");
