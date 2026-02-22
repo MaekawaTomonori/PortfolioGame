@@ -21,6 +21,8 @@ class Stage {
     std::unique_ptr<Enemies> enemies_;
     std::unique_ptr<SkillManager> skillManager_;
 
+    float fogTimer_ = 0.f;
+
 public:
     Stage(GameStatus& _status) : status_(_status) {}
     void Setup(ParticleSystem* _particle, PostProcessExecutor* _postEffect);

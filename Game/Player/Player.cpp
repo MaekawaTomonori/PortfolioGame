@@ -82,7 +82,7 @@ void Player::Initialize() {
         1.f
     };
 
-    position_ = {0.f, 1.5f,-5.f};
+    position_ = {0.f, .5f,-5.f};
 
     attack_->Initialize();
     attack_->SetOwner(this);
