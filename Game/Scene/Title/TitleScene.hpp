@@ -20,7 +20,11 @@ public:
     void Initialize() override;
     void Update() override;
     void Draw() override;
+    void Debug() override;
     void Finalize() override;
+
+private:
+    void OnEnable() override;
 }; // class TitleScene
 
 #endif // TitleScene_HPP_

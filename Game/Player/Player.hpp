@@ -73,6 +73,7 @@ public:
      **/
     void SetOnSkillRequest(std::function<void(const Vector3&, const Vector3&)> _callback) { onSkillRequest_ = std::move(_callback); }
 
+    void UpdateWithoutInput();
 private:
     std::function<void(const Vector3&, const Vector3&)> onSkillRequest_;
 

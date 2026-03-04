@@ -15,7 +15,7 @@ void GameScene::Initialize() {
     status_ ={
         .point = 0,
         .time = 15,
-        .requirementKill = 10,
+        .requirementKill = 5,
         .maxEnemyCount = 5,
         .enemySpawnInterval = 2.f,
         .playerStatus = {
@@ -31,15 +31,15 @@ void GameScene::Initialize() {
     stage_->Initialize();
 
     followCamera_ = std::make_unique<FollowCamera>();
-    followCamera_->SetTarget(stage_->GetPlayer());
     followCamera_->Initialize();
+    followCamera_->SetTarget(stage_->GetPlayer());
     followCamera_->SetEnemies(stage_->GetEnemies());
     followCamera_->SetActive(false);
 
     stage_->SetCamera(followCamera_.get());
+    stage_->SetActive(false);
 
     intro_ = std::make_unique<Intro>();
-    intro_->Initialize();
 
     outro_ = std::make_unique<Outro>();
 
@@ -47,26 +47,28 @@ void GameScene::Initialize() {
     gameTimer_->Initialize();
     gameTimer_->SetDuration(status_.time);
     gameTimer_->SetPosition({640.f, 69.f});
-
+    
     pause_ = std::make_unique<Pause>();
     pause_->Initialize();
     pause_->SetOnRetry([this]{ next_ = "game"; Change(); });
     pause_->SetOnQuit([this]{ next_ = "title"; Change(); });
-
+    
     keyGuide_ = std::make_unique<KeyGuide>();
     keyGuide_->Initialize();
-
+    
     killCounter_ = std::make_unique<KillCounter>();
-    killCounter_->Initialize(stage_->GetEnemies(), status_.requirementKill);
-
+    
     skillTree_ = std::make_unique<SkillTree>();
     skillTree_->Initialize(&status_);
     skillTree_->SetOnContinue([this] {
-        gameTimer_->SetDuration(status_.time);
-        stage_->Initialize();
-        killCounter_->Initialize(stage_->GetEnemies(), status_.requirementKill);
-        state_ = PLAY;
-        skillTree_->Close();
+        PlayTransition(Transition::Type::Fade, [this] {
+            gameTimer_->SetDuration(status_.time);
+            stage_->Initialize();
+            killCounter_->Initialize(stage_->GetEnemies(), status_.requirementKill);
+            killCounter_->Update();
+            state_ = PLAY;
+            skillTree_->Close();
+        });
     });
 }
 
@@ -80,35 +82,19 @@ void GameScene::Update() {
         if (!intro_)break;
         intro_->Update();
         followCamera_->Update();
+
+        if (intro_->IsCameraDone()){
+            followCamera_->SetActive(true);
+        }
         if (intro_->IsFinish()) {
             state_ = PLAY;
-            followCamera_->SetActive(true);
+            stage_->SetActive(true);
+            killCounter_->Initialize(stage_->GetEnemies(), status_.requirementKill);
+            UpdatePlay();
         }
         break;
     case PLAY:
-        gameTimer_->Update(1.f/ 60.f);
-        stage_->Update();
-        followCamera_->Update();
-        keyGuide_->Update();
-        killCounter_->Update();
-        cManager_->Detect();
-        cManager_->ProcessEvent();
-
-        if (gameTimer_->IsDone()) {
-            state_ = UPGRADE;
-            status_.point += stage_->GetEnemies()->GetDeathCount();
-            skillTree_->Open();
-        }
-
-        // is clear
-        if (stage_->IsClear()) {
-            state_ = OUTRO;
-            PostEffect()->ApplyPreset("DarkScene", "replace", {}, [&] {
-                next_ = "gameclear";
-                Change();
-            });
-        }
-
+        UpdatePlay();
         break;
     case UPGRADE:
         skillTree_->Update();
@@ -157,4 +143,36 @@ void GameScene::Debug() {
     }
     ImGui::DragFloat("Enemy Spawn Interval", &status_.enemySpawnInterval, 0.1f, 0.f, 10.f);
     ImGui::End();
+}
+
+void GameScene::OnEnable() {
+    intro_->Initialize();
+}
+
+void GameScene::UpdatePlay() {
+    gameTimer_->Update(1.f / 60.f);
+    stage_->Update();
+    killCounter_->Update();
+    followCamera_->Update();
+    keyGuide_->Update();
+    cManager_->Detect();
+    cManager_->ProcessEvent();
+
+    if (gameTimer_->IsDone()) {
+        status_.point += stage_->GetEnemies()->GetDeathCount();
+        PlayTransition(Transition::Type::Fade, [this] {
+            state_ = UPGRADE;
+            skillTree_->Open();
+            skillTree_->Update();
+            });
+    }
+
+    // is clear
+    if (stage_->IsClear() || Singleton<Input>::GetInstance()->IsTrigger(DIK_T)) {
+        state_ = OUTRO;
+        PostEffect()->ApplyPreset("DarkScene", "replace", {}, [&] {
+            next_ = "gameclear";
+            Change();
+        });
+    }
 }

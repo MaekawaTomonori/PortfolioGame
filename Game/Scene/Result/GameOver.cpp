@@ -15,9 +15,6 @@ void GameOver::Initialize() {
     //bg_->SetPosition({640.f, 360.f});
     //bg_->SetSize({1280.f, 720.f});
 
-    alpha_ = 0.f;
-
-    PostEffect()->ApplyPreset("DarkScene");
 }
 
 void GameOver::Update() {
@@ -33,4 +30,9 @@ void GameOver::Update() {
 void GameOver::Draw() {
     //bg_->Draw();
     sprite_->Draw();
+}
+
+void GameOver::OnEnable() {
+    alpha_ = 0.f;
+    PostEffect()->ApplyPreset("DarkScene");
 }

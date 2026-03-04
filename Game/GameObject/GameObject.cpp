@@ -23,7 +23,6 @@ void GameObject::UpdateTransform() {
 
 void GameObject::ApplyVelocity(float deltaTime) {
     position_ += velocity_ * deltaTime;
-    UpdateTransform();
 }
 
 void GameObject::SetModel(const std::string& _name) {

@@ -1,25 +1,21 @@
 #include "SampleScene.hpp"
-#include "Framework.hpp"
-#include "imgui.h"
-#include "Random/RandomEngine.hpp"
-#include "include/Pattern/Singleton.hpp"
 
 void SampleScene::Initialize() {
     name_ = "sample";
 
-    status_ = std::make_unique<GameStatus>();
-
-    userInterface_ = std::make_unique<Ui::UserInterface>();
+    model_ = std::make_unique<Model>();
+    model_->Initialize("animatedCube");
+    model_->SetTranslate({0.f, .5f, -5.f});
+    model_->SetScale({0.4f, 0.4f, 0.4f});
 }
 
 void SampleScene::Update() {
-    userInterface_->Update();
+    model_->Update();
 }
 
 void SampleScene::Draw() {
-    userInterface_->Draw();
+    model_->Draw();
 }
 
 void SampleScene::Debug() {
-    userInterface_->StandaloneDebug();
 }

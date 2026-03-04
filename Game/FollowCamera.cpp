@@ -18,7 +18,8 @@ FollowCamera::~FollowCamera() {
 
 void FollowCamera::Initialize() {
     cameraController_ = Singleton<CameraController>::GetInstance();
-    cameraController_->GetActive()->transform_.translate = {0.f, 2.2f, -20.7f};
+    cameraController_->GetActive()->transform_.translate = { 0.f, 4.1f, -7.6f };
+    cameraController_->GetActive()->transform_.rotate = Vector3{0.89f, 0.f, 0.f};
 
     Load();
     UpdateCameraDistance();

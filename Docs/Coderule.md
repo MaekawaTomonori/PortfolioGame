@@ -1,12 +1,3 @@
-## 基礎思想
-- DRY（Don't Repeat Yourself）原則を意識
-- SOLID原則を意識
-  - Single Responsibility（単一責任）
-  - Open/Closed（開放閉鎖）
-  - Liskov Substitution（リスコフの置換）
-  - Interface Segregation（インターフェース分離）
-  - Dependency Inversion（依存性逆転）
-
 ## ファイル拡張子規則
 
 ### C++ファイル
@@ -71,8 +62,8 @@ public:
 1. private メンバ変数
 2. public コンストラクタ/デストラクタ
 3. public 関数
-4. private 関数
-5. public アクセサ（Get/Set関数）
+4. public アクセサ（Get/Set関数）
+5. private 関数
 
 ```c++
 class Sample {
@@ -82,14 +73,12 @@ class Sample {
 public:
     // Functions
     void Register();
+    // Accessor
+    int32_t GetId() const;
 
 private:
     // private funcs
     void CreateID();
-
-public:
-    // Accessor
-    int32_t GetId() const;
 };
 ```
 
@@ -270,10 +259,9 @@ class Sample {
 
 ### ネストした名前空間
 - ネストは名前空間ごとにインデントを上げる
-- C++17の簡潔な構文も使用可能
 
 ```c++
-// 従来型（ネストごとにインデント）
+// ネストごとにインデント
 namespace Engine {
     namespace Graphics {
         void Render();
@@ -281,15 +269,6 @@ namespace Engine {
     namespace Physics {
         void Update();
     }
-}
-
-// C++17スタイル（推奨）
-namespace Engine::Graphics {
-    void Render();
-}
-
-namespace Engine::Physics {
-    void Update();
 }
 ```
 

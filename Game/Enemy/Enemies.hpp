@@ -10,6 +10,8 @@
 #include "Status/GameStatus.hpp"
 
 class Enemies {
+    const float SIZE = 0.5f;
+    
     ParticleSystem* particle_ = nullptr;
     const GameStatus& status_;
 
@@ -30,6 +32,7 @@ class Enemies {
 
     // 敵の共通パラメータ
     Enemy::Params enemyParams_;
+    
 
 #ifdef _DEBUG
     bool autoSpawn_ = true;

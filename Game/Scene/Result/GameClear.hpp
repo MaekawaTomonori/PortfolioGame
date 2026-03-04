@@ -17,7 +17,7 @@ public:
     void Debug() override;
 
 private:
-
+    void OnEnable() override;
 }; // class GameClear
 
 #endif // GameClear_HPP_

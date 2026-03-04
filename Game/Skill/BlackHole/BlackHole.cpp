@@ -19,6 +19,7 @@ void BlackHole::Initialize(const Vector3& _position, const Vector3& _direction) 
     SetModel("sphere");
     model_->SetTexture("white_x16.png");
     model_->SetColor(params_->flyingColor);
+    model_->SetName("Skill_BlackHole");
     UpdateModel();
 
     collider_ = std::make_unique<Collision::Collider>();
@@ -75,16 +76,7 @@ void BlackHole::Initialize(const Vector3& _position, const Vector3& _direction) 
             color.w = std::max(0.f, 0.85f * (1.f - t * 1.1f));
         });
 
-        particle_->Register(particleGroupName_)
-            .AddEmitter({
-                .texture = "white_x16.png",
-                .duration = 2.2f,
-                .spawnCount = 8,
-                .size = {0.18f, 0.18f, 0.18f},
-                .color = {0.35f, 0.f, 0.9f, 0.85f},
-                .updateFuncKey = "bh_suction",
-                .spawnFuncKey = "bh_spawn",
-            });
+        particle_->Register(particleGroupName_);
     }
 }
 

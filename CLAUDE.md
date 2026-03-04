@@ -2,88 +2,31 @@
 
 このファイルは、このリポジトリでコードを操作する際のClaude Code (claude.ai/code) へのガイダンスを提供します。
 
-## ビルドコマンド
+## プロジェクト概要
 
-これはVisual Studio 2022を使用した2層ビルドシステムのC++20 DirectX12ベースのゲームエンジンです。
+ゲーム本体。
 
-```bash
-# ソリューション全体をビルド
-msbuild GameTemplate.sln /p:Configuration=Debug /p:Platform=x64
+## ディレクトリ構造
 
-# エンジンライブラリのみをビルド
-msbuild Engine/Engine.vcxproj /p:Configuration=Debug /p:Platform=x64
+- `Game/` - ゲームの子プロジェクト
+- `Engine/` - ゲームエンジンの子プロジェクト(DirectX12を主としている)。CLAUDE.mdを持つ独立的プロジェクト。
+- `Lib/` - ゲーム直接依存するゲームエンジン以外のライブラリ
+- `Assets/` - ゲームのリソースやコンフィグのGit更新用。操作の必要なし。
 
-# ゲーム実行ファイルのみをビルド  
-msbuild Game/Game.vcxproj /p:Configuration=Debug /p:Platform=x64
+- `Game/Assets` - アセット本体
+  - `Config/` - ImGuiのコンフィグ
+  - `Data/` - データ駆動用Json格納庫
+  - `Fonts/` - TTFなどのフォント
+  - `Resources` - 画像とモデル
+  - `Shaders/` - 描画用シェーダー(.hlsl)
 
-# ゲームを実行
-tools\Execute.bat
+## ビルド/テスト
 
-# クリーンビルド
-msbuild GameTemplate.sln /t:Clean /p:Configuration=Debug /p:Platform=x64
-```
+ビルドや起動テストはユーザーが行うためテストまで行う必要はない
+編集・提案の終了をもって、ユーザーが実行確認を行うものとする
 
-## アーキテクチャ概要
+## 詳細ドキュメント
 
-### コアフレームワーク構造
-- **エンジンライブラリ** (`Engine/`) - 静的ライブラリ（.lib）としてコンパイルされるコアシステム
-- **ゲーム実行ファイル** (`Game/`) - Engine.libとリンクするゲーム実装
-- **コンポーネントベースアーキテクチャ** 専門的なマネージャークラスを使用
-
-### 主要コンポーネント
-- `Framework.hpp` - メインアプリケーションループと初期化
-- `IGame` - ゲーム実装のベースインターフェース（`Game/MyGame.cpp`で継承）
-- `IScene` - ゲームシーンのベースインターフェース
-- `SceneSwitcher` - シーン遷移の管理
-- `DirectXAdapter` - DirectX12の初期化とデバイス管理
-- `ResourceRepository` - アセットの読み込みとキャッシュシステム
-
-### マネージャークラス
-- `CameraManager` - カメラシステム管理
-- `LightManager` - ライティングシステム
-- `TextureManager` - テクスチャの読み込みと管理
-- `ModelRepository` / `MeshRepository` - 3Dモデルアセットのキャッシュ
-
-### アセットパイプライン
-アセットは`Assets/`ディレクトリから読み込まれます：
-- **モデル**: `Assets/Resources/`内の`.gltf`、`.obj`、`.blend`ファイル
-- **テクスチャ**: `.png`ファイル
-- **シェーダー**: `Assets/Shaders/`内の`.hlsl`ファイル
-- **フォント**: `Assets/Fonts/`内の`.ttf`ファイル
-- **データ**: `Assets/Data/`内のJSON設定ファイル
-
-サポートされているローダー: `GltfLoader`（アニメーション付き）、`ObjLoader`
-
-### 開発ワークフロー
-1. `Game/MyGame.cpp`で`IGame`を継承してゲームロジックを実装
-2. `IScene`を継承してシーンを作成
-3. `Game/SceneFactory.cpp`でシーンを登録
-4. レンダリング、入力、アセット管理にはFrameworkマネージャークラスを使用
-5. アセットはResourceRepositoryによって自動的にキャッシュされます
-
-## コーディング規約
-- **C++20標準**
-- **4スペースインデント**
-- **UTF-8エンコーディング、CRLF改行**
-- 直接DirectX呼び出しよりもFrameworkマネージャーを使用
-- コンポーネントベースデザインパターンを優先
-
-## 依存関係
-- **DirectX 12**（Windows 10 SDK必須）
-- **vcpkg** パッケージ管理用
-- **imgui** デバッグUI用
-- **DirectXTex** テクスチャ処理用
-- **lwlog** ログ出力用
-
-## 設計思想・開発原則
-このプロジェクトの開発時は `design-philosophy.md` に記載された原則に従ってください：
-- **DRY原則**: コードの重複を避ける
-- **SOLID原則**: オブジェクト指向設計の5原則を遵守
-- **コンポーネント指向**: 疎結合・高凝集なコンポーネント設計
-
-新機能の提案や既存コードの改修時には、これらの原則に沿った実装を心がけてください。
-
-## よくある問題
-- Windows 10 SDKとVisual Studio 2022 v143ツールセットがインストールされていることを確認
-- ビルド順序: EngineプロジェクトがGameプロジェクトより先にコンパイルされる必要があります
-- 自動読み込みのため、アセットは正しい`Assets/`サブディレクトリに配置する必要があります
+ - ゲーム企画 : `Docs/game.md`
+ - 設計思想 : `Docs/design-philosophy.md`
+ - コードルール : `Docs/Coderule.md`

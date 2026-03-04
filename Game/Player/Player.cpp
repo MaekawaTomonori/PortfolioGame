@@ -13,19 +13,7 @@ Player::Player(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
     particle_ = _particle;
     postEffect_ = _postEffect;
 
-    inputHandler_ = std::make_unique<InputHandler>();
-    inputHandler_->Initialize();
-
-    movement_ = std::make_unique<Movement>();
-    movement_->Initialize(this);
-
-    behaviors_.push_back(std::make_unique<FlashBehavior>(5.0f, 3.0f));
-    behaviors_.push_back(std::make_unique<DashBehavior>(10.0f, 0.3f, 1.0f));
-    behaviors_.push_back(std::make_unique<WalkBehavior>(5.0f));
-
-    for (auto& behavior : behaviors_) {
-        movement_->AddBehavior(behavior.get());
-    }
+    position_ = { 0.f, .5f,-5.f };
 
     particle_->RegisterUpdateFunc("hit_explosion", [](float t, const Vector3&, Vector3& pos, Vector3& velocity, Vector4& color) {
         (void)pos;
@@ -37,21 +25,13 @@ Player::Player(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
         color.w = 0.9f * (.7f - t);
     });
 
-    particle_->Register("hit")
-        .AddEmitter({
-            .texture = "white_x16.png",
-            .duration = 0.7f,
-            .spawnCount = 15,
-            .size = {0.3f, 0.3f, 0.3f},
-            .color = {0.f, 0.2f, 1.f, 0.9f},
-            .updateFuncKey = "hit_explosion",
-        });
+    particle_->Register("hit");
     
     collider_ = std::make_unique<Collision::Collider>();
     collider_->SetEvent(Collision::EventType::Trigger, [this](const Collision::Collider* _collider) {OnCollision(_collider); })
         ->SetTranslate({ position_.x, position_.y, position_.z })
         ->SetType(Collision::Type::AABB)
-        ->SetSize(Collision::Vec3{ 1.f, 1.f, 1.f })
+        ->SetSize(Collision::Vec3{ .3f, .3f, .3f })
         ->SetOwner(this)
         ->AddAttribute(static_cast<uint32_t>(CollisionType::Player))
         ->AddIgnore(static_cast<uint32_t>(CollisionType::P_Bullet))
@@ -60,10 +40,14 @@ Player::Player(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
     SetModel("animatedCube");
     model_->SetTexture("white_x16.png");
     model_->SetColor(BaseColor);
-
-    attack_ = std::make_unique<Attack>();
-
+    model_->SetName("Player");
     SetScale({0.4f, 0.4f, 0.4f});
+    UpdateModel();
+
+    // Modules
+    inputHandler_ = std::make_unique<InputHandler>();
+    movement_ = std::make_unique<Movement>();
+    attack_ = std::make_unique<Attack>();
 
 #ifdef _DEBUG
     reticle_ = std::make_unique<Model>();
@@ -82,11 +66,23 @@ void Player::Initialize() {
         1.f
     };
 
-    position_ = {0.f, .5f,-5.f};
+    inputHandler_->Initialize();
+
+    movement_->Initialize(this);
+
+    behaviors_.push_back(std::make_unique<FlashBehavior>(5.0f, 3.0f));
+    behaviors_.push_back(std::make_unique<DashBehavior>(10.0f, 0.3f, 1.0f));
+    behaviors_.push_back(std::make_unique<WalkBehavior>(5.0f));
+
+    for (auto& behavior : behaviors_) {
+        movement_->AddBehavior(behavior.get());
+    }
 
     attack_->Initialize();
     attack_->SetOwner(this);
 
+    forLight_ = position_;
+    forLight_.y += 3.f;
     Singleton<LightManager>::GetInstance()->SetPosition(forLight_);
 }
 
@@ -98,12 +94,6 @@ void Player::Update(const float _deltaTime) {
     }
 
 #ifdef _DEBUG
-
-    if (reticle_) {
-        reticle_->SetTranslate(movementContext_.targetPosition);
-        reticle_->Update();
-    }
-
     if (!no_move)
 #endif
         if (movement_) {
@@ -146,12 +136,6 @@ void Player::Draw() {
 #endif
           attack_->Draw();
     }
-
-#ifdef _DEBUG
-    if (reticle_) {
-        reticle_->Draw();
-    }
-#endif
 
     model_->Draw();
 }
@@ -209,6 +193,16 @@ void Player::SetCamera(FollowCamera* _camera) {
 
 void Player::SetStatus(const PlayerStatus& _status) {
     status_ = _status;
+}
+
+void Player::UpdateWithoutInput() {
+    forLight_ = position_;
+    forLight_.y += 3.0f;
+    Singleton<LightManager>::GetInstance()->SetPosition(forLight_);
+
+    if (model_) {
+        UpdateModel();
+    }
 }
 
 void Player::UpdateInvulnerability(const float _deltaTime) {

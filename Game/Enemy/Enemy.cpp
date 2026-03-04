@@ -5,6 +5,7 @@
 
 void Enemy::Initialize() {
     SetModel("animatedcube");
+    model_->SetName("Enemy");
     model_->SetTexture("white_x16.png");
     model_->SetColor({1.f, 0.3f, 0.3f, 1.f});
 
@@ -39,7 +40,6 @@ void Enemy::Initialize() {
 
 void Enemy::Update(float deltaTime) {
     if (!active_) return;
-
 
     // 死亡演出中は特別処理
     if (dying_) {
@@ -371,7 +371,7 @@ void Enemy::UpdatePulse(float _deltaTime) {
         // 終了
         scalePulse_ = false;
         pulseTimer_ = 0.f;
-        scale_ = Vector3{1.f, 1.f, 1.f};
+        scale_ = Vector3{0.5f, 0.5f, 0.5f};
         return;
     }
 
@@ -379,11 +379,10 @@ void Enemy::UpdatePulse(float _deltaTime) {
     float progress = pulseTimer_ / pulseDuration_;
 
     // sin波で滑らかに (0 → 1 → 0)
-    constexpr float PI = 3.14159265f;
-    float curve = std::sin(progress * PI);
+    float curve = std::sin(progress * MathUtils::F_PI);
 
-    // スケール計算 (1.0 → 1.2 → 1.0)
-    float scaleFactor = 1.0f + (curve * 0.2f);
+    // スケール計算 (0.5 → 0.6 → 0.5)
+    float scaleFactor = 0.5f * (1.0f + curve * 0.2f);
     scale_ = Vector3{scaleFactor, scaleFactor, scaleFactor};
 }
 
@@ -468,8 +467,8 @@ void Enemy::UpdateDeath(float _deltaTime) {
         // === フェーズ1: 膨張 ===
         float phase1Progress = progress / 0.3f;  // 0.0 → 1.0
 
-        // スケール: 1.0 → 1.3 に膨張
-        float scaleValue = MathUtils::Lerp(1.0f, 1.3f, phase1Progress);
+        // スケール: 0.5 → 0.65 に膨張
+        float scaleValue = MathUtils::Lerp(0.5f, 0.65f, phase1Progress);
         scale_ = Vector3{scaleValue, scaleValue, scaleValue};
 
         // 色: 白く光る
@@ -482,8 +481,8 @@ void Enemy::UpdateDeath(float _deltaTime) {
         // === フェーズ2: 縮小＆フェードアウト ===
         float phase2Progress = (progress - 0.3f) / 0.5f;  // 0.0 → 1.0
 
-        // スケール: 1.5 → 0.0 に縮小
-        float scaleValue = MathUtils::Lerp(1.5f, 0.0f, phase2Progress);
+        // スケール: 0.75 → 0.0 に縮小
+        float scaleValue = MathUtils::Lerp(0.75f, 0.0f, phase2Progress);
         scale_ = Vector3{scaleValue, scaleValue, scaleValue};
 
         // 色: 白 → 透明へフェードアウト
@@ -588,8 +587,8 @@ void Enemy::UpdateCharging(float _deltaTime) {
 
     // 2. スケールパルス（溜めている感じ）
     float pulseFrequency = 10.0f;
-    float pulse = std::sin(dashChargeTime_ * pulseFrequency) * 0.05f * progress;
-    float scaleValue = 1.0f + pulse;
+    float pulse = std::sin(dashChargeTime_ * pulseFrequency) * 0.025f * progress;
+    float scaleValue = 0.5f + pulse;
     scale_ = Vector3{scaleValue, scaleValue, scaleValue};
 
     // 3. 予測線の更新
@@ -622,7 +621,7 @@ void Enemy::UpdateDashing(float _deltaTime) {
 
         // 元の色に戻す
         model_->SetColor({1.f, 0.3f, 0.3f, 1.f});
-        scale_ = Vector3{1.f, 1.f, 1.f};
+        scale_ = Vector3{0.5f, 0.5f, 0.5f};
     }
 }
 

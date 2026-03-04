@@ -30,15 +30,16 @@ void Bullet::Initialize() {
     type_ = owner_->GetType();
     position_ = owner_->GetPosition();
     scale_ = { 0.3f, 0.3f, 0.3f };
-    SetModel("animatedcube");
+    SetModel("animatedCube");
     model_->SetTexture("white_x16.png");
+    model_->SetName("Bullet");
     UpdateModel();
 
     collider_ = std::make_unique<Collision::Collider>();
     collider_->SetEvent(Collision::EventType::Trigger, [this](const Collision::Collider* _pCol) { this->OnCollision(_pCol); })
         ->SetOwner(this)
         ->SetType(Collision::Type::Sphere)
-        ->SetSize(0.15f)
+        ->SetSize(0.3f)
         ->SetTranslate({ position_.x, position_.y, position_.z })
         ->AddAttribute(static_cast<uint32_t>(CollisionType::P_Bullet))
         ->AddIgnore(static_cast<uint32_t>(CollisionType::Player))

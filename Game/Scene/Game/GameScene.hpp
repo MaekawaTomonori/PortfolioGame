@@ -53,6 +53,9 @@ public:
     void Debug() override;
 
 private:
+    void OnEnable() override;
+
+    void UpdatePlay();
 
 }; // class GameScene
 

@@ -23,6 +23,7 @@ void Stage::Setup(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
     terrain_->SetRotate({ -(MathUtils::F_PI / 2.f), 0.f, 0.f });
     terrain_->SetEnvironmentTexture("rostock.dds");
     terrain_->SetTexture("tile.png");
+    terrain_->SetName("Field");
 
     player_ = std::make_unique<Player>(particle_, postEffect_);
     enemies_ = std::make_unique<Enemies>(particle_, status_);
@@ -36,22 +37,24 @@ void Stage::Setup(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
     });
 
     // フィールドの暗闇感を演出する霧エフェクトのスポーン関数（発生中心の周囲にランダム配置）
-    particle_->RegisterSpawnFunc("field_fog_spawn", [](const Vector3& center, Vector3& pos, Vector3& vel) {
-        float angle = MathUtils::Random(0.f, MathUtils::F_PI * 2.f);
-        float radius = MathUtils::Random(0.5f, 10.5f);
-        pos = {
-            center.x + std::cos(angle) * radius,
-            center.y + MathUtils::Random(-0.2f, 0.3f),
-            center.z + std::sin(angle) * radius,
-        };
-        float horizAngle = MathUtils::Random(0.f, MathUtils::F_PI * 2.f);
-        float horizSpeed = MathUtils::Random(0.f, 0.2f);
-        vel = {
-            std::cos(horizAngle) * horizSpeed,
-            MathUtils::Random(0.35f, 0.65f),
-            std::sin(horizAngle) * horizSpeed,
-        };
-    });
+    particle_->RegisterSpawnFunc("field_fog_spawn", 
+        [](const Vector3& center, Vector3& pos, Vector3& vel) {
+            float angle = MathUtils::Random(0.f, MathUtils::F_PI * 2.f);
+            float radius = MathUtils::Random(0.5f, 10.5f);
+            pos = {
+                center.x + std::cos(angle) * radius,
+                center.y + MathUtils::Random(-0.2f, 0.3f),
+                center.z + std::sin(angle) * radius,
+            };
+            float horizAngle = MathUtils::Random(0.f, MathUtils::F_PI * 2.f);
+            float horizSpeed = MathUtils::Random(0.f, 0.2f);
+            vel = {
+                std::cos(horizAngle) * horizSpeed,
+                MathUtils::Random(0.35f, 0.65f),
+                std::sin(horizAngle) * horizSpeed,
+            };
+        }
+    );
 
     // フィールド霧エフェクトの更新関数（上昇しながらフェードアウト）
     particle_->RegisterUpdateFunc("field_fog_update",
@@ -66,19 +69,8 @@ void Stage::Setup(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
             color.x = 0.32f;
             color.y = 0.28f;
             color.z = 0.42f;
-        });
-
-    particle_->Register("field")
-        .AddEmitter({
-            .texture = "white_x16.png",
-            .frequency = 0.06f,
-            .duration = 1.5f,
-            .spawnCount = 10,
-            .size = {0.2f, 0.2f, 0.2f},
-            .color = {0.32f, 0.28f, 0.42f, 0.f},
-            .updateFuncKey = "field_fog_update",
-            .spawnFuncKey = "field_fog_spawn",
-        });
+        }
+    );
 }
 
 void Stage::Initialize() {
@@ -92,8 +84,18 @@ void Stage::Initialize() {
 }
 
 void Stage::Update() {
+    if (active_ != pending_) {
+        active_ = pending_;
+    }
+
     skybox_->Update();
     terrain_->Update();
+
+    if (!active_) {
+        player_->UpdateWithoutInput();
+        return;
+    }
+
     enemies_->Update();
 
     if (!enemies_->Empty()) {

@@ -22,6 +22,8 @@ class Stage {
     std::unique_ptr<SkillManager> skillManager_;
 
     float fogTimer_ = 0.f;
+    bool active_ = true;
+    bool pending_ = false;
 
 public:
     Stage(GameStatus& _status) : status_(_status) {}
@@ -31,13 +33,16 @@ public:
     void Draw() const;
     void Debug();
 
+    void SetActive(bool _active) { pending_ = _active; }
+    bool IsActive() const { return active_; }
+
     //Getter
     [[nodiscard]] Player* GetPlayer() const;
     [[nodiscard]] Enemies* GetEnemies() const;
 
-    void SetCamera(FollowCamera* _camera) const;
-
     bool IsClear() const;
+
+    void SetCamera(FollowCamera* _camera) const;
 }; // class Stage
 
 #endif // Stage_HPP_

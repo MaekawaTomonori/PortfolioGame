@@ -35,16 +35,6 @@ Enemies::Enemies(ParticleSystem* _particle, const GameStatus& _status) :status_(
         color.w = 0.9f * (.7f - t);
     });
 
-    particle_->Register("enemy_hit")
-        .AddEmitter({
-            .texture = "white_x16.png",
-            .duration = 0.7f,
-            .spawnCount = 20,
-            .size = {0.3f, 0.3f, 0.3f},
-            .color = {1.f, 0.2f, 0.2f, 0.9f},
-            .updateFuncKey = "enemy_hit_explosion",
-        });
-
 #ifdef _DEBUG
     line_.Initialize();
     line_.SetName("Enemies");
@@ -314,11 +304,12 @@ void Enemies::Spawn() {
 
     Vector3 position = target_->GetPosition();
     position += Vector3::Random().Normalize() * MathUtils::Random(distance_.x, distance_.y);
-    position.y = 1.5f;
+    position.y = .5f;
 
     std::unique_ptr<Enemy> enemy = std::make_unique<Enemy>();
     enemy->Initialize();
     enemy->SetPosition(position);
+    enemy->SetScale({SIZE, SIZE, SIZE});
     enemy->SetParticleSystem(particle_);
     enemy->SetTarget(target_);
 

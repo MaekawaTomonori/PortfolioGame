@@ -24,6 +24,8 @@ namespace Ui {
     }
 
     void UserInterface::Update() {
+        //if (!active_) return;
+
         if (reload_) {
             reload_ = false;
 
@@ -38,6 +40,8 @@ namespace Ui {
     }
 
     void UserInterface::Draw() const {
+        if (!active_) return;
+
         for (auto& element : elements_) {
             if (!element->IsVisible()) continue;
             element->Draw();
