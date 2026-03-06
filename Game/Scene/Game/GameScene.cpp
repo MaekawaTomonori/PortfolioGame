@@ -70,7 +70,7 @@ void GameScene::Initialize() {
             skillTree_->Close();
         });
     });
-
+#ifdef _DEBUG
     Debugger::WatchGroup("Stage")
         .Watch("Time",               &status_.time)
         .Watch("MaxEnemyCount",      &status_.maxEnemyCount)
@@ -83,7 +83,7 @@ void GameScene::Initialize() {
         .Watch("Damage", &status_.playerStatus.damage)
         .Watch("MS",     &status_.playerStatus.ms)
         .Watch("AS",     &status_.playerStatus.as);
-
+#endif
 }
 
 void GameScene::Update() {
