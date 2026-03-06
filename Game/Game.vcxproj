@@ -42,7 +42,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LinkIncremental>true</LinkIncremental>
+    <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)out\$(Platform)\$(Configuration)\$(ProjectName)\\</OutDir>
     <IntDir>$(SolutionDir)out\$(Platform)\$(Configuration)\$(ProjectName)\bin\</IntDir>
     <TargetName>Game</TargetName>
@@ -63,7 +63,7 @@
       <WarningLevel>Level4</WarningLevel>
       <TreatWarningAsError>true</TreatWarningAsError>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir).;$(SolutionDir)Engine\include;$(SolutionDir)Engine\src;$(SolutionDir)Engine\externals\assimp\include;$(SolutionDir)Engine\externals\imgui;$(SolutionDir)Engine\externals\DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir).;$(SolutionDir)Engine\;$(SolutionDir)Engine\include;$(SolutionDir)Engine\src;$(SolutionDir)Engine\externals\assimp\include;$(SolutionDir)Engine\externals\imgui;$(SolutionDir)Engine\externals\DirectXTex;$(SolutionDir)Engine\externals\json;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -101,7 +101,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <WarningLevel>Level4</WarningLevel>
       <TreatWarningAsError>true</TreatWarningAsError>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir).;$(SolutionDir)Engine\include;$(SolutionDir)Engine\src;$(SolutionDir)Engine\externals\assimp\include;$(SolutionDir)Engine\externals\imgui;$(SolutionDir)Engine\externals\DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir).;$(SolutionDir)Engine\;$(SolutionDir)Engine\include;$(SolutionDir)Engine\src;$(SolutionDir)Engine\externals\assimp\include;$(SolutionDir)Engine\externals\imgui;$(SolutionDir)Engine\externals\DirectXTex;$(SolutionDir)Engine\externals\json;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>MinSpace</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -162,7 +162,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Factory\PostEffectFactory.hpp" />
     <ClInclude Include="Player\InputHandler.hpp" />
     <ClInclude Include="Player\Status\PlayerStatus.hpp" />
-    <ClInclude Include="SceneRegister.hpp" />
     <ClInclude Include="Scene\Game\GameScene.hpp" />
     <ClInclude Include="Scene\Result\GameClear.hpp" />
     <ClInclude Include="Scene\Result\GameOver.hpp" />
@@ -171,10 +170,13 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Showcase\ItemShowcase.hpp" />
     <ClInclude Include="Stage\Stage.hpp" />
     <ClInclude Include="Status\GameStatus.hpp" />
-    <ClInclude Include="Ui\Element\Element.hpp" />
     <ClInclude Include="Ui\KeyGuide\KeyGuide.hpp" />
+    <ClInclude Include="Ui\KillCount\KillCounter.hpp" />
+    <ClInclude Include="Ui\Pause\Pause.hpp" />
     <ClInclude Include="Ui\SkillTree\SkillTree.hpp" />
-    <ClInclude Include="Ui\UserInterface.hpp" />
+    <ClInclude Include="Skill\ISkillEntity.hpp" />
+    <ClInclude Include="Skill\SkillManager.hpp" />
+    <ClInclude Include="Skill\BlackHole\BlackHole.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Bullet\Bullet.cpp" />
@@ -198,7 +200,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Player\Player.cpp" />
     <ClCompile Include="Player\InputHandler.cpp" />
     <ClCompile Include="PostEffectFactory.cpp" />
-    <ClCompile Include="SceneRegister.cpp" />
     <ClCompile Include="Scene\Game\GameScene.cpp" />
     <ClCompile Include="Scene\Result\GameClear.cpp" />
     <ClCompile Include="Scene\Result\GameOver.cpp" />
@@ -207,17 +208,22 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Scene\Title\TitleScene.cpp" />
     <ClCompile Include="Showcase\ItemShowcase.cpp" />
     <ClCompile Include="Stage\Stage.cpp" />
-    <ClCompile Include="Ui\Element\Element.cpp" />
     <ClCompile Include="Ui\KeyGuide\KeyGuide.cpp" />
+    <ClCompile Include="Ui\KillCount\KillCounter.cpp" />
+    <ClCompile Include="Ui\Pause\Pause.cpp" />
     <ClCompile Include="Ui\SkillTree\SkillTree.cpp" />
-    <ClCompile Include="Ui\UserInterface.cpp" />
+    <ClCompile Include="Skill\SkillManager.cpp" />
+    <ClCompile Include="Skill\BlackHole\BlackHole.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Engine\Engine.vcxproj">
       <Project>{DBC7D3B0-C769-FE86-B024-12DB9C6585D7}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\Lib\Collision\CollisionLib.vcxproj">
+    <ProjectReference Include="..\Engine\Lib\Collision\CollisionLib.vcxproj">
       <Project>{3b4663f4-d09b-4503-aeb0-b2477444918f}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Engine\Lib\Misc\Misc.vcxproj">
+      <Project>{a1b2c3d4-e5f6-7890-abcd-ef1234567890}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

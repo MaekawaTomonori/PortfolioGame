@@ -15,6 +15,7 @@ struct MovementContext {
     bool isDashRequested = false;
     bool isJumpRequested = false;
     bool isFlashRequested = false;
+    bool isSkillRequested = false;
 
     GameObject* owner = nullptr;
     GameObject* target = nullptr;
@@ -28,6 +29,7 @@ struct MovementContext {
         isDashRequested = false;
         isJumpRequested = false;
         isFlashRequested = false;
+        isSkillRequested = false;
         owner = nullptr;
         target = nullptr;
     }

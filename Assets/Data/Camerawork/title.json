@@ -1,40 +1,81 @@
 {
-    "Camerawork": {
-        "title": {
-            "duration": 5.0,
-            "order": [
-                "Start",
-                "Point1",
-                "Start"
+    "duration": 5.0,
+    "keyframes": [
+        {
+            "controlPoint": [
+                -9.100000381469727,
+                2.200000047683716,
+                0.0
             ],
-            "points": [
-                {
-                    "name": "Start",
-                    "position": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "rotation": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ]
-                },
-                {
-                    "name": "Point1",
-                    "position": [
-                        1.100000023841858,
-                        1.100000023841858,
-                        -44.79999923706055
-                    ],
-                    "rotation": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ]
-                }
-            ]
+            "lookAtTarget": [
+                0.0,
+                6.0,
+                0.0
+            ],
+            "name": "Start",
+            "pathType": "Bezier",
+            "position": [
+                0.0,
+                2.200000047683716,
+                -20.0
+            ],
+            "rotation": [
+                0.0,
+                0.12999999523162842
+            ],
+            "timeEasing": "Linear",
+            "useLookAt": false
+        },
+        {
+            "controlPoint": [
+                9.100000381469727,
+                2.0,
+                0.0
+            ],
+            "lookAtTarget": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "name": "Point1",
+            "pathType": "Bezier",
+            "position": [
+                0.0,
+                5.800000190734863,
+                20.0
+            ],
+            "rotation": [
+                3.119999885559082,
+                0.11999999731779099
+            ],
+            "timeEasing": "Linear",
+            "useLookAt": false
+        },
+        {
+            "controlPoint": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "lookAtTarget": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "name": "Start",
+            "pathType": "Linear",
+            "position": [
+                0.0,
+                2.200000047683716,
+                -20.0
+            ],
+            "rotation": [
+                6.28000020980835,
+                0.12999999523162842
+            ],
+            "timeEasing": "Linear",
+            "useLookAt": false
         }
-    }
+    ],
+    "version": 2
 }

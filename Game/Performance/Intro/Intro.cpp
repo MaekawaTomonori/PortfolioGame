@@ -13,7 +13,8 @@ void Intro::Initialize() {
     sprite_->Initialize("intro.png");
     sprite_->SetPosition({640, 360});
 
-    Singleton<CameraDirector>::GetInstance()->Run("intro");
+    Singleton<CameraDirector>::GetInstance()->SetAnchor({0.f, 0.f, -5.f});
+    Singleton<CameraDirector>::GetInstance()->Run("intro", false, true);
 }
 
 void Intro::Update() {
@@ -30,8 +31,6 @@ void Intro::Update() {
     if (time_ >= duration_) {
         spriteDone_ = true;
     }
-
-    sprite_->Update();
 }
 
 void Intro::Draw() {

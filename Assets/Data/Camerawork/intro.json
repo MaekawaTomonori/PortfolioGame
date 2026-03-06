@@ -1,59 +1,55 @@
 {
-    "Camerawork": {
-        "intro": {
-            "duration": 2.0,
-            "points": [
-                {
-                    "name": "Start",
-                    "position": [
-                        0.0,
-                        0.5,
-                        -3.0
-                    ],
-                    "rotation": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "useLookAt": false
-                },
-                {
-                    "name": "end",
-                    "position": [
-                        0.0,
-                        22.200000762939453,
-                        -8.399999618530273
-                    ],
-                    "rotation": [
-                        0.0,
-                        1.2000000476837158,
-                        0.0
-                    ],
-                    "useLookAt": false
-                },
-                {
-                    "name": "Point2",
-                    "position": [
-                        0.0,
-                        22.200000762939453,
-                        -8.399999618530273
-                    ],
-                    "rotation": [
-                        0.0,
-                        1.3700000047683716,
-                        0.0
-                    ],
-                    "useLookAt": false
-                }
+    "duration": 4.5,
+    "keyframes": [
+        {
+            "controlPoint": [
+                0.0,
+                18.0,
+                -12.600000381469727
             ],
-            "segments": [
-                {
-                    "end": "end",
-                    "positionType": "Linear",
-                    "rotationType": "EaseOutCubic",
-                    "start": "Start"
-                }
-            ]
+            "lookAtTarget": [
+                0.0,
+                0.8999999761581421,
+                0.0
+            ],
+            "name": "CloseUp",
+            "pathType": "Bezier",
+            "position": [
+                0.0,
+                4.099999904632568,
+                -2.5999999046325684
+            ],
+            "rotation": [
+                0.0,
+                0.0
+            ],
+            "timeEasing": "EaseInOutCubic",
+            "useLookAt": true
+        },
+        {
+            "controlPoint": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "lookAtTarget": [
+                0.0,
+                0.5,
+                0.0
+            ],
+            "name": "GameView",
+            "pathType": "Linear",
+            "position": [
+                8.799059449024673e-20,
+                21.282947540283203,
+                -9.664852142333984
+            ],
+            "rotation": [
+                0.0,
+                1.350000023841858
+            ],
+            "timeEasing": "Linear",
+            "useLookAt": true
         }
-    }
+    ]
 }

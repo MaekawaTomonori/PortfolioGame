@@ -5,16 +5,10 @@
 #include "Camera/Controller/CameraController.hpp"
 #include "Light/LightManager.hpp"
 #include "Pattern/Singleton.hpp"
-#include "src/Random/RandomEngine.hpp"
+#include "Random/RandomEngine.hpp"
 
 void GameClear::Initialize() {
     entryTransition_ = Transition::Type::Fade;
-
-    Singleton<CameraController>::GetInstance()->GetActive()->transform_ = {
-        {1,1,1},
-        Vector3{0.2f, 0.f, 0.f},
-        {0.f, 2.5f, -11.1f}
-    };
 
     std::unique_ptr<Model> model = std::make_unique<Model>();
     model->Initialize("animatedcube");
@@ -42,7 +36,6 @@ void GameClear::Update() {
     }
 
     showcase_->Update();
-    sprite_->Update();
 }
 
 void GameClear::Draw() {
@@ -52,4 +45,12 @@ void GameClear::Draw() {
 
 void GameClear::Debug() {
 
+}
+
+void GameClear::OnEnable() {
+    Singleton<CameraController>::GetInstance()->GetActive()->transform_ = {
+        {1,1,1},
+        Vector3{0.2f, 0.f, 0.f},
+        {0.f, 2.5f, -11.1f}
+    };
 }

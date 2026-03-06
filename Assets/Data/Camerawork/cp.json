@@ -1,0 +1,130 @@
+{
+    "duration": 10.0,
+    "keyframes": [
+        {
+            "controlPoint": [
+                -20.0,
+                5.0,
+                -20.0
+            ],
+            "lookAtTarget": [
+                0.0,
+                0.5,
+                -1.0
+            ],
+            "name": "P0",
+            "pathType": "Bezier",
+            "position": [
+                0.0,
+                5.0,
+                -20.0
+            ],
+            "rotation": [
+                0.0,
+                0.0
+            ],
+            "timeEasing": "Linear",
+            "useLookAt": true
+        },
+        {
+            "controlPoint": [
+                -20.0,
+                5.0,
+                20.0
+            ],
+            "lookAtTarget": [
+                0.0,
+                0.5,
+                -1.0
+            ],
+            "name": "P1",
+            "pathType": "Bezier",
+            "position": [
+                -20.0,
+                5.0,
+                0.0
+            ],
+            "rotation": [
+                0.0,
+                0.0
+            ],
+            "timeEasing": "Linear",
+            "useLookAt": true
+        },
+        {
+            "controlPoint": [
+                20.0,
+                5.0,
+                20.0
+            ],
+            "lookAtTarget": [
+                0.0,
+                0.5,
+                -1.0
+            ],
+            "name": "P2",
+            "pathType": "Bezier",
+            "position": [
+                0.0,
+                5.0,
+                20.0
+            ],
+            "rotation": [
+                0.0,
+                0.0
+            ],
+            "timeEasing": "Linear",
+            "useLookAt": true
+        },
+        {
+            "controlPoint": [
+                20.0,
+                5.0,
+                -20.0
+            ],
+            "lookAtTarget": [
+                0.0,
+                0.5,
+                -1.0
+            ],
+            "name": "P3",
+            "pathType": "Bezier",
+            "position": [
+                20.0,
+                5.0,
+                0.0
+            ],
+            "rotation": [
+                0.0,
+                0.0
+            ],
+            "timeEasing": "Linear",
+            "useLookAt": true
+        },
+        {
+            "controlPoint": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "lookAtTarget": [
+                0.0,
+                0.5,
+                -1.0
+            ],
+            "name": "P4",
+            "pathType": "Linear",
+            "position": [
+                0.0,
+                5.0,
+                -20.0
+            ],
+            "rotation": [
+                0.0,
+                0.0
+            ],
+            "timeEasing": "Linear",
+            "useLookAt": true
+        }
+    ]
+}

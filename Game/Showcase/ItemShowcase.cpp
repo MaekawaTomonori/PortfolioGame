@@ -58,7 +58,7 @@ ItemShowcase& ItemShowcase::SetWaveAmplitude(float _amplitude) {
 
 void ItemShowcase::Debug() {
     ImGui::Begin("ItemShowcase");
-    ImGui::PushID(model_->GetUniqueId().c_str());
+    ImGui::PushID(model_->GetName().c_str());
     if (ImGui::CollapsingHeader("ItemShowcase")) {
         ImGui::Text("Position : ");
         ImGui::SameLine();

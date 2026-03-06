@@ -1,0 +1,86 @@
+{
+    "duration": 6.0,
+    "keyframes": [
+        {
+            "controlPoint": [
+                -20.0,
+                4.8,
+                -20.0
+            ],
+            "lookAtTarget": [0.0, 3.0, 0.0],
+            "name": "P0",
+            "pathType": "Bezier",
+            "position": [0.0, 4.5, -20.0],
+            "rotation": [0.0, 0.18000000715255737],
+            "timeEasing": "Linear",
+            "useLookAt": false
+        },
+        {
+            "controlPoint": [
+                -20.0,
+                5.8,
+                -20.0
+            ],
+            "lookAtTarget": [0.0, 3.0, 0.0],
+            "name": "P1",
+            "pathType": "Bezier",
+            "position": [-20.0, 5.5, 0.0],
+            "rotation": [1.5700000524520874, 0.18000000715255737],
+            "timeEasing": "Linear",
+            "useLookAt": false
+        },
+        {
+            "controlPoint": [
+                20.0,
+                4.2,
+                20.0
+            ],
+            "lookAtTarget": [0.0, 3.0, 0.0],
+            "name": "P2",
+            "pathType": "Bezier",
+            "position": [0.0, 4.0, 20.0],
+            "rotation": [3.140000104904175, 0.18000000715255737],
+            "timeEasing": "Linear",
+            "useLookAt": false
+        },
+        {
+            "controlPoint": [
+                20.0,
+                5.8,
+                20.0
+            ],
+            "lookAtTarget": [0.0, 3.0, 0.0],
+            "name": "P3",
+            "pathType": "Bezier",
+            "position": [20.0, 5.5, 0.0],
+            "rotation": [4.440000057220459, 0.18000000715255737],
+            "timeEasing": "Linear",
+            "useLookAt": false
+        },
+        {
+            "controlPoint": [
+                -20.0,
+                4.8,
+                -20.0
+            ],
+            "lookAtTarget": [0.0, 3.0, 0.0],
+            "name": "P4",
+            "pathType": "Bezier",
+            "position": [0.0, 4.5, -20.0],
+            "rotation": [6.28000020980835, 0.18000000715255737],
+            "timeEasing": "Linear",
+            "useLookAt": false
+        },
+        {
+            "controlPoint": [0.0, 0.0, 0.0],
+            "lookAtTarget": [0.0, 0.0, 0.0],
+            "name": "Keyframe5",
+            "pathType": "Linear",
+            "position": [0.0, 4.5, -20.0],
+            "rotation": [0.0, 0.18000000715255737],
+            "timeEasing": "Linear",
+            "useLookAt": false
+        }
+    ],
+    "version": 2
+}

@@ -5,7 +5,7 @@
 #include "imgui.h"
 #include "GameObject/GameObject.hpp"
 #include "Enemy/Enemies.hpp"
-#include "Json/Json.hpp"
+#include "Json/JsonParams.hpp"
 #include "Pattern/Singleton.hpp"
 #include "Math/MathUtils.hpp"
 
@@ -18,7 +18,8 @@ FollowCamera::~FollowCamera() {
 
 void FollowCamera::Initialize() {
     cameraController_ = Singleton<CameraController>::GetInstance();
-    cameraController_->GetActive()->transform_.translate = {0.f, 2.2f, -20.7f};
+    cameraController_->GetActive()->transform_.translate = { 0.f, 4.1f, -7.6f };
+    cameraController_->GetActive()->transform_.rotate = Vector3{0.89f, 0.f, 0.f};
 
     Load();
     UpdateCameraDistance();
@@ -45,7 +46,7 @@ void FollowCamera::Shake(const float _time, const float _power) {
 }
 
 void FollowCamera::Load() {
-    const auto& json = Singleton<Json>::GetInstance();
+    const auto& json = Singleton<JsonParams>::GetInstance();
 
     if (json->Load("FollowCamera")){
         distance_ = std::get<float>(json->GetValue("FollowCamera", "Settings", "Distance"));
@@ -62,7 +63,7 @@ void FollowCamera::Load() {
 }
 
 void FollowCamera::Save() {
-    const auto& json = Singleton<Json>::GetInstance();
+    const auto& json = Singleton<JsonParams>::GetInstance();
     json->SetValue("FollowCamera", "Settings", "Distance", distance_);
     json->SetValue("FollowCamera", "Settings", "Yaw", yaw_);
     json->SetValue("FollowCamera", "Settings", "Pitch", pitch_);

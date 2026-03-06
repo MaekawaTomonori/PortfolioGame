@@ -7,10 +7,25 @@ void TitleScene::Initialize() {
     name_ = "title";
 
     exitTransition_ = Transition::Type::Fade;
+    
+    status_ = {
+        .point = 0,
+        .time = 15,
+        .requirementKill = 10,
+        .maxEnemyCount = 1,
+        .enemySpawnInterval = 0.f,
+        .playerStatus = {
+            .hp = 10.f,
+            .damage = 1.f,
+            .ms = 1.f,
+            .as = 1.f
+        }
+    };
 
-    stage_ = std::make_unique<Stage>();
+    stage_ = std::make_unique<Stage>(status_);
     stage_->Setup(Particle(), PostEffect());
-    stage_->Initialize({});
+    stage_->Initialize();
+    stage_->SetActive(false);
 
     titleLogo_ = std::make_unique<Sprite>();
     titleLogo_->Initialize("title.png");
@@ -21,8 +36,6 @@ void TitleScene::Initialize() {
     pushtoStart_->Initialize("space.png");
     pushtoStart_->SetAnchorPoint({ .5f, 0.5f });
     pushtoStart_->SetPosition({ 640.f, 500.f });
-
-    Singleton<CameraDirector>::GetInstance()->Run("title", true);
 
     //PostProcessExecutor* postProcessor_ = game_->GetPostProcessor();
     //postProcessor_->Add(std::make_unique<Grayscale>(),"Grayscale");
@@ -38,7 +51,6 @@ void TitleScene::Update() {
     }
 
     stage_->Update();
-    titleLogo_->Update();
 
     alpha_ += increase_ ? 0.02f : -0.02f;
     if (alpha_ >= 1.f) { alpha_ = 1.f; increase_ = false; }
@@ -47,7 +59,6 @@ void TitleScene::Update() {
     Vector4 color = pushtoStart_->GetColor();
     color.w = alpha_;
     pushtoStart_->SetColor(color);
-    pushtoStart_->Update();
 }
 
 void TitleScene::Draw() {
@@ -56,6 +67,14 @@ void TitleScene::Draw() {
     pushtoStart_->Draw();
 }
 
+void TitleScene::Debug() {
+    stage_->Debug();
+}
+
 void TitleScene::Finalize() {
     IScene::Finalize();
+}
+
+void TitleScene::OnEnable() {
+    Singleton<CameraDirector>::GetInstance()->Run("cp", true);
 }

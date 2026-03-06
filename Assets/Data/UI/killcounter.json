@@ -1,0 +1,130 @@
+{
+    "Elements": [
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Name": "current_d0",
+            "Position": [
+                0.0,
+                0.0
+            ],
+            "Size": [
+                32.0,
+                48.0
+            ],
+            "Texture": "numbers.png",
+            "TextureLeftTop": [
+                0.0,
+                0.0
+            ],
+            "TextureSize": [
+                64.0,
+                96.0
+            ]
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Name": "current_d1",
+            "Position": [
+                32.0,
+                0.0
+            ],
+            "Size": [
+                32.0,
+                48.0
+            ],
+            "Texture": "numbers.png",
+            "TextureLeftTop": [
+                384.0,
+                0.0
+            ],
+            "TextureSize": [
+                64.0,
+                96.0
+            ]
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Name": "slash",
+            "Position": [
+                65.0,
+                5.0
+            ],
+            "Size": [
+                32.0,
+                59.0
+            ],
+            "Texture": "slash.png"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Name": "max_d0",
+            "Position": [
+                96.0,
+                0.0
+            ],
+            "Size": [
+                32.0,
+                48.0
+            ],
+            "Texture": "numbers.png",
+            "TextureLeftTop": [
+                64.0,
+                0.0
+            ],
+            "TextureSize": [
+                64.0,
+                96.0
+            ]
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Name": "max_d1",
+            "Position": [
+                128.0,
+                0.0
+            ],
+            "Size": [
+                32.0,
+                48.0
+            ],
+            "Texture": "numbers.png",
+            "TextureLeftTop": [
+                0.0,
+                0.0
+            ],
+            "TextureSize": [
+                64.0,
+                96.0
+            ]
+        }
+    ],
+    "Position": [
+        1112.0,
+        43.0
+    ]
+}

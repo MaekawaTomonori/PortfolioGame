@@ -17,6 +17,10 @@ void KeyGuide::Initialize() {
     frame_->SetPosition(position_);
     frame_->SetColor({0.3f, 0.3f, 0.3f, 0.8f});
     Load();
+
+    //ui_ = std::make_unique<Ui::UserInterface>();
+    //ui_->Setup("Guide");
+    //ui_->SetActive(false);
 }
 
 void KeyGuide::Update() {
@@ -25,6 +29,8 @@ void KeyGuide::Update() {
         Load();
         reload_ = false;
     }
+
+    //ui_->Update();
 
     frame_->SetPosition(position_);
     frame_->Update();
@@ -59,6 +65,10 @@ void KeyGuide::Draw() const {
             key.key->Draw();
         }
     }
+
+    //if (ui_) {
+    //    ui_->Draw();
+    //}
 }
 
 void KeyGuide::Debug() {
@@ -329,6 +339,10 @@ void KeyGuide::Debug() {
     }
 
     ImGui::End();
+
+    //if (ui_) {
+    //    ui_->StandaloneDebug();
+    //}
 }
 
 void KeyGuide::Load() {

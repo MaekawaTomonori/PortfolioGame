@@ -5,14 +5,15 @@
 
 #include "imgui.h"
 #include "Command/Move/ToTargetCommand.hpp"
-#include "Json/Json.hpp"
+#include "Json/JsonParams.hpp"
 #include "Player/Movement/WalkBehavior.hpp"
 #include "Player/Movement/DashBehavior.hpp"
 #include "Pattern/Singleton.hpp"
 
-Enemies::Enemies(ParticleSystem* _particle) {
+Enemies::Enemies(ParticleSystem* _particle, const GameStatus& _status) :status_(_status) {
+    if (!_particle){Utils::Alert("ParticleSystem is null");}
+
     particle_ = _particle;
-    if (!particle_) Utils::Alert("ParticleSystem is null");
 
     // パラメータの読み込み
     LoadParams();
@@ -24,28 +25,15 @@ Enemies::Enemies(ParticleSystem* _particle) {
     // 共有Commandを生成
     toTargetCommand_ = std::make_unique<ToTargetCommand>(3.0f, 0.5f);
 
-    particle_->Register("enemy_hit", { 3.f, 2.f, 0.f })
-        .AddEmitter({
-            .texture = "white_x16.png",
-            .active = false,
-            .frequency = 0.5f,
-            .duration = 0.7f,
-            .spawnCount = 20,
-            .size = {0.3f, 0.3f, 0.3f},
-            .velocity = {0.f, 0.f, 0.f},
-            .color = { 1.f, 0.2f, 0.2f, 0.9f },
-            .updateFunc = [](float t, Vector3& velocity, Vector4& color) {
-                // ランダムな方向に爆発（初回のみ設定）
-                if (t < 0.01f) {
-                    velocity = Vector3::Random() * 6.0f;
-                }
-                // 減速と重力
-                velocity = velocity * 0.92f;
-                velocity.y -= 0.05f;
-                // フェードアウト
-                color.w = 0.9f * (.7f - t);
-            }
-        });
+    particle_->RegisterUpdateFunc("enemy_hit_explosion", [](float t, const Vector3&, Vector3& pos, Vector3& velocity, Vector4& color) {
+        (void)pos;
+        if (t < 0.01f) {
+            velocity = Vector3::Random() * 6.0f;
+        }
+        velocity = velocity * 0.92f;
+        velocity.y -= 0.05f;
+        color.w = 0.9f * (.7f - t);
+    });
 
 #ifdef _DEBUG
     line_.Initialize();
@@ -57,6 +45,7 @@ Enemies::Enemies(ParticleSystem* _particle) {
 void Enemies::Initialize() {
     timer_ = 0.f;
     deathCount_ = 0;
+    done_ = false;
     enemies_.clear();
 }
 
@@ -67,6 +56,10 @@ void Enemies::Update() {
     std::erase_if(enemies_, [](const auto& _enemy) {return !_enemy->IsActive();});
     const auto after = enemies_.size();
     deathCount_ += static_cast<uint16_t>(pre - after);
+
+    if (status_.requirementKill <= 0 && status_.requirementKill <= deathCount_) {
+        done_ = true;
+    }
 
 #ifdef _DEBUG
 
@@ -115,7 +108,7 @@ void Enemies::Update() {
 
     if (autoSpawn_) {
 #endif
-        if (interval_ <= timer_) {
+        if (status_.enemySpawnInterval <= timer_) {
             timer_ = 0.f;
             Spawn();
         } else {
@@ -164,7 +157,7 @@ void Enemies::Debug() {
     ImGui::Begin("Enemies");
 
     // Display current enemy count
-    ImGui::Text("Active Enemies: %zu / %hu", enemies_.size(), maxCount_);
+    ImGui::Text("Active Enemies: %zu / %hu", enemies_.size(), status_.maxEnemyCount);
 
     ImGui::Separator();
 
@@ -175,8 +168,8 @@ void Enemies::Debug() {
 
     // Show spawn timer when auto spawn is enabled
     if (autoSpawn_) {
-        ImGui::Text("Next spawn in: %.1fs", interval_ - timer_);
-        ImGui::ProgressBar(timer_ / interval_, ImVec2(-1.0f, 0.0f));
+        ImGui::Text("Next spawn in: %.1fs", status_.enemySpawnInterval - timer_);
+        ImGui::ProgressBar(timer_ / status_.enemySpawnInterval, ImVec2(-1.0f, 0.0f));
     }
 
     // Manual spawn button
@@ -295,21 +288,28 @@ void Enemies::Debug() {
     ImGui::End();
 #endif
 }
+
+bool Enemies::IsDone() const {
+    return done_ && enemies_.empty();
+}
+
 bool Enemies::Empty() const {
     return enemies_.empty();
 }
 
 void Enemies::Spawn() {
+    if (done_) return;
     if (!target_) return;
-    if (maxCount_ <= enemies_.size()) return;
+    if (status_.maxEnemyCount <= enemies_.size()) return;
 
     Vector3 position = target_->GetPosition();
     position += Vector3::Random().Normalize() * MathUtils::Random(distance_.x, distance_.y);
-    position.y = 1.5f;
+    position.y = .5f;
 
     std::unique_ptr<Enemy> enemy = std::make_unique<Enemy>();
     enemy->Initialize();
     enemy->SetPosition(position);
+    enemy->SetScale({SIZE, SIZE, SIZE});
     enemy->SetParticleSystem(particle_);
     enemy->SetTarget(target_);
 
@@ -348,7 +348,7 @@ uint16_t Enemies::GetDeathCount() const {
 }
 
 void Enemies::LoadParams() {
-    const auto& json = Singleton<Json>::GetInstance();
+    const auto& json = Singleton<JsonParams>::GetInstance();
 
     if (json->Load("EnemyParams")) {
         // 基本ステータス
@@ -380,7 +380,7 @@ void Enemies::LoadParams() {
 }
 
 void Enemies::SaveParams() {
-    const auto& json = Singleton<Json>::GetInstance();
+    const auto& json = Singleton<JsonParams>::GetInstance();
 
     // 基本ステータス
     json->SetValue("EnemyParams", "Basic", "MaxHp", enemyParams_.maxHp);

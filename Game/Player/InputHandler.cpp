@@ -13,6 +13,7 @@ void InputHandler::UpdateContext(MovementContext& context, const Vector3& curren
 
     context.Reset();
     context.position = currentPos;
+    context.targetPosition = GetMouseInWorld();
 
     // 移動入力
     if (input_->IsPress(DIK_W)) context.moveDirection.z += 1.0f;
@@ -28,21 +29,44 @@ void InputHandler::UpdateContext(MovementContext& context, const Vector3& curren
     // ダッシュ
     context.isDashRequested = input_->IsPress(DIK_SPACE);
 
-    // フラッシュ (Fキー)
+    // フラッシュ
     context.isFlashRequested = input_->IsTrigger(DIK_F);
 
-    if (context.isFlashRequested) {
-        context.moveDirection = (context.position - GetMouseInWorld()).Normalize();
-    }
+    // スキル (Qキー)
+    context.isSkillRequested = input_->IsTrigger(DIK_Q);
 }
 
-Vector3 InputHandler::GetMouseInWorld() {
+Vector3 InputHandler::GetMouseInWorld() const {
     if (!input_) return {};
     if (auto camera = Singleton<CameraController>::GetInstance()->GetActive()) {
         // スクリーン座標を取得
         Vector2 mousePos = input_->GetMousePosition();
-        // 正規化デバイス座標に変換
         
+        // スクリーン座標 → NDC に手動変換
+        float ndcX = (2.0f * mousePos.x / Viewport.x) - 1.0f;
+        float ndcY = 1.0f - (2.0f * mousePos.y / Viewport.y);
+
+        // ViewProjectionの逆行列のみで逆変換
+        Matrix4x4 mInv = camera->GetViewProjection().Inverse();
+
+        Vector3 nPos = {ndcX, ndcY, 0.f};
+        Vector3 fPos = {ndcX, ndcY, 1.f};
+
+        nPos = MathUtils::Matrix::Transform(nPos, mInv);
+        fPos = MathUtils::Matrix::Transform(fPos, mInv);
+
+        Vector3 mouseDir = (fPos - nPos).Normalize();
+
+        Vector3 res = camera->transform_.translate;
+
+        // レイとY=0平面の交点を求める
+        if (std::abs(mouseDir.y) > 1e-6f) {
+            float t = -nPos.y / mouseDir.y;
+            if (t >= 0.f) {
+                res = nPos + mouseDir * t;
+            }
+        }
+        return res;
     }
     return {};
 }

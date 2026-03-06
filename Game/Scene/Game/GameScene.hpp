@@ -9,6 +9,9 @@
 #include "Stage/Stage.hpp"
 #include "Status/GameStatus.hpp"
 #include "Ui/KeyGuide/KeyGuide.hpp"
+#include "Ui/KillCount/KillCounter.hpp"
+#include "Ui/Pause/Pause.hpp"
+#include "Ui/SkillTree/SkillTree.hpp"
 
 class GameScene : public IScene {
     enum State {
@@ -25,9 +28,7 @@ class GameScene : public IScene {
 
     std::unique_ptr<Intro> intro_;
 
-    std::unique_ptr<Sprite> sprite_;
-
-    Collision::Manager* cManager_ = nullptr;
+    std::unique_ptr<SkillTree> skillTree_;
 
     std::unique_ptr<Outro> outro_;
     bool clear_ = false;
@@ -37,10 +38,11 @@ class GameScene : public IScene {
 
     std::unique_ptr<GameTimer> gameTimer_;
 
-    bool pause_ = false;
-    std::unique_ptr<Sprite> pauseSprite_;
+    std::unique_ptr<Pause> pause_;
 
     std::unique_ptr<KeyGuide> keyGuide_;
+
+    std::unique_ptr<KillCounter> killCounter_;
 
 public:
     void Initialize() override;
@@ -49,6 +51,12 @@ public:
     void Debug() override;
 
 private:
+    void OnEnable() override;
+
+    void UpdatePlay();
+
+    void LoadStatus();
+    void SaveStatus();
 
 }; // class GameScene
 

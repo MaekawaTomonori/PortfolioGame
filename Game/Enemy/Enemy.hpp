@@ -68,6 +68,7 @@ private:
 
     // 共通パラメータ（参照）
     const Params* params_ = nullptr;
+    Vector3 externalForce_{};
 
     bool invincible_ = false;
     float invincibleTimer_ = 0.4f;
@@ -117,6 +118,8 @@ public:
     void SetParticleSystem(ParticleSystem* _particle) { particle_ = _particle; }
 
     bool IsDead() const { return dying_; }
+
+    void AddExternalForce(const Vector3& _force) { externalForce_ += _force; }
 
     // パラメータの設定・取得
     void SetParams(const Params* _params) { params_ = _params; }

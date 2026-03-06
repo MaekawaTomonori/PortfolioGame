@@ -1,12 +1,12 @@
 {
     "FollowCamera": {
         "Settings": {
-            "Distance": 21.299991607666016,
+            "Distance": 50.29998016357422,
             "MaxDistance": 50.29999923706055,
             "MinDistance": 21.299999237060547,
             "Pitch": 1.350000023841858,
             "Yaw": 0.0,
-            "ZoomSensitivity": 0.9300000071525574
+            "ZoomSensitivity": 0.8899999856948853
         }
     }
 }

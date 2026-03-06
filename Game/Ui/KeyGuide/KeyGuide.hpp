@@ -5,6 +5,7 @@
 
 #include "Input.hpp"
 #include "Sprite.hpp"
+#include "Ui/UserInterface.hpp"
 
 class KeyGuide {
     struct Key {
@@ -28,6 +29,8 @@ class KeyGuide {
 
     std::unordered_map<BYTE, Key> keys_;
 
+    //std::unique_ptr<Ui::UserInterface> ui_;
+
     // Debug用の入力バッファ
     int selectedKeyIndex_ = 0;
     char newKeyTexture_[256] = "white_x16.png";
@@ -43,7 +46,7 @@ class KeyGuide {
         Vector4 pressColor;
         Vector2 frameSize;
         Vector2 labelSize;
-    } clipboardKey_;
+    } clipboardKey_{};
 
 public:
     void Initialize();
