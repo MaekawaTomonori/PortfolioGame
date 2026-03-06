@@ -236,8 +236,8 @@
         },
         {
             "Color": [
-                0.4000000059604645,
-                0.4000000059604645,
+                0.800000011920929,
+                0.800000011920929,
                 0.4000000059604645,
                 1.0
             ],
@@ -254,11 +254,14 @@
         },
         {
             "Color": [
-                0.4000000059604645,
-                0.4000000059604645,
-                0.4000000059604645,
+                1.0,
+                1.0,
+                1.0,
                 1.0
             ],
+            "Events": {
+                "Execute": "SkillTree.Upgrade.hp_up"
+            },
             "Name": "hp_up",
             "Position": [
                 345.0,
@@ -272,11 +275,14 @@
         },
         {
             "Color": [
-                0.4000000059604645,
-                0.4000000059604645,
-                0.4000000059604645,
+                1.0,
+                1.0,
+                1.0,
                 1.0
             ],
+            "Events": {
+                "Execute": "SkillTree.Upgrade.spd_up"
+            },
             "Name": "spd_up",
             "Position": [
                 345.0,
@@ -290,8 +296,8 @@
         },
         {
             "Color": [
-                0.4000000059604645,
-                0.4000000059604645,
+                0.800000011920929,
+                0.800000011920929,
                 0.4000000059604645,
                 1.0
             ],
@@ -308,11 +314,14 @@
         },
         {
             "Color": [
-                0.4000000059604645,
-                0.4000000059604645,
-                0.4000000059604645,
+                1.0,
+                1.0,
+                1.0,
                 1.0
             ],
+            "Events": {
+                "Execute": "SkillTree.Upgrade.time_up"
+            },
             "Name": "time_up",
             "Position": [
                 485.0,
@@ -326,11 +335,14 @@
         },
         {
             "Color": [
-                0.4000000059604645,
-                0.4000000059604645,
-                0.4000000059604645,
+                1.0,
+                1.0,
+                1.0,
                 1.0
             ],
+            "Events": {
+                "Execute": "SkillTree.Upgrade.enemy_up"
+            },
             "Name": "enemy_up",
             "Position": [
                 485.0,
@@ -344,11 +356,14 @@
         },
         {
             "Color": [
-                0.4000000059604645,
-                0.4000000059604645,
-                0.4000000059604645,
+                1.0,
+                1.0,
+                1.0,
                 1.0
             ],
+            "Events": {
+                "Execute": "SkillTree.Upgrade.atk_up_2"
+            },
             "Name": "atk_up_2",
             "Position": [
                 625.0,
@@ -362,11 +377,14 @@
         },
         {
             "Color": [
-                0.4000000059604645,
-                0.4000000059604645,
-                0.4000000059604645,
+                1.0,
+                1.0,
+                1.0,
                 1.0
             ],
+            "Events": {
+                "Execute": "SkillTree.Upgrade.hp_up_2"
+            },
             "Name": "hp_up_2",
             "Position": [
                 625.0,
@@ -380,11 +398,14 @@
         },
         {
             "Color": [
-                0.4000000059604645,
-                0.4000000059604645,
-                0.4000000059604645,
+                1.0,
+                1.0,
+                1.0,
                 1.0
             ],
+            "Events": {
+                "Execute": "SkillTree.Upgrade.spawn_down"
+            },
             "Name": "spawn_down",
             "Position": [
                 625.0,
@@ -451,8 +472,7 @@
                 32.0,
                 32.0
             ],
-            "Texture": "white_x16.png",
-            "Visible": false
+            "Texture": "as.png"
         },
         {
             "Color": [
@@ -470,8 +490,7 @@
                 24.0,
                 32.0
             ],
-            "Texture": "white_x16.png",
-            "Visible": false
+            "Texture": "sign_plus.png"
         },
         {
             "Color": [
@@ -497,8 +516,7 @@
             "TextureSize": [
                 64.0,
                 96.0
-            ],
-            "Visible": false
+            ]
         },
         {
             "Color": [
@@ -518,14 +536,13 @@
             ],
             "Texture": "numbers.png",
             "TextureLeftTop": [
-                0.0,
+                128.0,
                 0.0
             ],
             "TextureSize": [
                 64.0,
                 96.0
-            ],
-            "Visible": false
+            ]
         },
         {
             "Color": [
@@ -616,7 +633,81 @@
                 160.0,
                 48.0
             ],
-            "Texture": "continue.png"
+            "Texture": "acquired.png"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Name": "point_icon",
+            "Position": [
+                280.0,
+                40.0
+            ],
+            "Size": [
+                32.0,
+                32.0
+            ],
+            "Texture": "pt_icon.png"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Name": "point_d0",
+            "Position": [
+                315.0,
+                40.0
+            ],
+            "Size": [
+                24.0,
+                32.0
+            ],
+            "Texture": "numbers.png",
+            "TextureLeftTop": [
+                0.0,
+                0.0
+            ],
+            "TextureSize": [
+                64.0,
+                96.0
+            ]
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Name": "point_d1",
+            "Position": [
+                340.0,
+                40.0
+            ],
+            "Size": [
+                24.0,
+                32.0
+            ],
+            "Texture": "numbers.png",
+            "TextureLeftTop": [
+                192.0,
+                0.0
+            ],
+            "TextureSize": [
+                64.0,
+                96.0
+            ]
         }
+    ],
+    "Position": [
+        0.0,
+        0.0
     ]
 }
