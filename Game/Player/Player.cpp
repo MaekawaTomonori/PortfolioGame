@@ -31,7 +31,7 @@ Player::Player(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
     collider_->SetEvent(Collision::EventType::Trigger, [this](const Collision::Collider* _collider) {OnCollision(_collider); })
         ->SetTranslate({ position_.x, position_.y, position_.z })
         ->SetType(Collision::Type::AABB)
-        ->SetSize(Collision::Vec3{ .3f, .3f, .3f })
+        ->SetSize(Vector3{ .3f, .3f, .3f })
         ->SetOwner(this)
         ->AddAttribute(static_cast<uint32_t>(CollisionType::Player))
         ->AddIgnore(static_cast<uint32_t>(CollisionType::P_Bullet))
@@ -94,6 +94,10 @@ void Player::Update(const float _deltaTime) {
     }
 
 #ifdef _DEBUG
+    if (reticle_) {
+        reticle_->SetTranslate(movementContext_.targetPosition);
+    }
+
     if (!no_move)
 #endif
         if (movement_) {
@@ -136,6 +140,12 @@ void Player::Draw() {
 #endif
           attack_->Draw();
     }
+
+#ifdef _DEBUG
+    if (reticle_) {
+        reticle_->Draw();
+    }
+#endif
 
     model_->Draw();
 }

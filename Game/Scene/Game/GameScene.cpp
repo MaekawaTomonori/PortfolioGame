@@ -1,16 +1,15 @@
 #include "GameScene.hpp"
 
 #include "imgui_internal.h"
-#include "Collision/CollisionManager.h"
+#include "Json/JsonParams.hpp"
 #include "Pattern/Singleton.hpp"
 #include "PostProcess/Executor/PostProcessExecutor.hpp"
+#include "Debug/Debugger.hpp"
 
 void GameScene::Initialize() {
     name_ = "game";
 
     entryTransition_ = Transition::Type::Fade;
-
-    cManager_ = Singleton<Collision::Manager>::GetInstance();
 
     status_ ={
         .point = 0,
@@ -25,6 +24,7 @@ void GameScene::Initialize() {
             .as = 1.f
         }
     };
+    LoadStatus();
 
     stage_ = std::make_unique<Stage>(status_);
     stage_->Setup(Particle(), PostEffect());
@@ -70,6 +70,20 @@ void GameScene::Initialize() {
             skillTree_->Close();
         });
     });
+
+    Debugger::WatchGroup("Stage")
+        .Watch("Time",               &status_.time)
+        .Watch("MaxEnemyCount",      &status_.maxEnemyCount)
+        .Watch("RequirementKill",    &status_.requirementKill)
+        .Watch("EnemySpawnInterval", &status_.enemySpawnInterval)
+        .Watch("Point", &status_.point);
+
+    Debugger::WatchGroup("Player")
+        .Watch("HP",     &status_.playerStatus.hp)
+        .Watch("Damage", &status_.playerStatus.damage)
+        .Watch("MS",     &status_.playerStatus.ms)
+        .Watch("AS",     &status_.playerStatus.as);
+
 }
 
 void GameScene::Update() {
@@ -136,13 +150,39 @@ void GameScene::Debug() {
     killCounter_->Debug();
 
     ImGui::Begin("Status");
-    ImGui::DragFloat("Timer", &status_.time, 1.f, 0.f, 300.f);
-    int tmp = static_cast<int>(status_.maxEnemyCount);
-    if (ImGui::DragInt("Max Enemy Count", &tmp, 1, 1, 100)){
-        status_.maxEnemyCount = static_cast<uint16_t>(tmp);
+    if (ImGui::Button("Save to JSON")) {
+        SaveStatus();
     }
-    ImGui::DragFloat("Enemy Spawn Interval", &status_.enemySpawnInterval, 0.1f, 0.f, 10.f);
+    ImGui::SameLine();
+    ImGui::TextDisabled("Assets/Data/GameStatus/GameStatus.json");
     ImGui::End();
+}
+
+void GameScene::LoadStatus() {
+    const auto& json = Singleton<JsonParams>::GetInstance();
+    if (!json->Load("GameStatus")) return;
+
+    status_.time               = std::get<float>  (json->GetValue("GameStatus", "Stage",  "Time"));
+    status_.maxEnemyCount      = static_cast<uint16_t>(std::get<int32_t>(json->GetValue("GameStatus", "Stage",  "MaxEnemyCount")));
+    status_.requirementKill    = static_cast<uint16_t>(std::get<int32_t>(json->GetValue("GameStatus", "Stage",  "RequirementKill")));
+    status_.enemySpawnInterval = std::get<float>  (json->GetValue("GameStatus", "Stage",  "EnemySpawnInterval"));
+    status_.playerStatus.hp    = std::get<float>  (json->GetValue("GameStatus", "Player", "HP"));
+    status_.playerStatus.damage= std::get<float>  (json->GetValue("GameStatus", "Player", "Damage"));
+    status_.playerStatus.ms    = std::get<float>  (json->GetValue("GameStatus", "Player", "MS"));
+    status_.playerStatus.as    = std::get<float>  (json->GetValue("GameStatus", "Player", "AS"));
+}
+
+void GameScene::SaveStatus() {
+    const auto& json = Singleton<JsonParams>::GetInstance();
+    json->SetValue("GameStatus", "Stage",  "Time",               status_.time);
+    json->SetValue("GameStatus", "Stage",  "MaxEnemyCount",      static_cast<int32_t>(status_.maxEnemyCount));
+    json->SetValue("GameStatus", "Stage",  "RequirementKill",    static_cast<int32_t>(status_.requirementKill));
+    json->SetValue("GameStatus", "Stage",  "EnemySpawnInterval", status_.enemySpawnInterval);
+    json->SetValue("GameStatus", "Player", "HP",                 status_.playerStatus.hp);
+    json->SetValue("GameStatus", "Player", "Damage",             status_.playerStatus.damage);
+    json->SetValue("GameStatus", "Player", "MS",                 status_.playerStatus.ms);
+    json->SetValue("GameStatus", "Player", "AS",                 status_.playerStatus.as);
+    json->Save("GameStatus");
 }
 
 void GameScene::OnEnable() {
@@ -155,8 +195,6 @@ void GameScene::UpdatePlay() {
     killCounter_->Update();
     followCamera_->Update();
     keyGuide_->Update();
-    cManager_->Detect();
-    cManager_->ProcessEvent();
 
     if (gameTimer_->IsDone()) {
         status_.point += stage_->GetEnemies()->GetDeathCount();

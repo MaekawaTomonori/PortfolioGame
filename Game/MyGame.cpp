@@ -11,6 +11,7 @@ void MyGame::Initialize(GameEngine::Config& _config) {
         .title = "DarkRun",
         .defaultScene = "title",
         .fps = 60,
+        .showCursor = false,
     };
 
     Register();

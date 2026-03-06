@@ -18,7 +18,7 @@ void Enemy::Initialize() {
     collider_->SetEvent(Collision::EventType::Trigger, [this](const Collision::Collider* _pCol){ this->OnCollision(_pCol); })
         ->SetOwner(this)
         ->SetType(Collision::Type::AABB)
-        ->SetSize(Collision::Vec3{1.f, 1.f, 1.f})
+        ->SetSize(Vector3{1.f, 1.f, 1.f})
         ->SetTranslate({ position_.x, position_.y, position_.z })
         ->AddAttribute(static_cast<uint32_t>(CollisionType::Enemy))
         ->AddIgnore(static_cast<uint32_t>(CollisionType::Enemy))
@@ -107,7 +107,7 @@ void Enemy::Debug() {
         if (ImGui::CollapsingHeader("Collider")) {
             if (collider_) {
                 auto pos = collider_->GetTranslate();
-                auto size = get<Collision::Vec3>(collider_->GetSize());
+                auto size = get<Vector3>(collider_->GetSize());
                 ImGui::Text("Position: (%.2f, %.2f, %.2f)", pos.x, pos.y, pos.z);
                 ImGui::Text("Size: (%.2f, %.2f, %.2f)", size.x, size.y, size.z);
                 ImGui::Text("Enabled: %s", collider_->IsEnabled() ? "Yes" : "No");
@@ -293,7 +293,7 @@ void Enemy::OnCollision(const Collision::Collider* _collider) {
             model_->SetColor({2.f, 2.f, 2.f, 1.f});
 
             // Knockback処理
-            Collision::Vec3 d = (collider_->GetTranslate() - _collider->GetTranslate());
+            Vector3 d = (collider_->GetTranslate() - _collider->GetTranslate());
             ApplyKnockback({d.x, d.y, d.z}, 40.f, 0.15f);
 
             // Shake

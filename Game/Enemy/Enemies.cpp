@@ -5,7 +5,7 @@
 
 #include "imgui.h"
 #include "Command/Move/ToTargetCommand.hpp"
-#include "Json/Json.hpp"
+#include "Json/JsonParams.hpp"
 #include "Player/Movement/WalkBehavior.hpp"
 #include "Player/Movement/DashBehavior.hpp"
 #include "Pattern/Singleton.hpp"
@@ -348,7 +348,7 @@ uint16_t Enemies::GetDeathCount() const {
 }
 
 void Enemies::LoadParams() {
-    const auto& json = Singleton<Json>::GetInstance();
+    const auto& json = Singleton<JsonParams>::GetInstance();
 
     if (json->Load("EnemyParams")) {
         // 基本ステータス
@@ -380,7 +380,7 @@ void Enemies::LoadParams() {
 }
 
 void Enemies::SaveParams() {
-    const auto& json = Singleton<Json>::GetInstance();
+    const auto& json = Singleton<JsonParams>::GetInstance();
 
     // 基本ステータス
     json->SetValue("EnemyParams", "Basic", "MaxHp", enemyParams_.maxHp);

@@ -30,8 +30,6 @@ class GameScene : public IScene {
 
     std::unique_ptr<SkillTree> skillTree_;
 
-    Collision::Manager* cManager_ = nullptr;
-
     std::unique_ptr<Outro> outro_;
     bool clear_ = false;
     
@@ -56,6 +54,9 @@ private:
     void OnEnable() override;
 
     void UpdatePlay();
+
+    void LoadStatus();
+    void SaveStatus();
 
 }; // class GameScene
 
