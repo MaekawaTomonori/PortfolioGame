@@ -12,7 +12,7 @@ class KillCounter {
     Enemies* enemies_ = nullptr;
     uint16_t max_ = 0;
 
-    std::unique_ptr<Ui::UserInterface> ui_;
+    std::unique_ptr<Ui::Canvas> ui_;
 
 public:
     void Initialize(Enemies* _enemies, uint16_t _max);

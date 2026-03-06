@@ -170,13 +170,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Showcase\ItemShowcase.hpp" />
     <ClInclude Include="Stage\Stage.hpp" />
     <ClInclude Include="Status\GameStatus.hpp" />
-    <ClInclude Include="Ui\Element\Element.hpp" />
     <ClInclude Include="Ui\KeyGuide\KeyGuide.hpp" />
     <ClInclude Include="Ui\KillCount\KillCounter.hpp" />
     <ClInclude Include="Ui\Pause\Pause.hpp" />
     <ClInclude Include="Ui\SkillTree\SkillTree.hpp" />
-    <ClInclude Include="Ui\EventSystem.hpp" />
-    <ClInclude Include="Ui\UserInterface.hpp" />
     <ClInclude Include="Skill\ISkillEntity.hpp" />
     <ClInclude Include="Skill\SkillManager.hpp" />
     <ClInclude Include="Skill\BlackHole\BlackHole.hpp" />
@@ -211,13 +208,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Scene\Title\TitleScene.cpp" />
     <ClCompile Include="Showcase\ItemShowcase.cpp" />
     <ClCompile Include="Stage\Stage.cpp" />
-    <ClCompile Include="Ui\Element\Element.cpp" />
     <ClCompile Include="Ui\KeyGuide\KeyGuide.cpp" />
     <ClCompile Include="Ui\KillCount\KillCounter.cpp" />
     <ClCompile Include="Ui\Pause\Pause.cpp" />
     <ClCompile Include="Ui\SkillTree\SkillTree.cpp" />
-    <ClCompile Include="Ui\EventSystem.cpp" />
-    <ClCompile Include="Ui\UserInterface.cpp" />
     <ClCompile Include="Skill\SkillManager.cpp" />
     <ClCompile Include="Skill\BlackHole\BlackHole.cpp" />
   </ItemGroup>

@@ -22,7 +22,7 @@ class SkillTree {
         float enemySpawnInterval = 0.f;
     };
 
-    std::unique_ptr<Ui::UserInterface> ui_;
+    std::unique_ptr<Ui::Canvas> ui_;
     std::unique_ptr<Sprite> cursor_;
     Input* input_ = nullptr;
 

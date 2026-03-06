@@ -15,7 +15,7 @@ void SkillTree::Initialize(GameStatus* _status) {
 
     LoadSkills("Assets/Data/SkillTree/data.json");
 
-    ui_ = std::make_unique<Ui::UserInterface>();
+    ui_ = std::make_unique<Ui::Canvas>();
     ui_->Setup("skilltree");
     ui_->SetActive(false);
 

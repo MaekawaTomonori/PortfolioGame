@@ -7,7 +7,7 @@
 void Pause::Initialize() {
     input_ = Singleton<Input>::GetInstance();
 
-    ui_ = std::make_unique<Ui::UserInterface>();
+    ui_ = std::make_unique<Ui::Canvas>();
     ui_->Setup("pause");
     ui_->SetActive(false);
 

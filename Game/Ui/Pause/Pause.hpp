@@ -8,7 +8,7 @@
 #include "Ui/UserInterface.hpp"
 
 class Pause {
-    std::unique_ptr<Ui::UserInterface> ui_;
+    std::unique_ptr<Ui::Canvas> ui_;
     std::unique_ptr<Sprite> cursor_;
 
     Input* input_ = nullptr;

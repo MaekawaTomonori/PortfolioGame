@@ -10,7 +10,7 @@ void KillCounter::Initialize(Enemies* _enemies, const uint16_t _max) {
     enemies_ = _enemies;
     max_ = _max;
 
-    ui_ = std::make_unique<Ui::UserInterface>();
+    ui_ = std::make_unique<Ui::Canvas>();
     ui_->Setup("killcounter");
 }
 
