@@ -4,10 +4,7 @@
 #include <algorithm>
 
 #include "imgui.h"
-#include "Command/Move/ToTargetCommand.hpp"
 #include "Json/JsonParams.hpp"
-#include "Player/Movement/WalkBehavior.hpp"
-#include "Player/Movement/DashBehavior.hpp"
 #include "Pattern/Singleton.hpp"
 
 Enemies::Enemies(ParticleSystem* _particle, const GameStatus& _status) :status_(_status) {
@@ -17,13 +14,6 @@ Enemies::Enemies(ParticleSystem* _particle, const GameStatus& _status) :status_(
 
     // パラメータの読み込み
     LoadParams();
-
-    // 共有Behaviorを生成（Flyweight Pattern）
-    walkBehavior_ = std::make_unique<WalkBehavior>(3.0f);
-    dashBehavior_ = std::make_unique<DashBehavior>(8.0f, 0.5f, 2.0f);
-
-    // 共有Commandを生成
-    toTargetCommand_ = std::make_unique<ToTargetCommand>(3.0f, 0.5f);
 
     particle_->RegisterUpdateFunc("enemy_hit_explosion", [](float t, const Vector3&, Vector3& pos, Vector3& velocity, Vector4& color) {
         (void)pos;
@@ -315,15 +305,6 @@ void Enemies::Spawn() {
 
     // 共通パラメータへのポインタを設定（すべてのEnemyが同じパラメータを参照）
     enemy->SetParams(&enemyParams_);
-
-    // 共有Commandを設定（ポインタのみ）
-    enemy->SetMoveCommand(toTargetCommand_.get());
-
-    // 共有Behaviorを設定（ポインタのみ）
-    if (auto* movement = enemy->GetMovement()) {
-        movement->ClearBehaviors();
-        movement->AddBehavior(walkBehavior_.get());
-    }
 
     enemies_.push_back(std::move(enemy));
 }

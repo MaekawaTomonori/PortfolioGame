@@ -143,3 +143,7 @@ void Stage::SetCamera(FollowCamera* _camera) const {
 bool Stage::IsClear() const {
     return enemies_->IsDone();
 }
+
+bool Stage::IsGameOver() const {
+    return player_->IsDead();
+}

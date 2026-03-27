@@ -49,18 +49,16 @@ Player::Player(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
     movement_ = std::make_unique<Movement>();
     attack_ = std::make_unique<Attack>();
 
-#ifdef _DEBUG
     reticle_ = std::make_unique<Model>();
     reticle_->Initialize("animatedCube");
     reticle_->SetTexture("white_x16.png");
     reticle_->SetColor({1.f, 0.f, 0.f, 1.f});
     reticle_->SetScale({0.3f, 0.3f, 0.3f});
-#endif
 }
 
 void Player::Initialize() {
     status_ = {
-        10.f,
+        1.f,
         1.f,
         1.f,
         1.f
@@ -93,10 +91,10 @@ void Player::Update(const float _deltaTime) {
         inputHandler_->UpdateContext(movementContext_, position_);
     }
 
-#ifdef _DEBUG
     if (reticle_) {
         reticle_->SetTranslate(movementContext_.targetPosition);
     }
+#ifdef _DEBUG
 
     if (!no_move)
 #endif
@@ -141,11 +139,10 @@ void Player::Draw() {
           attack_->Draw();
     }
 
-#ifdef _DEBUG
+
     if (reticle_) {
         reticle_->Draw();
     }
-#endif
 
     model_->Draw();
 }
@@ -190,6 +187,8 @@ void Player::OnCollision(const Collision::Collider* _collider) {
 
             invulnerability_ = true;
             invulnerabilityTimer_ = InvulnerabilityDuration;
+
+            status_.hp -= 1.f;
         }
         else {
             active_ = false;
@@ -213,6 +212,10 @@ void Player::UpdateWithoutInput() {
     if (model_) {
         UpdateModel();
     }
+}
+
+bool Player::IsDead() const {
+    return status_.hp <= 0.f;
 }
 
 void Player::UpdateInvulnerability(const float _deltaTime) {

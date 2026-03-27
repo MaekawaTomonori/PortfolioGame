@@ -5,8 +5,6 @@
 
 #include "Enemy.hpp"
 #include "ParticleSystem/ParticleSystem.hpp"
-#include "Player/Movement/IMovementBehavior.hpp"
-#include "Command/ICommand.hpp"
 #include "Status/GameStatus.hpp"
 
 class Enemies {
@@ -17,11 +15,6 @@ class Enemies {
 
     GameObject* target_ = nullptr;
     std::vector<std::unique_ptr<Enemy>> enemies_;
-
-    std::unique_ptr<IMovementBehavior> walkBehavior_;
-    std::unique_ptr<IMovementBehavior> dashBehavior_;
-
-    std::unique_ptr<ICommand> toTargetCommand_;
 
     bool done_ = false;
 

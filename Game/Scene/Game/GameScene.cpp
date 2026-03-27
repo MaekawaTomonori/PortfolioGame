@@ -7,8 +7,6 @@
 #include "Debug/Debugger.hpp"
 
 void GameScene::Initialize() {
-    name_ = "game";
-
     entryTransition_ = Transition::Type::Fade;
 
     status_ ={
@@ -149,6 +147,7 @@ void GameScene::Debug() {
     skillTree_->Debug();
     killCounter_->Debug();
 
+    
     ImGui::Begin("Status");
     if (ImGui::Button("Save to JSON")) {
         SaveStatus();
@@ -210,6 +209,14 @@ void GameScene::UpdatePlay() {
         state_ = OUTRO;
         PostEffect()->ApplyPreset("DarkScene", "replace", {}, [&] {
             next_ = "gameclear";
+            Change();
+        });
+    }
+
+    if (stage_->IsGameOver()) {
+        state_ = OUTRO;
+        PostEffect()->ApplyPreset("DarkScene", "replace", {}, [&] {
+            next_ = "gameover";
             Change();
         });
     }

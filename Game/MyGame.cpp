@@ -1,7 +1,6 @@
 #include "MyGame.hpp"
 
 #include "Factory/PostEffectFactory.hpp"
-#include "Scene/SampleScene.hpp"
 #include "Scene/Game/GameScene.hpp"
 #include "Scene/Result/GameOver.hpp"
 #include "Scene/Title/TitleScene.hpp"
@@ -21,7 +20,6 @@ void MyGame::Initialize(GameEngine::Config& _config) {
 }
 
 void MyGame::Register(){
-    RegisterScene<SampleScene>("sample");
     RegisterScene<TitleScene>("title");
     RegisterScene<GameScene>("game");
     RegisterScene<GameOver>("gameover");

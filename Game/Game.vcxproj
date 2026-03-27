@@ -63,7 +63,7 @@
       <WarningLevel>Level4</WarningLevel>
       <TreatWarningAsError>true</TreatWarningAsError>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir).;$(SolutionDir)Engine\;$(SolutionDir)Engine\include;$(SolutionDir)Engine\src;$(SolutionDir)Engine\externals\assimp\include;$(SolutionDir)Engine\externals\imgui;$(SolutionDir)Engine\externals\DirectXTex;$(SolutionDir)Engine\externals\json;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir).;$(SolutionDir)Engine\;$(SolutionDir)Engine\include;$(SolutionDir)Engine\src;$(SolutionDir)Engine\externals\assimp\include;$(SolutionDir)Engine\externals\imgui;$(SolutionDir)Engine\externals\DirectXTex;$(SolutionDir)Engine\externals\json;$(SolutionDir)Engine\Lib\Audio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -101,7 +101,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <WarningLevel>Level4</WarningLevel>
       <TreatWarningAsError>true</TreatWarningAsError>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir).;$(SolutionDir)Engine\;$(SolutionDir)Engine\include;$(SolutionDir)Engine\src;$(SolutionDir)Engine\externals\assimp\include;$(SolutionDir)Engine\externals\imgui;$(SolutionDir)Engine\externals\DirectXTex;$(SolutionDir)Engine\externals\json;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir).;$(SolutionDir)Engine\;$(SolutionDir)Engine\include;$(SolutionDir)Engine\src;$(SolutionDir)Engine\externals\assimp\include;$(SolutionDir)Engine\externals\imgui;$(SolutionDir)Engine\externals\DirectXTex;$(SolutionDir)Engine\externals\json;$(SolutionDir)Engine\Lib\Audio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>MinSpace</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -142,6 +142,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Command\ICommand.hpp" />
     <ClInclude Include="Command\Move\ToTargetCommand.hpp" />
     <ClInclude Include="Enemy\Enemies.hpp" />
+    <ClInclude Include="Enemy\State\EnemyStateCharging.hpp" />
+    <ClInclude Include="Enemy\State\EnemyStateDash.hpp" />
+    <ClInclude Include="Enemy\State\EnemyStateDeath.hpp" />
+    <ClInclude Include="Enemy\State\EnemyStateIdle.hpp" />
+    <ClInclude Include="Enemy\State\IEnemyState.hpp" />
     <ClInclude Include="FollowCamera.hpp" />
     <ClInclude Include="Components\BehaviorComponent.hpp" />
     <ClInclude Include="Enemy\Enemy.hpp" />
@@ -165,7 +170,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Scene\Game\GameScene.hpp" />
     <ClInclude Include="Scene\Result\GameClear.hpp" />
     <ClInclude Include="Scene\Result\GameOver.hpp" />
-    <ClInclude Include="Scene\SampleScene.hpp" />
     <ClInclude Include="Scene\Title\TitleScene.hpp" />
     <ClInclude Include="Showcase\ItemShowcase.hpp" />
     <ClInclude Include="Stage\Stage.hpp" />
@@ -183,6 +187,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Command\ICommand.cpp" />
     <ClCompile Include="Command\Move\ToTargetCommand.cpp" />
     <ClCompile Include="Enemy\Enemies.cpp" />
+    <ClCompile Include="Enemy\State\EnemyStateCharging.cpp" />
+    <ClCompile Include="Enemy\State\EnemyStateDash.cpp" />
+    <ClCompile Include="Enemy\State\EnemyStateDeath.cpp" />
+    <ClCompile Include="Enemy\State\EnemyStateIdle.cpp" />
     <ClCompile Include="FollowCamera.cpp" />
     <ClCompile Include="Components\BehaviorComponent.cpp" />
     <ClCompile Include="Enemy\Enemy.cpp" />
@@ -203,7 +211,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Scene\Game\GameScene.cpp" />
     <ClCompile Include="Scene\Result\GameClear.cpp" />
     <ClCompile Include="Scene\Result\GameOver.cpp" />
-    <ClCompile Include="Scene\SampleScene.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Scene\Title\TitleScene.cpp" />
     <ClCompile Include="Showcase\ItemShowcase.cpp" />

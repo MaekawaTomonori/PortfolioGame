@@ -41,6 +41,7 @@ public:
     [[nodiscard]] Enemies* GetEnemies() const;
 
     bool IsClear() const;
+    bool IsGameOver() const;
 
     void SetCamera(FollowCamera* _camera) const;
 }; // class Stage

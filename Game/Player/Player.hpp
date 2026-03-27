@@ -49,8 +49,8 @@ class Player : public GameObject {
     bool no_atk = false;
     bool no_move = false;
 
-    std::unique_ptr<Model> reticle_;
 #endif
+    std::unique_ptr<Model> reticle_;
 
 
 public:
@@ -74,6 +74,9 @@ public:
     void SetOnSkillRequest(std::function<void(const Vector3&, const Vector3&)> _callback) { onSkillRequest_ = std::move(_callback); }
 
     void UpdateWithoutInput();
+
+    bool IsDead() const;
+
 private:
     std::function<void(const Vector3&, const Vector3&)> onSkillRequest_;
 
