@@ -189,7 +189,8 @@ void GameScene::OnEnable() {
 }
 
 void GameScene::UpdatePlay() {
-    gameTimer_->Update(1.f / 60.f);
+    constexpr float DeltaTime = 1.f / 60.f;
+    gameTimer_->Update(DeltaTime);
     stage_->Update();
     killCounter_->Update();
     followCamera_->Update();

@@ -6,11 +6,50 @@
 #include "Math/MathUtils.hpp"
 #include "imgui.h"
 
+namespace {
+    // 外観
+    constexpr Vector4 BASE_COLOR       = {1.f, 0.3f, 0.3f, 1.f};   // 通常時の赤
+    constexpr Vector4 HIT_FLASH_COLOR  = {2.f, 2.f,  2.f,  1.f};   // 被弾フラッシュ白
+
+    // コライダー
+    constexpr Vector3 COLLIDER_SIZE    = {1.f, 1.f, 1.f};
+
+    // HPバーの色
+    constexpr Vector4 HPBAR_FRONT_COLOR = {1.f, 0.f, 0.f, 1.f};
+    constexpr Vector4 HPBAR_BACK_COLOR  = {0.f, 0.f, 0.f, 0.6f};
+
+    // 被弾時エフェクト
+    constexpr float    HIT_KNOCKBACK_FORCE    = 40.f;
+    constexpr float    HIT_KNOCKBACK_DURATION = 0.15f;
+    constexpr uint16_t HIT_SHAKE_FRAMES       = 10;
+    constexpr float    HIT_SHAKE_POWER        = 0.5f;
+    constexpr float    HIT_PULSE_DURATION     = 0.15f;
+
+    // パーティクル
+    constexpr float PARTICLE_Y_OFFSET = 1.5f;
+
+    // シェイク
+    constexpr float SHAKE_DECAY_FACTOR = 0.9f;
+
+    // スケール
+    constexpr Vector3 DEFAULT_SCALE    = {0.5f, 0.5f, 0.5f};
+    constexpr float   PULSE_AMPLITUDE  = 0.2f;           // スケールパルスの振れ幅係数
+
+    // カラーグラデーション（無敵状態：白→赤）
+    constexpr float GRAD_R_BASE  = 1.0f;
+    constexpr float GRAD_G_BASE  = 0.3f;
+    constexpr float GRAD_B_BASE  = 0.3f;
+    constexpr float GRAD_FLASH   = 2.0f;
+
+    // Debugウィンドウ
+    constexpr float DEBUG_KNOCKBACK_DURATION = HIT_KNOCKBACK_DURATION;
+}
+
 void Enemy::Initialize() {
     SetModel("animatedcube");
     model_->SetName("Enemy");
     model_->SetTexture("white_x16.png");
-    model_->SetColor({1.f, 0.3f, 0.3f, 1.f});
+    model_->SetColor(BASE_COLOR);
 
     status_ = {
         .hp = params_ ? params_->maxHp : 3.0f,
@@ -21,7 +60,7 @@ void Enemy::Initialize() {
     collider_->SetEvent(Collision::EventType::Trigger, [this](const Collision::Collider* _pCol){ this->OnCollision(_pCol); })
         ->SetOwner(this)
         ->SetType(Collision::Type::AABB)
-        ->SetSize(Vector3{1.f, 1.f, 1.f})
+        ->SetSize(COLLIDER_SIZE)
         ->SetTranslate({ position_.x, position_.y, position_.z })
         ->AddAttribute(static_cast<uint32_t>(CollisionType::Enemy))
         ->AddIgnore(static_cast<uint32_t>(CollisionType::Enemy))
@@ -29,8 +68,8 @@ void Enemy::Initialize() {
 
     hpBar_ = std::make_unique<HpBar>();
     hpBar_->Initialize("white_x16.png", &position_);
-    hpBar_->SetFrontColor({1.f, 0.f, 0.f, 1.f});
-    hpBar_->SetBackColor({0.f, 0.f, 0.f, 0.6f});
+    hpBar_->SetFrontColor(HPBAR_FRONT_COLOR);
+    hpBar_->SetBackColor(HPBAR_BACK_COLOR);
 
     state_ = std::make_unique<EnemyStateIdle>(this);
     state_->Enter();
@@ -73,7 +112,7 @@ void Enemy::Debug() {
         // ステータス
         if (ImGui::CollapsingHeader("Status", ImGuiTreeNodeFlags_DefaultOpen)) {
             ImGui::Text("HP: %.1f", status_.hp);
-            ImGui::ProgressBar(status_.hp / 3.0f, ImVec2(-1, 0), "");
+            ImGui::ProgressBar(status_.hp / (params_ ? params_->maxHp : 3.0f), ImVec2(-1, 0), "");
             ImGui::Text("Damage: %.1f", status_.damage);
         }
 
@@ -123,7 +162,7 @@ void Enemy::Debug() {
             if (knockback_) {
                 ImGui::SameLine();
                 ImGui::Text("(%.2fs)", knockbackTimer_);
-                ImGui::ProgressBar(knockbackTimer_ / 0.15f, ImVec2(-1, 0));
+                ImGui::ProgressBar(knockbackTimer_ / DEBUG_KNOCKBACK_DURATION, ImVec2(-1, 0));
             }
 
             ImGui::Checkbox("Shake", (bool*)&shake_);
@@ -178,7 +217,7 @@ void Enemy::OnCollision(const Collision::Collider* _collider) {
         // Particle
         if (particle_) {
             Vector3 p = position_;
-            p.y += 1.5f;
+            p.y += PARTICLE_Y_OFFSET;
             particle_->Emit("enemy_hit", p);
         }
 
@@ -194,23 +233,23 @@ void Enemy::OnCollision(const Collision::Collider* _collider) {
             // 無敵状態に移行
             invincible_ = true;
 
-            // 強烈に白く光る（2.0倍の明るさ）
-            model_->SetColor({2.f, 2.f, 2.f, 1.f});
+            // 強烈に白く光る
+            model_->SetColor(HIT_FLASH_COLOR);
 
             // Knockback処理
             Vector3 d = (collider_->GetTranslate() - _collider->GetTranslate());
-            ApplyKnockback({d.x, d.y, d.z}, 40.f, 0.15f);
+            ApplyKnockback({d.x, d.y, d.z}, HIT_KNOCKBACK_FORCE, HIT_KNOCKBACK_DURATION);
 
             // Shake
-            ApplyShake(10, 0.5f);
+            ApplyShake(HIT_SHAKE_FRAMES, HIT_SHAKE_POWER);
 
             // ScalePulse
-            ApplyScalePulse(0.15f);
+            ApplyScalePulse(HIT_PULSE_DURATION);
 
             // Particle
             if (particle_) {
                 Vector3 p = position_;
-                p.y += 1.5f;
+                p.y += PARTICLE_Y_OFFSET;
                 particle_->Emit("enemy_hit", p);
             }
 
@@ -259,7 +298,7 @@ void Enemy::UpdateShake() {
     offset_ = offset;
 
     // 減衰処理
-    shakePower_ = shakeDecay_ ? shakePower_ * 0.9f : shakePower_;
+    shakePower_ = shakeDecay_ ? shakePower_ * SHAKE_DECAY_FACTOR : shakePower_;
     --shakeFrames_;
 }
 
@@ -272,7 +311,7 @@ void Enemy::UpdatePulse(float _deltaTime) {
         // 終了
         scalePulse_ = false;
         pulseTimer_ = 0.f;
-        scale_ = Vector3{0.5f, 0.5f, 0.5f};
+        scale_ = DEFAULT_SCALE;
         return;
     }
 
@@ -282,8 +321,8 @@ void Enemy::UpdatePulse(float _deltaTime) {
     // sin波で滑らかに (0 → 1 → 0)
     float curve = std::sin(progress * MathUtils::F_PI);
 
-    // スケール計算 (0.5 → 0.6 → 0.5)
-    float scaleFactor = 0.5f * (1.0f + curve * 0.2f);
+    // スケール計算 (DEFAULT_SCALE → 振れ幅 → DEFAULT_SCALE)
+    float scaleFactor = DEFAULT_SCALE.x * (1.0f + curve * PULSE_AMPLITUDE);
     scale_ = Vector3{scaleFactor, scaleFactor, scaleFactor};
 }
 
@@ -307,16 +346,16 @@ void Enemy::UpdateInvincible(float _deltaTime) {
     // 進行度を計算 (1.0 → 0.0)
     float progress = invincibleTimer_ / params_->invincibleDuration;
 
-    // 白(2.0, 2.0, 2.0) → 赤(1.0, 0.3, 0.3) にグラデーション
-    float r = MathUtils::Lerp(1.0f, 2.0f, progress);
-    float g = MathUtils::Lerp(0.3f, 2.0f, progress);
-    float b = MathUtils::Lerp(0.3f, 2.0f, progress);
+    // HIT_FLASH_COLOR → BASE_COLOR にグラデーション
+    float r = MathUtils::Lerp(GRAD_R_BASE, GRAD_FLASH, progress);
+    float g = MathUtils::Lerp(GRAD_G_BASE, GRAD_FLASH, progress);
+    float b = MathUtils::Lerp(GRAD_B_BASE, GRAD_FLASH, progress);
     model_->SetColor({r, g, b, 1.f});
 
     if (invincibleTimer_ <= 0.f) {
         invincible_ = false;
         invincibleTimer_ = params_->invincibleDuration;
-        model_->SetColor({1.f, 0.3f, 0.3f, 1.f});
+        model_->SetColor(BASE_COLOR);
     }
 }
 
