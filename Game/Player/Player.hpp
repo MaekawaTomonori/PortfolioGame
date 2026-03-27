@@ -1,19 +1,24 @@
 #ifndef PLAYER_HPP_
 #define PLAYER_HPP_
 
+#include <memory>
+#include <functional>
+#include <vector>
+
+#include "ParticleSystem/ParticleSystem.hpp"
+
 #include "GameObject/GameObject.hpp"
 #include "Movement/Movement.hpp"
 #include "Movement/IMovementBehavior.hpp"
 #include "Movement/MovementContext.hpp"
+#include "Movement/WalkBehavior.hpp"
+#include "Movement/DashBehavior.hpp"
+#include "Movement/FlashBehavior.hpp"
 #include "Module/Attack/Attack.hpp"
-#include <memory>
-#include <vector>
 
+#include "InputHandler.hpp"
 #include "FollowCamera.hpp"
 #include "Status/PlayerStatus.hpp"
-#include "InputHandler.hpp"
-#include "ParticleSystem/ParticleSystem.hpp"
-#include <functional>
 
 class Player : public GameObject {
     ParticleSystem* particle_ = nullptr;
@@ -41,6 +46,10 @@ class Player : public GameObject {
 
     PlayerStatus status_{};
 
+    WalkBehavior*  walk_  = nullptr;
+    DashBehavior*  dash_  = nullptr;
+    FlashBehavior* flash_ = nullptr;
+
     bool invulnerability_ = false;
     float invulnerabilityTimer_ = 1.f;
     const float InvulnerabilityDuration = 1.f;
@@ -48,10 +57,9 @@ class Player : public GameObject {
 # ifdef _DEBUG  
     bool no_atk = false;
     bool no_move = false;
-
 #endif
-    std::unique_ptr<Model> reticle_;
 
+    std::unique_ptr<Model> reticle_;
 
 public:
     Player(ParticleSystem* _particle, PostProcessExecutor* _postEffect);
@@ -80,6 +88,8 @@ public:
 private:
     std::function<void(const Vector3&, const Vector3&)> onSkillRequest_;
 
+    void LoadParams();
+    void SaveParams();
     void UpdateInvulnerability(float _deltaTime);
     void UpdateAttack();
 };

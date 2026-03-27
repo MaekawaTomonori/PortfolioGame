@@ -15,7 +15,7 @@
 /// </summary>
 class Attack {
     // consts
-    const float DeltaTime = 1.f / 60.f;
+    static constexpr float DELTA_TIME = 1.f / 60.f;
 
     // refs
     GameObject* owner_ = nullptr;
@@ -23,7 +23,8 @@ class Attack {
     // own
     std::vector<std::unique_ptr<Bullet>> bullets_;
 
-    const float BaseAttackRate = 1.f;
+    float attackRate_ = 1.f;
+    Bullet::Params bulletParams_;
     float timer_ = 0.f;
 
     Vector3 direction_ = {};
@@ -41,6 +42,9 @@ public:
     void SetStatus(PlayerStatus& _status);
 
     void Clear();
+
+    void LoadParams();
+    void SaveParams();
 
 private:
     void Execute();

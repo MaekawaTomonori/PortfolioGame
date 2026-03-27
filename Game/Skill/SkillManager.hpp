@@ -35,6 +35,10 @@ public:
 
     void SetEnemies(Enemies* _enemies) { enemies_ = _enemies; }
     void SetParticle(ParticleSystem* _particle) { particle_ = _particle; }
+
+private:
+    void LoadParams();
+    void SaveParams();
 };
 
 #endif // SKILL_MANAGER_HPP_

@@ -1,0 +1,23 @@
+{
+    "PlayerParams": {
+        "Walk": {
+            "Speed": 5.0
+        },
+        "Dash": {
+            "Speed": 10.0,
+            "Duration": 0.3,
+            "Cooldown": 1.0
+        },
+        "Flash": {
+            "Distance": 5.0,
+            "Cooldown": 3.0
+        },
+        "Attack": {
+            "Rate": 1.0
+        },
+        "Bullet": {
+            "Speed": 5.0,
+            "Lifetime": 2.0
+        }
+    }
+}
