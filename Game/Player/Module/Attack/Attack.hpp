@@ -36,7 +36,7 @@ public:
     void Draw();
 
     void SetOwner(GameObject* _owner);
-    void SetDirection(Vector3 _direction);
+    void SetDirection(const Vector3& _direction);
 
     void SetStatus(PlayerStatus& _status);
 

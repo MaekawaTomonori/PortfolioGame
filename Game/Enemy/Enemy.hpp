@@ -118,7 +118,7 @@ public:
     void TransitionState(std::unique_ptr<IEnemyState> _next);
 
 private:
-    void ApplyKnockback(Vector3 _direction, float _force, float _duration);
+    void ApplyKnockback(const Vector3& _direction, float _force, float _duration);
     void ApplyScalePulse(float _duration);
 
     void UpdateShake();

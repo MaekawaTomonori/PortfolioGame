@@ -124,7 +124,7 @@ void Enemies::Draw() const {
 #endif
 }
 
-Vector3 Enemies::GetNearest(const Vector3 _pos) const {
+Vector3 Enemies::GetNearest(const Vector3& _pos) const {
     float minDistance = FLT_MAX;
     Vector3 nearest = {};
     for (const auto& enemy : enemies_) {
@@ -313,7 +313,7 @@ void Enemies::Spawn() {
     enemies_.push_back(std::move(enemy));
 }
 
-float Enemies::GetFarthestEnemyDistance(Vector3 referencePos) const {
+float Enemies::GetFarthestEnemyDistance(const Vector3& referencePos) const {
     float maxDistance = 0.0f;
 
     for (const auto& enemy : enemies_) {

@@ -261,7 +261,7 @@ void Enemy::OnCollision(const Collision::Collider* _collider) {
     }
 }
 
-void Enemy::ApplyKnockback(Vector3 _direction, float _force, float _duration) {
+void Enemy::ApplyKnockback(const Vector3& _direction, float _force, float _duration) {
     if (knockback_) return;
 
     knockback_ = true;

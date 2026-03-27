@@ -165,7 +165,7 @@ void Player::Debug() {
 #endif
 }
 
-void Player::SetTargetPosition(Vector3 _position) {
+void Player::SetTargetPosition(const Vector3& _position) {
     targetPosition_ = _position;
     targetExist_ = true;
 }

@@ -13,7 +13,7 @@ class Bullet : public GameObject{
     std::unique_ptr<Collision::Collider> collider_;
 
 public:
-    void Initialize(GameObject* _owner, Vector3 _direction);
+    void Initialize(GameObject* _owner, const Vector3& _direction);
     void Update(float deltaTime) override;
     void Draw() override;
 

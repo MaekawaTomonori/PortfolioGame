@@ -32,7 +32,7 @@ void Attack::SetOwner(GameObject* _owner) {
     owner_ = _owner;
 }
 
-void Attack::SetDirection(const Vector3 _direction) {
+void Attack::SetDirection(const Vector3& _direction) {
     direction_ = _direction;
 }
 

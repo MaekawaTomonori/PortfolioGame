@@ -2,7 +2,7 @@
 
 #include "ColliderType.hpp"
 
-void Bullet::Initialize(GameObject* _owner, Vector3 _direction) {
+void Bullet::Initialize(GameObject* _owner, const Vector3& _direction) {
     speed_ = 5.f;
     owner_ = _owner;
     velocity_  = _direction.Normalize() * speed_;

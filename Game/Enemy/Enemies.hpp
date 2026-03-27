@@ -38,7 +38,7 @@ public:
     void Update();
     void Draw() const;
 
-    [[nodiscard]] Vector3 GetNearest(Vector3 _pos) const;
+    [[nodiscard]] Vector3 GetNearest(const Vector3& _pos) const;
 
     void SetTarget(GameObject* _target);
 
@@ -48,7 +48,7 @@ public:
     bool Empty() const;
 
     // カメラ調整用の情報取得
-    [[nodiscard]] float GetFarthestEnemyDistance(Vector3 referencePos) const;
+    [[nodiscard]] float GetFarthestEnemyDistance(const Vector3& referencePos) const;
 
     [[nodiscard]] uint16_t GetDeathCount() const;
 

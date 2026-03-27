@@ -60,7 +60,7 @@ public:
     void Draw() override;
     void Debug() override;
 
-    void SetTargetPosition(Vector3 _position);
+    void SetTargetPosition(const Vector3& _position);
 
     void OnCollision(const Collision::Collider* _collider);
 
