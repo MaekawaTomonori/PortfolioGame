@@ -5,6 +5,11 @@
 
 #undef max
 
+namespace {
+    constexpr float DeltaTime      = 1.f / 60.f;
+    constexpr float FOG_INTERVAL   = 0.5f;
+}
+
 void Stage::Setup(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
     // 初回限定
     particle_ = _particle;
@@ -102,13 +107,13 @@ void Stage::Update() {
         player_->SetTargetPosition(enemies_->GetNearest(player_->GetPosition()));
     }
 
-    player_->Update(1.f / 60.f);
+    player_->Update(DeltaTime);
 
     // フィールド霧エフェクトをプレイヤー位置を中心に継続発生
-    fogTimer_ -= 1.f / 60.f;
+    fogTimer_ -= DeltaTime;
     if (fogTimer_ <= 0.f) {
         particle_->Emit("field", player_->GetPosition());
-        fogTimer_ = 0.5f;
+        fogTimer_ = FOG_INTERVAL;
     }
 
     skillManager_->Update();

@@ -6,17 +6,16 @@
 #include "Scene/Title/TitleScene.hpp"
 
 void MyGame::Initialize(GameEngine::Config& _config) {
-    _config = { 
-        .title = "DarkRun",
-        .defaultScene = "title",
-        .fps = 60,
-        .showCursor = false,
-    };
+    // ゲーム固有の設定（Assets/Config/App.cnf に含まれないもの）
+    _config.defaultScene = "title";
+
+    // cnf の値をゲーム側で強制上書きしたい場合はここで設定する
+    // 例: _config.fps = 120;
 
     Register();
 
     // PostEffectFactoryを登録
-    SetPostEffectFactory(std::make_unique<PostEffectFactory>());    
+    SetPostEffectFactory(std::make_unique<PostEffectFactory>());
 }
 
 void MyGame::Register(){

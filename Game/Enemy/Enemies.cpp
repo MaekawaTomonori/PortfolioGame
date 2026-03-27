@@ -195,7 +195,11 @@ void Enemies::Debug() {
         // Stats
         ImGui::TextColored(ImVec4(0.4f, 0.8f, 1.0f, 1.0f), "Stats");
         ImGui::SetNextItemWidth(inputWidth);
-        ImGui::DragFloat("Max HP", &enemyParams_.maxHp, 0.1f, 1.0f, 10.0f, "%.1f");
+        ImGui::DragFloat("Max HP",       &enemyParams_.maxHp,       0.1f, 1.0f,  10.0f, "%.1f");
+        ImGui::SetNextItemWidth(inputWidth);
+        ImGui::DragFloat("Move Speed",   &enemyParams_.moveSpeed,   0.1f, 0.5f,  20.0f, "%.1f");
+        ImGui::SetNextItemWidth(inputWidth);
+        ImGui::DragFloat("Min Distance", &enemyParams_.minDistance, 0.1f, 0.0f,   5.0f, "%.2f");
 
         ImGui::Separator();
 
@@ -333,7 +337,9 @@ void Enemies::LoadParams() {
 
     if (json->Load("EnemyParams")) {
         // 基本ステータス
-        enemyParams_.maxHp = std::get<float>(json->GetValue("EnemyParams", "Basic", "MaxHp"));
+        enemyParams_.maxHp      = std::get<float>(json->GetValue("EnemyParams", "Basic", "MaxHp"));
+        enemyParams_.moveSpeed  = std::get<float>(json->GetValue("EnemyParams", "Basic", "MoveSpeed"));
+        enemyParams_.minDistance= std::get<float>(json->GetValue("EnemyParams", "Basic", "MinDistance"));
 
         distance_ = std::get<Vector2>(json->GetValue("EnemyParams", "Basic", "SpawnDistance"));
 
@@ -364,7 +370,9 @@ void Enemies::SaveParams() {
     const auto& json = Singleton<JsonParams>::GetInstance();
 
     // 基本ステータス
-    json->SetValue("EnemyParams", "Basic", "MaxHp", enemyParams_.maxHp);
+    json->SetValue("EnemyParams", "Basic", "MaxHp",       enemyParams_.maxHp);
+    json->SetValue("EnemyParams", "Basic", "MoveSpeed",   enemyParams_.moveSpeed);
+    json->SetValue("EnemyParams", "Basic", "MinDistance", enemyParams_.minDistance);
 
     json->SetValue("EnemyParams", "Basic", "SpawnDistance", distance_);
 

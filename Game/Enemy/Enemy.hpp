@@ -68,7 +68,7 @@ private:
     Vector3 externalForce_{};
 
     bool invincible_ = false;
-    float invincibleTimer_ = 0.4f;
+    float invincibleTimer_ = Params{}.invincibleDuration;
 
     bool knockback_ = false;
     float knockbackTimer_ = 0.f;
