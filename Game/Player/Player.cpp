@@ -3,11 +3,9 @@
 #include "imgui_internal.h"
 #include "Pattern/Singleton.hpp"
 #include "Light/LightManager.hpp"
-#include "Movement/WalkBehavior.hpp"
-#include "Movement/DashBehavior.hpp"
-#include "Movement/FlashBehavior.hpp"
 #include "Math/MathUtils.hpp"
 #include "PostProcess/Executor/PostProcessExecutor.hpp"
+#include "Json/JsonParams.hpp"
 
 Player::Player(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
     particle_ = _particle;
@@ -68,9 +66,15 @@ void Player::Initialize() {
 
     movement_->Initialize(this);
 
-    behaviors_.push_back(std::make_unique<FlashBehavior>(5.0f, 3.0f));
-    behaviors_.push_back(std::make_unique<DashBehavior>(10.0f, 0.3f, 1.0f));
-    behaviors_.push_back(std::make_unique<WalkBehavior>(5.0f));
+    auto flash = std::make_unique<FlashBehavior>();
+    auto dash  = std::make_unique<DashBehavior>();
+    auto walk  = std::make_unique<WalkBehavior>();
+    flash_ = flash.get();
+    dash_  = dash.get();
+    walk_  = walk.get();
+    behaviors_.push_back(std::move(flash));
+    behaviors_.push_back(std::move(dash));
+    behaviors_.push_back(std::move(walk));
 
     for (auto& behavior : behaviors_) {
         movement_->AddBehavior(behavior.get());
@@ -78,6 +82,9 @@ void Player::Initialize() {
 
     attack_->Initialize();
     attack_->SetOwner(this);
+
+    LoadParams();
+    attack_->LoadParams();
 
     forLight_ = position_;
     forLight_.y += 3.f;
@@ -216,6 +223,38 @@ void Player::UpdateWithoutInput() {
 
 bool Player::IsDead() const {
     return status_.hp <= 0.f;
+}
+
+void Player::LoadParams() {
+    const auto& json = Singleton<JsonParams>::GetInstance();
+    if (!json->Load("PlayerParams")) return;
+
+    if (walk_)  walk_->SetSpeed   (std::get<float>(json->GetValue("PlayerParams", "Walk",  "Speed")));
+    if (dash_) {
+        dash_->SetSpeed   (std::get<float>(json->GetValue("PlayerParams", "Dash",  "Speed")));
+        dash_->SetDuration(std::get<float>(json->GetValue("PlayerParams", "Dash",  "Duration")));
+        dash_->SetCooldown(std::get<float>(json->GetValue("PlayerParams", "Dash",  "Cooldown")));
+    }
+    if (flash_) {
+        flash_->SetDistance(std::get<float>(json->GetValue("PlayerParams", "Flash", "Distance")));
+        flash_->SetCooldown(std::get<float>(json->GetValue("PlayerParams", "Flash", "Cooldown")));
+    }
+}
+
+void Player::SaveParams() {
+    const auto& json = Singleton<JsonParams>::GetInstance();
+    if (walk_)  json->SetValue("PlayerParams", "Walk",  "Speed",    walk_->GetSpeed());
+    if (dash_) {
+        json->SetValue("PlayerParams", "Dash",  "Speed",    dash_->GetSpeed());
+        json->SetValue("PlayerParams", "Dash",  "Duration", dash_->GetDuration());
+        json->SetValue("PlayerParams", "Dash",  "Cooldown", dash_->GetCooldown());
+    }
+    if (flash_) {
+        json->SetValue("PlayerParams", "Flash", "Distance", flash_->GetDistance());
+        json->SetValue("PlayerParams", "Flash", "Cooldown", flash_->GetCooldown());
+    }
+    attack_->SaveParams();
+    json->Save("PlayerParams");
 }
 
 void Player::UpdateInvulnerability(const float _deltaTime) {

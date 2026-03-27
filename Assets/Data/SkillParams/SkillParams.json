@@ -1,0 +1,23 @@
+{
+    "SkillParams": {
+        "BlackHole_Flying": {
+            "InitialSpeed": 15.0,
+            "Deceleration": 8.0,
+            "StopThreshold": 0.5,
+            "FlyingScale": [0.5, 0.5, 0.5],
+            "FlyingColor": [0.2, 0.0, 0.5, 1.0]
+        },
+        "BlackHole_Sucking": {
+            "SuckRadius": 8.0,
+            "SuckForce": 1.2,
+            "SuckDuration": 3.0,
+            "SuckingScale": [0.8, 0.8, 0.8],
+            "SuckingColor": [0.5, 0.0, 1.0, 1.0]
+        },
+        "BlackHole_Vortex": {
+            "VortexRotateSpeed": 3.0,
+            "VortexScale": [5.0, 5.0, 1.0],
+            "VortexColor": [1.0, 1.0, 1.0, 1.0]
+        }
+    }
+}

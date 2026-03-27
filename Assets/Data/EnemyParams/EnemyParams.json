@@ -2,6 +2,8 @@
     "EnemyParams": {
         "Basic": {
             "MaxHp": 3.0,
+            "MoveSpeed": 3.0,
+            "MinDistance": 0.5,
             "SpawnDistance": [
                 10.300000190734863,
                 12.300000190734863

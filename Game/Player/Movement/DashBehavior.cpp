@@ -1,12 +1,17 @@
 #include "DashBehavior.hpp"
 #include "imgui.h"
 
+namespace {
+    constexpr float DELTA_TIME = 1.f / 60.f;
+    constexpr float MIN_MOVE_THRESHOLD = 0.0001f;
+}
+
 Vector3 DashBehavior::Calculate(const MovementContext& context, const float deltaTime) {
     if (!isDashing_ && CanExecute(context)) {
         isDashing_ = true;
         currentDuration_ = duration_;
         dashDirection_ = context.moveDirection;
-        if (dashDirection_.Length() <= 0.0001f) {
+        if (dashDirection_.Length() <= MIN_MOVE_THRESHOLD) {
              isDashing_ = false;
              return {};
         }
@@ -35,7 +40,7 @@ bool DashBehavior::CanExecute(const MovementContext& context) {
     if (isDashing_) return true;
 
     bool hasDashInput = context.isDashRequested;
-    bool hasMovement = context.moveDirection.Length() > 0.0001f;
+    bool hasMovement = context.moveDirection.Length() > MIN_MOVE_THRESHOLD;
 
     return hasDashInput && hasMovement;
 }
@@ -57,6 +62,6 @@ bool DashBehavior::IsCooldown() {
         return false;
     }
 
-    currentCooldown_ -= 1.f / 60.f;
+    currentCooldown_ -= DELTA_TIME;
     return true;
 }

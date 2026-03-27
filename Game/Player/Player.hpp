@@ -5,6 +5,9 @@
 #include "Movement/Movement.hpp"
 #include "Movement/IMovementBehavior.hpp"
 #include "Movement/MovementContext.hpp"
+#include "Movement/WalkBehavior.hpp"
+#include "Movement/DashBehavior.hpp"
+#include "Movement/FlashBehavior.hpp"
 #include "Module/Attack/Attack.hpp"
 #include <memory>
 #include <vector>
@@ -40,6 +43,10 @@ class Player : public GameObject {
     Vector3 forLight_ = {};
 
     PlayerStatus status_{};
+
+    WalkBehavior*  walk_  = nullptr;
+    DashBehavior*  dash_  = nullptr;
+    FlashBehavior* flash_ = nullptr;
 
     bool invulnerability_ = false;
     float invulnerabilityTimer_ = 1.f;
@@ -80,6 +87,8 @@ public:
 private:
     std::function<void(const Vector3&, const Vector3&)> onSkillRequest_;
 
+    void LoadParams();
+    void SaveParams();
     void UpdateInvulnerability(float _deltaTime);
     void UpdateAttack();
 };
