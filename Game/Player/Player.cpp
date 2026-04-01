@@ -1,11 +1,12 @@
 #include "Player.hpp"
-#include "ColliderType.hpp"
-#include "imgui_internal.h"
 #include "Pattern/Singleton.hpp"
 #include "Light/LightManager.hpp"
 #include "Math/MathUtils.hpp"
 #include "PostProcess/Executor/PostProcessExecutor.hpp"
+#include "ColliderType.hpp"
 #include "Json/JsonParams.hpp"
+
+#include "imgui_internal.h"
 
 Player::Player(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
     particle_ = _particle;
@@ -56,7 +57,7 @@ Player::Player(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
 
 void Player::Initialize() {
     status_ = {
-        1.f,
+        100.f,
         1.f,
         1.f,
         1.f
@@ -225,7 +226,7 @@ bool Player::IsDead() const {
     return status_.hp <= 0.f;
 }
 
-void Player::LoadParams() {
+void Player::LoadParams() const {
     const auto& json = Singleton<JsonParams>::GetInstance();
     if (!json->Load("PlayerParams")) return;
 
@@ -241,7 +242,7 @@ void Player::LoadParams() {
     }
 }
 
-void Player::SaveParams() {
+void Player::SaveParams() const {
     const auto& json = Singleton<JsonParams>::GetInstance();
     if (walk_)  json->SetValue("PlayerParams", "Walk",  "Speed",    walk_->GetSpeed());
     if (dash_) {

@@ -22,8 +22,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CollisionLib", "Engine\Lib\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Misc", "Engine\Lib\Misc\Misc.vcxproj", "{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Audio", "Engine\Lib\Audio\Audio.vcxproj", "{4AA5FDEE-80D9-4E30-8EFF-D9435C7C4416}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -54,10 +52,6 @@ Global
 		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}.Debug|x64.Build.0 = Debug|x64
 		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}.Release|x64.ActiveCfg = Release|x64
 		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}.Release|x64.Build.0 = Release|x64
-		{4AA5FDEE-80D9-4E30-8EFF-D9435C7C4416}.Debug|x64.ActiveCfg = Debug|x64
-		{4AA5FDEE-80D9-4E30-8EFF-D9435C7C4416}.Debug|x64.Build.0 = Debug|x64
-		{4AA5FDEE-80D9-4E30-8EFF-D9435C7C4416}.Release|x64.ActiveCfg = Release|x64
-		{4AA5FDEE-80D9-4E30-8EFF-D9435C7C4416}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

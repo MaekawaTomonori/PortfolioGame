@@ -88,8 +88,8 @@ public:
 private:
     std::function<void(const Vector3&, const Vector3&)> onSkillRequest_;
 
-    void LoadParams();
-    void SaveParams();
+    void LoadParams() const;
+    void SaveParams() const;
     void UpdateInvulnerability(float _deltaTime);
     void UpdateAttack();
 };

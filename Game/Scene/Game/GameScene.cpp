@@ -13,7 +13,7 @@ void GameScene::Initialize() {
         .point = 0,
         .time = 15,
         .requirementKill = 5,
-        .maxEnemyCount = 5,
+        .maxEnemyCount = 100,
         .enemySpawnInterval = 2.f,
         .playerStatus = {
             .hp = 10.f,
