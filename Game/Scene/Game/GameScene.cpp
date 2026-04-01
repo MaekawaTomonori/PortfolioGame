@@ -196,22 +196,20 @@ void GameScene::UpdatePlay() {
     followCamera_->Update();
     keyGuide_->Update();
 
-    if (gameTimer_->IsDone()) {
-        status_.point += stage_->GetEnemies()->GetDeathCount();
-        PlayTransition(Transition::Type::Fade, [this] {
-            state_ = UPGRADE;
-            skillTree_->Open();
-            skillTree_->Update();
-            });
-    }
-
-    // is clear
+    // is clear (タイマーより優先してチェック)
     if (stage_->IsClear() || Singleton<Input>::GetInstance()->IsTrigger(DIK_T)) {
         state_ = OUTRO;
         PostEffect()->ApplyPreset("DarkScene", "replace", {}, [&] {
             next_ = "gameclear";
             Change();
         });
+    } else if (gameTimer_->IsDone()) {
+        status_.point += stage_->GetEnemies()->GetDeathCount();
+        PlayTransition(Transition::Type::Fade, [this] {
+            state_ = UPGRADE;
+            skillTree_->Open();
+            skillTree_->Update();
+            });
     }
 
     if (stage_->IsGameOver()) {

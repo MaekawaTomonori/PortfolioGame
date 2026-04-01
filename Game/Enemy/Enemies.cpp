@@ -42,13 +42,20 @@ void Enemies::Initialize() {
 void Enemies::Update() {
     constexpr float DeltaTime = 1.f / 60.f;
 
-    const auto pre = enemies_.size();
+    uint16_t killed = 0;
+    for (const auto& enemy : enemies_) {
+        if (!enemy->IsActive() && enemy->IsKilledByBullet()) {
+            ++killed;
+        }
+    }
     std::erase_if(enemies_, [](const auto& _enemy) {return !_enemy->IsActive();});
-    const auto after = enemies_.size();
-    deathCount_ += static_cast<uint16_t>(pre - after);
+    deathCount_ += killed;
 
-    if (status_.requirementKill <= 0 && status_.requirementKill <= deathCount_) {
+    if (!done_ && status_.requirementKill > 0 && deathCount_ >= status_.requirementKill) {
         done_ = true;
+        for (auto& enemy : enemies_) {
+            enemy->ForceDeath();
+        }
     }
 
 #ifdef _DEBUG

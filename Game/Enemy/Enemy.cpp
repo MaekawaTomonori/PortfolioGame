@@ -254,6 +254,7 @@ void Enemy::OnCollision(const Collision::Collider* _collider) {
             }
 
             if (status_.hp <= 0.f) {
+                killedByBullet_ = true;
                 collider_->Disable();
                 TransitionState(std::make_unique<EnemyStateDeath>(this));
             }
@@ -373,4 +374,10 @@ void Enemy::TransitionState(std::unique_ptr<IEnemyState> _next) {
     if (state_) state_->Exit();
     state_ = std::move(_next);
     if (state_) state_->Enter();
+}
+
+void Enemy::ForceDeath() {
+    if (IsDead()) return;
+    if (collider_) collider_->Disable();
+    TransitionState(std::make_unique<EnemyStateDeath>(this));
 }

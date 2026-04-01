@@ -70,6 +70,8 @@ private:
     bool invincible_ = false;
     float invincibleTimer_ = Params{}.invincibleDuration;
 
+    bool killedByBullet_ = false;
+
     bool knockback_ = false;
     float knockbackTimer_ = 0.f;
 
@@ -102,6 +104,8 @@ public:
     void SetParticleSystem(ParticleSystem* _particle) { particle_ = _particle; }
 
     bool IsDead() const { return state_ && state_->IsDying(); }
+    bool IsKilledByBullet() const { return killedByBullet_; }
+    void ForceDeath();
 
     void AddExternalForce(const Vector3& _force) { externalForce_ += _force; }
 
