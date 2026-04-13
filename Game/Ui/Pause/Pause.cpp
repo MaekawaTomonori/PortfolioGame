@@ -15,6 +15,8 @@ void Pause::Initialize() {
     ui_->RegisterAction("Pause.Retry", [this]() { if (onRetry_) onRetry_(); });
     ui_->RegisterAction("Pause.Quit", [this]() { if (onQuit_) onQuit_(); });
 
+    ui_->SetCustomDebug([this]{ Debug(); });
+
     actionIndices_ = ui_->GetIndicesWithEvent(Ui::EventKey::Execute);
 
     cursor_ = std::make_unique<Sprite>();
@@ -41,7 +43,6 @@ void Pause::Update() {
     HandleInput();
     UpdateCursor();
 
-    ui_->Update();
     cursor_->Update();
 }
 
@@ -49,7 +50,6 @@ void Pause::Draw() {
     if (!ui_)return;
     if (!ui_->IsActive()) return;
 
-    ui_->Draw();
     cursor_->Draw();
 }
 
@@ -136,13 +136,6 @@ void Pause::CheckActivateState() {
 }
 
 void Pause::Debug() {
-    if (!ui_)return;
-
-    ImGui::Begin("PauseMenu");
     ImGui::Text("Interpolation Time(sec)");
     ImGui::DragFloat("##interpolationtime", &interpolationTime_, 0.01f, 0.0f, 10.0f);
-    ImGui::Separator();
-
-    ui_->Debug();
-    ImGui::End();
 }

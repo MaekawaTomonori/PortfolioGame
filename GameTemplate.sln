@@ -20,7 +20,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "imgui", "Engine\externals\i
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CollisionLib", "Engine\Lib\Collision\CollisionLib.vcxproj", "{3B4663F4-D09B-4503-AEB0-B2477444918F}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Misc", "Engine\Lib\Misc\Misc.vcxproj", "{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GESTD", "Engine\Lib\GESTD\GESTD.vcxproj", "{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

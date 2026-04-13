@@ -28,6 +28,8 @@ void SkillTree::Initialize(GameStatus* _status) {
         if (onContinue_) onContinue_();
     });
 
+    ui_->SetCustomDebug([this]{ Debug(); });
+
     cursor_ = std::make_unique<Sprite>();
     cursor_->Initialize("white_x16.png");
     cursor_->SetSize({16.f, 16.f});
@@ -42,14 +44,12 @@ void SkillTree::Update() {
     HandleInput();
     UpdateCursor();
 
-    ui_->Update();
     cursor_->Update();
 }
 
 void SkillTree::Draw() {
     if (!ui_ || !ui_->IsActive()) return;
 
-    ui_->Draw();
     cursor_->Draw();
 }
 
@@ -71,10 +71,6 @@ bool SkillTree::IsOpen() const {
 }
 
 void SkillTree::Debug() {
-    if (!ui_) return;
-
-    ImGui::Begin("SkillTree");
-
     if (status_) {
         ImGui::Text("Points: %u", status_->point);
         if (ImGui::Button("AddPoint")){
@@ -96,10 +92,6 @@ void SkillTree::Debug() {
     }
 
     ImGui::DragFloat("Interpolation", &interpolationTime_, 0.01f, 0.0f, 10.0f);
-    ImGui::Separator();
-
-    ui_->Debug();
-    ImGui::End();
 }
 
 void SkillTree::SetOnContinue(std::function<void()> _callback) {
@@ -191,20 +183,16 @@ void SkillTree::Refresh() {
         auto* elem = ui_->FindElementByName(skill.id);
         if (!elem) continue;
 
-        auto data = elem->GetData();
-
         if (acquired_.contains(skill.id)) {
-            elem->SetEvent(Ui::EventKey::Execute, "");
-            data.color = colorAcquired;
+            ui_->SetElementEvent(skill.id, Ui::EventKey::Execute, "");
+            elem->SetColor(colorAcquired);
         } else if (status_->point >= skill.cost) {
-            elem->SetEvent(Ui::EventKey::Execute, "SkillTree.Upgrade." + skill.id);
-            data.color = colorAvailable;
+            ui_->SetElementEvent(skill.id, Ui::EventKey::Execute, "SkillTree.Upgrade." + skill.id);
+            elem->SetColor(colorAvailable);
         } else {
-            elem->SetEvent(Ui::EventKey::Execute, "");
-            data.color = colorDisabled;
+            ui_->SetElementEvent(skill.id, Ui::EventKey::Execute, "");
+            elem->SetColor(colorDisabled);
         }
-
-        elem->SetData(data);
     }
 
     CollectNavigableIndices();
@@ -312,23 +300,17 @@ void SkillTree::UpdatePreview() {
     auto setDigit = [this, &DIGIT_TEX_SIZE](const std::string& _name, int32_t _digit, bool _visible = true) {
         auto* elem = ui_->FindElementByName(_name);
         if (!elem) return;
-        auto d = elem->GetData();
-        d.texture = "numbers.png";
-        d.textureLeftTop = {static_cast<float>(std::abs(_digit) % 10) * DIGIT_TEX_SIZE.x, 0.f};
-        d.textureSize = DIGIT_TEX_SIZE;
-        d.visible = _visible;
-        elem->SetData(d);
+        elem->SetTexture("numbers.png");
+        elem->SetTextureRegion({static_cast<float>(std::abs(_digit) % 10) * DIGIT_TEX_SIZE.x, 0.f}, DIGIT_TEX_SIZE);
+        elem->SetVisible(_visible);
     };
 
     auto setIcon = [this](const std::string& _name, const std::string& _tex, bool _visible = true) {
         auto* elem = ui_->FindElementByName(_name);
         if (!elem) return;
-        auto d = elem->GetData();
-        d.texture = _tex;
-        d.textureLeftTop = {};
-        d.textureSize = {};
-        d.visible = _visible;
-        elem->SetData(d);
+        elem->SetTexture(_tex);
+        elem->SetTextureRegion({}, {});
+        elem->SetVisible(_visible);
     };
 
     if (skill) {
@@ -373,11 +355,8 @@ void SkillTree::UpdatePointDisplay() {
     auto setDigit = [this, &DIGIT_TEX_SIZE](const std::string& _name, int32_t _digit) {
         auto* elem = ui_->FindElementByName(_name);
         if (!elem) return;
-        auto d = elem->GetData();
-        d.texture = "numbers.png";
-        d.textureLeftTop = {static_cast<float>(std::abs(_digit) % 10) * DIGIT_TEX_SIZE.x, 0.f};
-        d.textureSize = DIGIT_TEX_SIZE;
-        elem->SetData(d);
+        elem->SetTexture("numbers.png");
+        elem->SetTextureRegion({static_cast<float>(std::abs(_digit) % 10) * DIGIT_TEX_SIZE.x, 0.f}, DIGIT_TEX_SIZE);
     };
 
     int32_t pt = static_cast<int32_t>(status_->point);

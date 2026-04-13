@@ -21,6 +21,7 @@ void KeyGuide::Initialize() {
     ui_ = std::make_unique<Ui::Canvas>();
     ui_->Setup("Guide");
     ui_->SetActive(true);
+    ui_->SetCustomDebug([this]{ Debug(); });
 }
 
 void KeyGuide::Update() {
@@ -29,8 +30,6 @@ void KeyGuide::Update() {
         Load();
         reload_ = false;
     }
-
-    ui_->Update();
 
     frame_->SetPosition(position_);
     frame_->Update();
@@ -65,15 +64,9 @@ void KeyGuide::Draw() const {
             key.key->Draw();
         }
     }
-
-    if (ui_) {
-        ui_->Draw();
-    }
 }
 
 void KeyGuide::Debug() {
-    ImGui::Begin("KeyGuide");
-
     ImGui::Text("Global Settings");
     ImGui::Separator();
 
@@ -336,12 +329,6 @@ void KeyGuide::Debug() {
     ImGui::SameLine();
     if (ImGui::Button("Save")) {
         Save();
-    }
-
-    ImGui::End();
-
-    if (ui_) {
-        ui_->StandaloneDebug();
     }
 }
 

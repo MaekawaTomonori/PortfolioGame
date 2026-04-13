@@ -229,7 +229,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ProjectReference Include="..\Engine\Lib\Collision\CollisionLib.vcxproj">
       <Project>{3b4663f4-d09b-4503-aeb0-b2477444918f}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\Engine\Lib\Misc\Misc.vcxproj">
+    <ProjectReference Include="..\Engine\Lib\GESTD\GESTD.vcxproj">
       <Project>{a1b2c3d4-e5f6-7890-abcd-ef1234567890}</Project>
     </ProjectReference>
   </ItemGroup>
