@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "Input.hpp"
+#include "Sprite.hpp"
 #include "Ui/UserInterface.hpp"
 #include "Status/GameStatus.hpp"
 

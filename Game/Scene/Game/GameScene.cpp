@@ -7,15 +7,13 @@
 #include "Debug/Debugger.hpp"
 
 void GameScene::Initialize() {
-    name_ = "game";
-
     entryTransition_ = Transition::Type::Fade;
 
     status_ ={
         .point = 0,
         .time = 15,
         .requirementKill = 5,
-        .maxEnemyCount = 5,
+        .maxEnemyCount = 100,
         .enemySpawnInterval = 2.f,
         .playerStatus = {
             .hp = 10.f,
@@ -149,6 +147,7 @@ void GameScene::Debug() {
     skillTree_->Debug();
     killCounter_->Debug();
 
+    
     ImGui::Begin("Status");
     if (ImGui::Button("Save to JSON")) {
         SaveStatus();
@@ -190,13 +189,21 @@ void GameScene::OnEnable() {
 }
 
 void GameScene::UpdatePlay() {
-    gameTimer_->Update(1.f / 60.f);
+    constexpr float DeltaTime = 1.f / 60.f;
+    gameTimer_->Update(DeltaTime);
     stage_->Update();
     killCounter_->Update();
     followCamera_->Update();
     keyGuide_->Update();
 
-    if (gameTimer_->IsDone()) {
+    // is clear (タイマーより優先してチェック)
+    if (stage_->IsClear() || Singleton<Input>::GetInstance()->IsTrigger(DIK_T)) {
+        state_ = OUTRO;
+        PostEffect()->ApplyPreset("DarkScene", "replace", {}, [&] {
+            next_ = "gameclear";
+            Change();
+        });
+    } else if (gameTimer_->IsDone()) {
         status_.point += stage_->GetEnemies()->GetDeathCount();
         PlayTransition(Transition::Type::Fade, [this] {
             state_ = UPGRADE;
@@ -205,11 +212,10 @@ void GameScene::UpdatePlay() {
             });
     }
 
-    // is clear
-    if (stage_->IsClear() || Singleton<Input>::GetInstance()->IsTrigger(DIK_T)) {
+    if (stage_->IsGameOver()) {
         state_ = OUTRO;
         PostEffect()->ApplyPreset("DarkScene", "replace", {}, [&] {
-            next_ = "gameclear";
+            next_ = "gameover";
             Change();
         });
     }

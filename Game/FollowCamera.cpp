@@ -84,7 +84,7 @@ void FollowCamera::UpdateCameraDistance() {
     float targetDistance = minDistance_;
 
     if (0.f < maxEnemyDistance) {
-        auto* camera = cameraController_->GetActive();
+        auto camera = cameraController_->GetActive();
         float fov = 0.45f;
         if (camera) {
             fov = camera->GetFov();

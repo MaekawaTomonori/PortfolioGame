@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "Input.hpp"
+#include "Sprite.hpp"
 #include "Ui/UserInterface.hpp"
 
 class Pause {

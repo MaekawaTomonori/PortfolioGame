@@ -1,13 +1,12 @@
 #include "Player.hpp"
-#include "ColliderType.hpp"
-#include "imgui_internal.h"
 #include "Pattern/Singleton.hpp"
 #include "Light/LightManager.hpp"
-#include "Movement/WalkBehavior.hpp"
-#include "Movement/DashBehavior.hpp"
-#include "Movement/FlashBehavior.hpp"
 #include "Math/MathUtils.hpp"
 #include "PostProcess/Executor/PostProcessExecutor.hpp"
+#include "ColliderType.hpp"
+#include "Json/JsonParams.hpp"
+
+#include "imgui_internal.h"
 
 Player::Player(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
     particle_ = _particle;
@@ -49,18 +48,16 @@ Player::Player(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
     movement_ = std::make_unique<Movement>();
     attack_ = std::make_unique<Attack>();
 
-#ifdef _DEBUG
     reticle_ = std::make_unique<Model>();
     reticle_->Initialize("animatedCube");
     reticle_->SetTexture("white_x16.png");
     reticle_->SetColor({1.f, 0.f, 0.f, 1.f});
     reticle_->SetScale({0.3f, 0.3f, 0.3f});
-#endif
 }
 
 void Player::Initialize() {
     status_ = {
-        10.f,
+        100.f,
         1.f,
         1.f,
         1.f
@@ -70,9 +67,15 @@ void Player::Initialize() {
 
     movement_->Initialize(this);
 
-    behaviors_.push_back(std::make_unique<FlashBehavior>(5.0f, 3.0f));
-    behaviors_.push_back(std::make_unique<DashBehavior>(10.0f, 0.3f, 1.0f));
-    behaviors_.push_back(std::make_unique<WalkBehavior>(5.0f));
+    auto flash = std::make_unique<FlashBehavior>();
+    auto dash  = std::make_unique<DashBehavior>();
+    auto walk  = std::make_unique<WalkBehavior>();
+    flash_ = flash.get();
+    dash_  = dash.get();
+    walk_  = walk.get();
+    behaviors_.push_back(std::move(flash));
+    behaviors_.push_back(std::move(dash));
+    behaviors_.push_back(std::move(walk));
 
     for (auto& behavior : behaviors_) {
         movement_->AddBehavior(behavior.get());
@@ -80,6 +83,9 @@ void Player::Initialize() {
 
     attack_->Initialize();
     attack_->SetOwner(this);
+
+    LoadParams();
+    attack_->LoadParams();
 
     forLight_ = position_;
     forLight_.y += 3.f;
@@ -93,10 +99,10 @@ void Player::Update(const float _deltaTime) {
         inputHandler_->UpdateContext(movementContext_, position_);
     }
 
-#ifdef _DEBUG
     if (reticle_) {
         reticle_->SetTranslate(movementContext_.targetPosition);
     }
+#ifdef _DEBUG
 
     if (!no_move)
 #endif
@@ -141,11 +147,10 @@ void Player::Draw() {
           attack_->Draw();
     }
 
-#ifdef _DEBUG
+
     if (reticle_) {
         reticle_->Draw();
     }
-#endif
 
     model_->Draw();
 }
@@ -168,7 +173,7 @@ void Player::Debug() {
 #endif
 }
 
-void Player::SetTargetPosition(Vector3 _position) {
+void Player::SetTargetPosition(const Vector3& _position) {
     targetPosition_ = _position;
     targetExist_ = true;
 }
@@ -190,6 +195,8 @@ void Player::OnCollision(const Collision::Collider* _collider) {
 
             invulnerability_ = true;
             invulnerabilityTimer_ = InvulnerabilityDuration;
+
+            status_.hp -= 1.f;
         }
         else {
             active_ = false;
@@ -213,6 +220,42 @@ void Player::UpdateWithoutInput() {
     if (model_) {
         UpdateModel();
     }
+}
+
+bool Player::IsDead() const {
+    return status_.hp <= 0.f;
+}
+
+void Player::LoadParams() const {
+    const auto& json = Singleton<JsonParams>::GetInstance();
+    if (!json->Load("PlayerParams")) return;
+
+    if (walk_)  walk_->SetSpeed   (std::get<float>(json->GetValue("PlayerParams", "Walk",  "Speed")));
+    if (dash_) {
+        dash_->SetSpeed   (std::get<float>(json->GetValue("PlayerParams", "Dash",  "Speed")));
+        dash_->SetDuration(std::get<float>(json->GetValue("PlayerParams", "Dash",  "Duration")));
+        dash_->SetCooldown(std::get<float>(json->GetValue("PlayerParams", "Dash",  "Cooldown")));
+    }
+    if (flash_) {
+        flash_->SetDistance(std::get<float>(json->GetValue("PlayerParams", "Flash", "Distance")));
+        flash_->SetCooldown(std::get<float>(json->GetValue("PlayerParams", "Flash", "Cooldown")));
+    }
+}
+
+void Player::SaveParams() const {
+    const auto& json = Singleton<JsonParams>::GetInstance();
+    if (walk_)  json->SetValue("PlayerParams", "Walk",  "Speed",    walk_->GetSpeed());
+    if (dash_) {
+        json->SetValue("PlayerParams", "Dash",  "Speed",    dash_->GetSpeed());
+        json->SetValue("PlayerParams", "Dash",  "Duration", dash_->GetDuration());
+        json->SetValue("PlayerParams", "Dash",  "Cooldown", dash_->GetCooldown());
+    }
+    if (flash_) {
+        json->SetValue("PlayerParams", "Flash", "Distance", flash_->GetDistance());
+        json->SetValue("PlayerParams", "Flash", "Cooldown", flash_->GetCooldown());
+    }
+    attack_->SaveParams();
+    json->Save("PlayerParams");
 }
 
 void Player::UpdateInvulnerability(const float _deltaTime) {

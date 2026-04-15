@@ -1,13 +1,55 @@
 #include "Enemy.hpp"
+#include "Enemy/State/EnemyStateIdle.hpp"
+#include "Enemy/State/EnemyStateDeath.hpp"
 
 #include "ColliderType.hpp"
+#include "Math/MathUtils.hpp"
 #include "imgui.h"
+
+namespace {
+    // 外観
+    constexpr Vector4 BASE_COLOR       = {1.f, 0.3f, 0.3f, 1.f};   // 通常時の赤
+    constexpr Vector4 HIT_FLASH_COLOR  = {2.f, 2.f,  2.f,  1.f};   // 被弾フラッシュ白
+
+    // コライダー
+    constexpr Vector3 COLLIDER_SIZE    = {1.f, 1.f, 1.f};
+
+    // HPバーの色
+    constexpr Vector4 HPBAR_FRONT_COLOR = {1.f, 0.f, 0.f, 1.f};
+    constexpr Vector4 HPBAR_BACK_COLOR  = {0.f, 0.f, 0.f, 0.6f};
+
+    // 被弾時エフェクト
+    constexpr float    HIT_KNOCKBACK_FORCE    = 40.f;
+    constexpr float    HIT_KNOCKBACK_DURATION = 0.15f;
+    constexpr uint16_t HIT_SHAKE_FRAMES       = 10;
+    constexpr float    HIT_SHAKE_POWER        = 0.5f;
+    constexpr float    HIT_PULSE_DURATION     = 0.15f;
+
+    // パーティクル
+    constexpr float PARTICLE_Y_OFFSET = 1.5f;
+
+    // シェイク
+    constexpr float SHAKE_DECAY_FACTOR = 0.9f;
+
+    // スケール
+    constexpr Vector3 DEFAULT_SCALE    = {0.5f, 0.5f, 0.5f};
+    constexpr float   PULSE_AMPLITUDE  = 0.2f;           // スケールパルスの振れ幅係数
+
+    // カラーグラデーション（無敵状態：白→赤）
+    constexpr float GRAD_R_BASE  = 1.0f;
+    constexpr float GRAD_G_BASE  = 0.3f;
+    constexpr float GRAD_B_BASE  = 0.3f;
+    constexpr float GRAD_FLASH   = 2.0f;
+
+    // Debugウィンドウ
+    constexpr float DEBUG_KNOCKBACK_DURATION = HIT_KNOCKBACK_DURATION;
+}
 
 void Enemy::Initialize() {
     SetModel("animatedcube");
     model_->SetName("Enemy");
     model_->SetTexture("white_x16.png");
-    model_->SetColor({1.f, 0.3f, 0.3f, 1.f});
+    model_->SetColor(BASE_COLOR);
 
     status_ = {
         .hp = params_ ? params_->maxHp : 3.0f,
@@ -18,63 +60,44 @@ void Enemy::Initialize() {
     collider_->SetEvent(Collision::EventType::Trigger, [this](const Collision::Collider* _pCol){ this->OnCollision(_pCol); })
         ->SetOwner(this)
         ->SetType(Collision::Type::AABB)
-        ->SetSize(Vector3{1.f, 1.f, 1.f})
+        ->SetSize(COLLIDER_SIZE)
         ->SetTranslate({ position_.x, position_.y, position_.z })
         ->AddAttribute(static_cast<uint32_t>(CollisionType::Enemy))
         ->AddIgnore(static_cast<uint32_t>(CollisionType::Enemy))
         ->Enable();
 
-    movement_ = std::make_unique<Movement>();
-    movement_->Initialize(this);
-
-    // ダッシュ予測線の初期化
-    prediction_ = std::make_unique<Model>();
-    prediction_->Initialize("plane");
-    prediction_->SetTexture("white_x16.png");
-
     hpBar_ = std::make_unique<HpBar>();
     hpBar_->Initialize("white_x16.png", &position_);
-    hpBar_->SetFrontColor({1.f, 0.f, 0.f, 1.f});
-    hpBar_->SetBackColor({0.f, 0.f, 0.f, 0.6f});
+    hpBar_->SetFrontColor(HPBAR_FRONT_COLOR);
+    hpBar_->SetBackColor(HPBAR_BACK_COLOR);
+
+    state_ = std::make_unique<EnemyStateIdle>(this);
+    state_->Enter();
 }
 
 void Enemy::Update(float deltaTime) {
     if (!active_) return;
 
-    // 死亡演出中は特別処理
-    if (dying_) {
-        UpdateDeath(deltaTime);
-        UpdateModel();
-        hpBar_->Update(status_.hp / params_->maxHp);
-        return;
+    if (knockback_) UpdateKnockback(deltaTime);
+
+    if (state_) {
+        if (auto next = state_->Update(deltaTime)) TransitionState(std::move(next));
     }
 
-    // 各状態の更新
-    UpdateDashAction(deltaTime);
-    UpdateMovement(deltaTime);
     UpdateInvincible(deltaTime);
     UpdateShake();
     UpdatePulse(deltaTime);
 
     ApplyVelocity(deltaTime);
     collider_->SetTranslate({position_.x, position_.y, position_.z});
-
     hpBar_->Update(status_.hp / params_->maxHp);
-
-    // 描画更新
     UpdateModel();
 }
 
 void Enemy::Draw() {
     if (!active_ || !model_) return;
-
     model_->Draw();
-
-    // チャージ中は予測線を描画
-    if (dashState_ == DashState::Charging) {
-        prediction_->Draw();
-    }
-
+    if (state_) state_->Draw();
     hpBar_->Draw();
 }
 
@@ -83,14 +106,13 @@ void Enemy::Debug() {
     if (ImGui::TreeNode("Enemy Info")) {
         // 基本情報
         ImGui::Text("Active: %s", active_ ? "Yes" : "No");
-        ImGui::Text("Dying: %s", dying_ ? "Yes" : "No");
 
         ImGui::Separator();
 
         // ステータス
         if (ImGui::CollapsingHeader("Status", ImGuiTreeNodeFlags_DefaultOpen)) {
             ImGui::Text("HP: %.1f", status_.hp);
-            ImGui::ProgressBar(status_.hp / 3.0f, ImVec2(-1, 0), "");
+            ImGui::ProgressBar(status_.hp / (params_ ? params_->maxHp : 3.0f), ImVec2(-1, 0), "");
             ImGui::Text("Damage: %.1f", status_.damage);
         }
 
@@ -140,7 +162,7 @@ void Enemy::Debug() {
             if (knockback_) {
                 ImGui::SameLine();
                 ImGui::Text("(%.2fs)", knockbackTimer_);
-                ImGui::ProgressBar(knockbackTimer_ / 0.15f, ImVec2(-1, 0));
+                ImGui::ProgressBar(knockbackTimer_ / DEBUG_KNOCKBACK_DURATION, ImVec2(-1, 0));
             }
 
             ImGui::Checkbox("Shake", (bool*)&shake_);
@@ -154,19 +176,6 @@ void Enemy::Debug() {
                 ImGui::SameLine();
                 ImGui::Text("(%.2fs / %.2fs)", pulseTimer_, pulseDuration_);
                 ImGui::ProgressBar(pulseTimer_ / pulseDuration_, ImVec2(-1, 0));
-            }
-        }
-
-        // 死亡演出
-        if (dying_ && params_ && ImGui::CollapsingHeader("Death Animation", ImGuiTreeNodeFlags_DefaultOpen)) {
-            ImGui::Text("Timer: %.2fs / %.2fs", deathTimer_, params_->deathDuration);
-            ImGui::ProgressBar(deathTimer_ / params_->deathDuration, ImVec2(-1, 0));
-
-            float progress = deathTimer_ / params_->deathDuration;
-            if (progress < 0.3f) {
-                ImGui::Text("Phase: Expansion");
-            } else {
-                ImGui::Text("Phase: Shrink & Fade");
             }
         }
 
@@ -188,75 +197,10 @@ void Enemy::Debug() {
             } else {
                 ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Target: None");
             }
-
-            ImGui::Text("Move Command: %s", moveCommand_ ? "Set" : "None");
-            ImGui::Text("Movement: %s", movement_ ? "Active" : "Inactive");
         }
 
-        // ダッシュアクション情報
-        if (params_ && ImGui::CollapsingHeader("Dash Action", ImGuiTreeNodeFlags_DefaultOpen)) {
-            // 現在の状態
-            const char* stateStr = "Unknown";
-            ImVec4 stateColor = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
-            switch (dashState_) {
-                case DashState::Idle:
-                    stateStr = "Idle";
-                    stateColor = ImVec4(0.5f, 0.5f, 0.5f, 1.0f);
-                    break;
-                case DashState::Charging:
-                    stateStr = "Charging";
-                    stateColor = ImVec4(1.0f, 1.0f, 0.0f, 1.0f);
-                    break;
-                case DashState::Dashing:
-                    stateStr = "Dashing";
-                    stateColor = ImVec4(1.0f, 0.0f, 0.0f, 1.0f);
-                    break;
-            }
-            ImGui::TextColored(stateColor, "State: %s", stateStr);
-
-            ImGui::Separator();
-
-            // タイマー情報
-            if (dashState_ == DashState::Idle) {
-                ImGui::Text("Next Dash Check: %.2fs", params_->dash.triggerInterval - dashTriggerTimer_);
-                ImGui::ProgressBar(dashTriggerTimer_ / params_->dash.triggerInterval, ImVec2(-1, 0));
-            } else if (dashState_ == DashState::Charging) {
-                ImGui::Text("Charge Time: %.2fs / %.2fs", dashChargeTime_, params_->dash.chargeMaxTime);
-                ImGui::ProgressBar(dashChargeTime_ / params_->dash.chargeMaxTime, ImVec2(-1, 0));
-            } else if (dashState_ == DashState::Dashing) {
-                ImGui::Text("Dash Time: %.2fs / %.2fs", dashTimer_, params_->dash.duration);
-                ImGui::ProgressBar(dashTimer_ / params_->dash.duration, ImVec2(-1, 0));
-            }
-
-            ImGui::Separator();
-
-            // ダッシュ方向
-            if (dashState_ != DashState::Idle) {
-                ImGui::Text("Dash Direction: (%.2f, %.2f, %.2f)",
-                    dashDirection_.x, dashDirection_.y, dashDirection_.z);
-            }
-
-            ImGui::Separator();
-
-            // パラメータ表示（共通パラメータはEnemiesで調整）
-            ImGui::Text("Parameters (adjust in Enemies panel):");
-            ImGui::Text("Charge Time: %.2fs", params_->dash.chargeMaxTime);
-            ImGui::Text("Dash Duration: %.2fs", params_->dash.duration);
-            ImGui::Text("Dash Speed: %.1f", params_->dash.speed);
-            ImGui::Text("Trigger Interval: %.2fs", params_->dash.triggerInterval);
-            ImGui::Text("Trigger Chance: %.0f%%", params_->dash.triggerChance * 100.0f);
-
-            ImGui::Separator();
-
-            // 計算値表示
-            float dashDistance = params_->dash.speed * params_->dash.duration;
-            ImGui::Text("Calculated Values:");
-            ImGui::BulletText("Dash Distance: %.2f", dashDistance);
-
-            // デバッグ用：強制トリガー
-            if (dashState_ == DashState::Idle && ImGui::Button("Force Dash")) {
-                dashTriggerTimer_ = params_->dash.triggerInterval;
-            }
+        if (ImGui::CollapsingHeader("State", ImGuiTreeNodeFlags_DefaultOpen)) {
+            ImGui::Text("Current: %s", state_ ? state_->GetStateName() : "None");
         }
 
         ImGui::TreePop();
@@ -273,7 +217,7 @@ void Enemy::OnCollision(const Collision::Collider* _collider) {
         // Particle
         if (particle_) {
             Vector3 p = position_;
-            p.y += 1.5f;
+            p.y += PARTICLE_Y_OFFSET;
             particle_->Emit("enemy_hit", p);
         }
 
@@ -285,43 +229,40 @@ void Enemy::OnCollision(const Collision::Collider* _collider) {
         {
             // Damage処理
             --status_.hp;
-            
+
             // 無敵状態に移行
             invincible_ = true;
 
-            // 強烈に白く光る（2.0倍の明るさ）
-            model_->SetColor({2.f, 2.f, 2.f, 1.f});
+            // 強烈に白く光る
+            model_->SetColor(HIT_FLASH_COLOR);
 
             // Knockback処理
             Vector3 d = (collider_->GetTranslate() - _collider->GetTranslate());
-            ApplyKnockback({d.x, d.y, d.z}, 40.f, 0.15f);
+            ApplyKnockback({d.x, d.y, d.z}, HIT_KNOCKBACK_FORCE, HIT_KNOCKBACK_DURATION);
 
             // Shake
-            ApplyShake(10, 0.5f);
+            ApplyShake(HIT_SHAKE_FRAMES, HIT_SHAKE_POWER);
 
             // ScalePulse
-            ApplyScalePulse(0.15f);
+            ApplyScalePulse(HIT_PULSE_DURATION);
 
             // Particle
             if (particle_) {
                 Vector3 p = position_;
-                p.y += 1.5f;
+                p.y += PARTICLE_Y_OFFSET;
                 particle_->Emit("enemy_hit", p);
             }
 
             if (status_.hp <= 0.f) {
-                // 死亡演出を開始
-                dying_ = true;
-                deathTimer_ = 0.f;
+                killedByBullet_ = true;
                 collider_->Disable();
-
-                dashState_ = DashState::Idle;
+                TransitionState(std::make_unique<EnemyStateDeath>(this));
             }
         }
     }
 }
 
-void Enemy::ApplyKnockback(Vector3 _direction, float _force, float _duration) {
+void Enemy::ApplyKnockback(const Vector3& _direction, float _force, float _duration) {
     if (knockback_) return;
 
     knockback_ = true;
@@ -358,7 +299,7 @@ void Enemy::UpdateShake() {
     offset_ = offset;
 
     // 減衰処理
-    shakePower_ = shakeDecay_ ? shakePower_ * 0.9f : shakePower_;
+    shakePower_ = shakeDecay_ ? shakePower_ * SHAKE_DECAY_FACTOR : shakePower_;
     --shakeFrames_;
 }
 
@@ -371,7 +312,7 @@ void Enemy::UpdatePulse(float _deltaTime) {
         // 終了
         scalePulse_ = false;
         pulseTimer_ = 0.f;
-        scale_ = Vector3{0.5f, 0.5f, 0.5f};
+        scale_ = DEFAULT_SCALE;
         return;
     }
 
@@ -381,37 +322,9 @@ void Enemy::UpdatePulse(float _deltaTime) {
     // sin波で滑らかに (0 → 1 → 0)
     float curve = std::sin(progress * MathUtils::F_PI);
 
-    // スケール計算 (0.5 → 0.6 → 0.5)
-    float scaleFactor = 0.5f * (1.0f + curve * 0.2f);
+    // スケール計算 (DEFAULT_SCALE → 振れ幅 → DEFAULT_SCALE)
+    float scaleFactor = DEFAULT_SCALE.x * (1.0f + curve * PULSE_AMPLITUDE);
     scale_ = Vector3{scaleFactor, scaleFactor, scaleFactor};
-}
-
-void Enemy::UpdateMovement(float _deltaTime) {
-    // ダッシュ中やノックバック中は通常の移動を停止
-    if (dashState_ != DashState::Idle) return;
-    if (knockback_) {
-        UpdateKnockback(_deltaTime);
-        return;
-    }
-
-    movementContext_.Reset();
-    movementContext_.position = position_;
-    movementContext_.target = target_;
-
-    if (moveCommand_) {
-        moveCommand_->Execute(movementContext_);
-    }
-
-    if (movement_) {
-        movement_->Update(movementContext_, _deltaTime);
-    }
-
-    if (invincible_) {
-        velocity_ *= 0.3f;
-    }
-
-    velocity_ += externalForce_;
-    externalForce_ = {};
 }
 
 void Enemy::UpdateKnockback(float _deltaTime) {
@@ -434,216 +347,37 @@ void Enemy::UpdateInvincible(float _deltaTime) {
     // 進行度を計算 (1.0 → 0.0)
     float progress = invincibleTimer_ / params_->invincibleDuration;
 
-    // 白(2.0, 2.0, 2.0) → 赤(1.0, 0.3, 0.3) にグラデーション
-    float r = MathUtils::Lerp(1.0f, 2.0f, progress);
-    float g = MathUtils::Lerp(0.3f, 2.0f, progress);
-    float b = MathUtils::Lerp(0.3f, 2.0f, progress);
+    // HIT_FLASH_COLOR → BASE_COLOR にグラデーション
+    float r = MathUtils::Lerp(GRAD_R_BASE, GRAD_FLASH, progress);
+    float g = MathUtils::Lerp(GRAD_G_BASE, GRAD_FLASH, progress);
+    float b = MathUtils::Lerp(GRAD_B_BASE, GRAD_FLASH, progress);
     model_->SetColor({r, g, b, 1.f});
 
     if (invincibleTimer_ <= 0.f) {
         invincible_ = false;
         invincibleTimer_ = params_->invincibleDuration;
-        model_->SetColor({1.f, 0.3f, 0.3f, 1.f});
+        model_->SetColor(BASE_COLOR);
     }
 }
 
-void Enemy::UpdateDeath(float _deltaTime) {
-    if (!params_) return;
-
-    deathTimer_ += _deltaTime;
-
-    if (deathTimer_ >= params_->deathDuration) {
-        // 演出終了、敵を削除
-        active_ = false;
-        return;
-    }
-
-    float progress = deathTimer_ / params_->deathDuration;  // 0.0 → 1.0
-
-    // フェーズ1 (0.0-0.3): 膨張しながら光る
-    // フェーズ2 (0.3-0.8): 縮小しながらフェードアウト
-
-    if (progress < 0.3f) {
-        // === フェーズ1: 膨張 ===
-        float phase1Progress = progress / 0.3f;  // 0.0 → 1.0
-
-        // スケール: 0.5 → 0.65 に膨張
-        float scaleValue = MathUtils::Lerp(0.5f, 0.65f, phase1Progress);
-        scale_ = Vector3{scaleValue, scaleValue, scaleValue};
-
-        // 色: 白く光る
-        model_->SetColor({2.f, 2.f, 2.f, 1.f});
-
-        // 回転: Y軸で加速回転
-        rotation_.y += _deltaTime * 10.0f * (1.0f + phase1Progress * 2.0f);
-
-    } else {
-        // === フェーズ2: 縮小＆フェードアウト ===
-        float phase2Progress = (progress - 0.3f) / 0.5f;  // 0.0 → 1.0
-
-        // スケール: 0.75 → 0.0 に縮小
-        float scaleValue = MathUtils::Lerp(0.75f, 0.0f, phase2Progress);
-        scale_ = Vector3{scaleValue, scaleValue, scaleValue};
-
-        // 色: 白 → 透明へフェードアウト
-        float alpha = 1.0f - phase2Progress;
-        model_->SetColor({2.f, 2.f, 2.f, alpha});
-
-        // 回転: さらに加速
-        rotation_.y += _deltaTime * 20.0f;
-
-        // 位置: 少し浮き上がる
-        position_.y += _deltaTime * 2.0f;
-    }
+void Enemy::SetModelColor(const Vector4& _color) const {
+    if (model_) model_->SetColor(_color);
 }
 
-void Enemy::UpdateDashAction(float _deltaTime) {
-    switch (dashState_) {
-        case DashState::Idle:
-            TryStartDash();
-            break;
-        case DashState::Charging:
-            UpdateCharging(_deltaTime);
-            break;
-        case DashState::Dashing:
-            UpdateDashing(_deltaTime);
-            break;
-    }
+Vector3 Enemy::ConsumeExternalForce() {
+    Vector3 f = externalForce_;
+    externalForce_ = {};
+    return f;
 }
 
-void Enemy::TryStartDash() {
-    // ターゲットがいない、またはノックバック中、無敵中はダッシュしない
-    if (!target_ || knockback_ || invincible_ || !params_) {
-        return;
-    }
-
-    if (dashState_ != DashState::Idle) {
-        dashTriggerTimer_ = 0.f;
-        return;
-    }
-
-    // ランダムなタイミングでダッシュを試行
-    dashTriggerTimer_ += 1.f / 60.f;
-    if (dashTriggerTimer_ < params_->dash.triggerInterval) {
-        return;
-    }
-
-    // 確率でダッシュを開始
-    if (MathUtils::Random(0.f, 1.f) < params_->dash.triggerChance) {
-        // ターゲットへの方向を計算
-        Vector3 toTarget = target_->GetPosition() - position_;
-        toTarget.y = 0.f; // 水平方向のみ
-
-        if (toTarget.Length() > 0.001f) {
-            dashDirection_ = toTarget.Normalize();
-            dashState_ = DashState::Charging;
-            dashChargeTime_ = 0.f;
-            dashTriggerTimer_ = 0.f;
-
-            // 予測線の初期設定
-            float dashDistance = params_->dash.speed * params_->dash.duration;
-            float yaw = atan2f(dashDirection_.x, dashDirection_.z);
-
-            // 予測線の長さを短めに
-            float lineLength = dashDistance * params_->dash.lineLength;
-
-            // planeは正面向きなのでY軸を伸ばし、X軸で幅を広げる
-            prediction_->SetScale({ params_->dash.lineWidth, lineLength, 1.f });
-            // X軸で-90度回転して真上に向け、Y軸でyaw回転
-            prediction_->SetRotate({ -MathUtils::F_PI / 2.f, yaw, 0.f });
-
-            // 敵と重ならないように、敵の前方から開始し、ターゲット側に寄せる
-            Vector3 startPos = position_ + dashDirection_ * params_->dash.enemyOffset;
-            Vector3 centerPos = startPos + dashDirection_ * (lineLength * params_->dash.lineCenterOffset);
-            centerPos.y = 0.1f;
-            prediction_->SetTranslate(centerPos);
-
-            // チャージ開始時のエフェクト
-            ApplyShake(5, 0.3f, false);
-        }
-    } else {
-        // 次の判定までリセット
-        dashTriggerTimer_ = 0.f;
-    }
+void Enemy::TransitionState(std::unique_ptr<IEnemyState> _next) {
+    if (state_) state_->Exit();
+    state_ = std::move(_next);
+    if (state_) state_->Enter();
 }
 
-void Enemy::UpdateCharging(float _deltaTime) {
-    if (!params_) return;
-
-    dashChargeTime_ += _deltaTime;
-
-    // チャージ中は完全に停止
-    velocity_ = Vector3{0.f, 0.f, 0.f};
-
-    // チャージ進行度 (0.0 → 1.0)
-    float progress = dashChargeTime_ / params_->dash.chargeMaxTime;
-
-    // チャージ中の視覚効果
-    // 1. 色の変化: 赤 → 黄色
-    float r = MathUtils::Lerp(1.0f, 1.5f, progress);
-    float g = MathUtils::Lerp(0.3f, 1.5f, progress);
-    float b = MathUtils::Lerp(0.3f, 0.3f, progress);
-    model_->SetColor({r, g, b, 1.f});
-
-    // 2. スケールパルス（溜めている感じ）
-    float pulseFrequency = 10.0f;
-    float pulse = std::sin(dashChargeTime_ * pulseFrequency) * 0.025f * progress;
-    float scaleValue = 0.5f + pulse;
-    scale_ = Vector3{scaleValue, scaleValue, scaleValue};
-
-    // 3. 予測線の更新
-    UpdatePredictionLine();
-
-    // チャージ完了 → ダッシュ実行
-    if (dashChargeTime_ >= params_->dash.chargeMaxTime) {
-        dashState_ = DashState::Dashing;
-        dashTimer_ = 0.f;
-
-        // ダッシュ開始時のエフェクト
-        ApplyShake(8, 0.5f, true);
-        model_->SetColor({2.f, 2.f, 2.f, 1.f}); // 白く光る
-    }
+void Enemy::ForceDeath() {
+    if (IsDead()) return;
+    if (collider_) collider_->Disable();
+    TransitionState(std::make_unique<EnemyStateDeath>(this));
 }
-
-void Enemy::UpdateDashing(float _deltaTime) {
-    if (!params_) return;
-
-    dashTimer_ += _deltaTime;
-
-    // ダッシュ速度を適用
-    velocity_ = dashDirection_ * params_->dash.speed;
-
-    // ダッシュ終了
-    if (dashTimer_ >= params_->dash.duration) {
-        dashState_ = DashState::Idle;
-        dashTimer_ = 0.f;
-        velocity_ = Vector3{0.f, 0.f, 0.f};
-
-        // 元の色に戻す
-        model_->SetColor({1.f, 0.3f, 0.3f, 1.f});
-        scale_ = Vector3{0.5f, 0.5f, 0.5f};
-    }
-}
-
-void Enemy::UpdatePredictionLine() {
-    if (!prediction_ || !params_) return;
-
-    // チャージ進行度
-    float progress = dashChargeTime_ / params_->dash.chargeMaxTime;
-
-    // 色の変化（黄→赤）
-    float r = MathUtils::Lerp(1.0f, 1.5f, progress);
-    float g = MathUtils::Lerp(1.0f, 0.3f, progress);
-    float b = MathUtils::Lerp(0.3f, 0.3f, progress);
-    prediction_->SetColor({ r, g, b, 0.6f });
-
-    // スケールのパルス（進行度に応じて強くなる）
-    float dashDistance = params_->dash.speed * params_->dash.duration;
-    float lineLength = dashDistance * params_->dash.lineLength;
-    float pulseScale = 1.0f + std::sin(dashChargeTime_ * 15.0f) * 0.1f * progress;
-    // Y軸を伸ばす（planeは正面向きなので）、X軸で幅を広げる
-    prediction_->SetScale({ params_->dash.lineWidth * pulseScale, lineLength, 1.0f });
-
-    prediction_->Update();
-}
-

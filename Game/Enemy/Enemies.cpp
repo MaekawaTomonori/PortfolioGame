@@ -4,10 +4,7 @@
 #include <algorithm>
 
 #include "imgui.h"
-#include "Command/Move/ToTargetCommand.hpp"
 #include "Json/JsonParams.hpp"
-#include "Player/Movement/WalkBehavior.hpp"
-#include "Player/Movement/DashBehavior.hpp"
 #include "Pattern/Singleton.hpp"
 
 Enemies::Enemies(ParticleSystem* _particle, const GameStatus& _status) :status_(_status) {
@@ -17,13 +14,6 @@ Enemies::Enemies(ParticleSystem* _particle, const GameStatus& _status) :status_(
 
     // パラメータの読み込み
     LoadParams();
-
-    // 共有Behaviorを生成（Flyweight Pattern）
-    walkBehavior_ = std::make_unique<WalkBehavior>(3.0f);
-    dashBehavior_ = std::make_unique<DashBehavior>(8.0f, 0.5f, 2.0f);
-
-    // 共有Commandを生成
-    toTargetCommand_ = std::make_unique<ToTargetCommand>(3.0f, 0.5f);
 
     particle_->RegisterUpdateFunc("enemy_hit_explosion", [](float t, const Vector3&, Vector3& pos, Vector3& velocity, Vector4& color) {
         (void)pos;
@@ -52,13 +42,20 @@ void Enemies::Initialize() {
 void Enemies::Update() {
     constexpr float DeltaTime = 1.f / 60.f;
 
-    const auto pre = enemies_.size();
+    uint16_t killed = 0;
+    for (const auto& enemy : enemies_) {
+        if (!enemy->IsActive() && enemy->IsKilledByBullet()) {
+            ++killed;
+        }
+    }
     std::erase_if(enemies_, [](const auto& _enemy) {return !_enemy->IsActive();});
-    const auto after = enemies_.size();
-    deathCount_ += static_cast<uint16_t>(pre - after);
+    deathCount_ += killed;
 
-    if (status_.requirementKill <= 0 && status_.requirementKill <= deathCount_) {
+    if (!done_ && status_.requirementKill > 0 && deathCount_ >= status_.requirementKill) {
         done_ = true;
+        for (auto& enemy : enemies_) {
+            enemy->ForceDeath();
+        }
     }
 
 #ifdef _DEBUG
@@ -134,7 +131,7 @@ void Enemies::Draw() const {
 #endif
 }
 
-Vector3 Enemies::GetNearest(const Vector3 _pos) const {
+Vector3 Enemies::GetNearest(const Vector3& _pos) const {
     float minDistance = FLT_MAX;
     Vector3 nearest = {};
     for (const auto& enemy : enemies_) {
@@ -205,7 +202,11 @@ void Enemies::Debug() {
         // Stats
         ImGui::TextColored(ImVec4(0.4f, 0.8f, 1.0f, 1.0f), "Stats");
         ImGui::SetNextItemWidth(inputWidth);
-        ImGui::DragFloat("Max HP", &enemyParams_.maxHp, 0.1f, 1.0f, 10.0f, "%.1f");
+        ImGui::DragFloat("Max HP",       &enemyParams_.maxHp,       0.1f, 1.0f,  10.0f, "%.1f");
+        ImGui::SetNextItemWidth(inputWidth);
+        ImGui::DragFloat("Move Speed",   &enemyParams_.moveSpeed,   0.1f, 0.5f,  20.0f, "%.1f");
+        ImGui::SetNextItemWidth(inputWidth);
+        ImGui::DragFloat("Min Distance", &enemyParams_.minDistance, 0.1f, 0.0f,   5.0f, "%.2f");
 
         ImGui::Separator();
 
@@ -316,19 +317,10 @@ void Enemies::Spawn() {
     // 共通パラメータへのポインタを設定（すべてのEnemyが同じパラメータを参照）
     enemy->SetParams(&enemyParams_);
 
-    // 共有Commandを設定（ポインタのみ）
-    enemy->SetMoveCommand(toTargetCommand_.get());
-
-    // 共有Behaviorを設定（ポインタのみ）
-    if (auto* movement = enemy->GetMovement()) {
-        movement->ClearBehaviors();
-        movement->AddBehavior(walkBehavior_.get());
-    }
-
     enemies_.push_back(std::move(enemy));
 }
 
-float Enemies::GetFarthestEnemyDistance(Vector3 referencePos) const {
+float Enemies::GetFarthestEnemyDistance(const Vector3& referencePos) const {
     float maxDistance = 0.0f;
 
     for (const auto& enemy : enemies_) {
@@ -352,7 +344,9 @@ void Enemies::LoadParams() {
 
     if (json->Load("EnemyParams")) {
         // 基本ステータス
-        enemyParams_.maxHp = std::get<float>(json->GetValue("EnemyParams", "Basic", "MaxHp"));
+        enemyParams_.maxHp      = std::get<float>(json->GetValue("EnemyParams", "Basic", "MaxHp"));
+        enemyParams_.moveSpeed  = std::get<float>(json->GetValue("EnemyParams", "Basic", "MoveSpeed"));
+        enemyParams_.minDistance= std::get<float>(json->GetValue("EnemyParams", "Basic", "MinDistance"));
 
         distance_ = std::get<Vector2>(json->GetValue("EnemyParams", "Basic", "SpawnDistance"));
 
@@ -383,7 +377,9 @@ void Enemies::SaveParams() {
     const auto& json = Singleton<JsonParams>::GetInstance();
 
     // 基本ステータス
-    json->SetValue("EnemyParams", "Basic", "MaxHp", enemyParams_.maxHp);
+    json->SetValue("EnemyParams", "Basic", "MaxHp",       enemyParams_.maxHp);
+    json->SetValue("EnemyParams", "Basic", "MoveSpeed",   enemyParams_.moveSpeed);
+    json->SetValue("EnemyParams", "Basic", "MinDistance", enemyParams_.minDistance);
 
     json->SetValue("EnemyParams", "Basic", "SpawnDistance", distance_);
 

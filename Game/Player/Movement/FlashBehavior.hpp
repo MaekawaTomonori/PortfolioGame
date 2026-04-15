@@ -21,6 +21,11 @@ public:
     int GetPriority() const override { return 100; }
     void Debug() const override;
 
+    void SetDistance(float distance) { distance_ = distance; }
+    void SetCooldown(float cooldown) { cooldown_ = cooldown; }
+    float GetDistance() const { return distance_; }
+    float GetCooldown() const { return cooldown_; }
+
 private:
     bool IsCooldown();
 };

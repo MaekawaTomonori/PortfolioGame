@@ -4,6 +4,13 @@
 #include "Collision/Collider.h"
 
 class Bullet : public GameObject{
+public:
+    struct Params {
+        float speed = 5.f;
+        float lifetime = 2.f;
+    };
+
+private:
     GameObject* owner_ = nullptr;
 
     float speed_ = 0.f;
@@ -13,7 +20,7 @@ class Bullet : public GameObject{
     std::unique_ptr<Collision::Collider> collider_;
 
 public:
-    void Initialize(GameObject* _owner, Vector3 _direction);
+    void Initialize(GameObject* _owner, const Vector3& _direction, const Params& _params = {});
     void Update(float deltaTime) override;
     void Draw() override;
 

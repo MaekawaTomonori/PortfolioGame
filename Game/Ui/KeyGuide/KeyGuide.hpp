@@ -29,7 +29,7 @@ class KeyGuide {
 
     std::unordered_map<BYTE, Key> keys_;
 
-    //std::unique_ptr<Ui::UserInterface> ui_;
+    std::unique_ptr<Ui::Canvas> ui_;
 
     // Debug用の入力バッファ
     int selectedKeyIndex_ = 0;

@@ -1,6 +1,8 @@
 #include "SkillManager.hpp"
 
 #include "Enemy/Enemies.hpp"
+#include "Json/JsonParams.hpp"
+#include "Pattern/Singleton.hpp"
 
 #ifdef _DEBUG
 #include <imgui.h>
@@ -8,6 +10,7 @@
 
 void SkillManager::Initialize() {
     entities_.clear();
+    LoadParams();
 }
 
 void SkillManager::Update() {
@@ -48,11 +51,58 @@ void SkillManager::Debug() {
             ImGui::ColorEdit4("Vortex Color", &blackHoleParams_.vortexColor.x);
         }
 
+        ImGui::Separator();
+        if (ImGui::Button("Save to JSON", ImVec2(-1, 0))) SaveParams();
+        ImGui::TextDisabled("Assets/Data/SkillParams/SkillParams.json");
+
         ImGui::SeparatorText("Active Entities");
         ImGui::Text("Count: %d", static_cast<int>(entities_.size()));
     }
     ImGui::End();
 #endif
+}
+
+void SkillManager::LoadParams() {
+    const auto& json = Singleton<JsonParams>::GetInstance();
+    if (!json->Load("SkillParams")) return;
+
+    blackHoleParams_.initialSpeed     = std::get<float>  (json->GetValue("SkillParams", "BlackHole_Flying",  "InitialSpeed"));
+    blackHoleParams_.deceleration     = std::get<float>  (json->GetValue("SkillParams", "BlackHole_Flying",  "Deceleration"));
+    blackHoleParams_.stopThreshold    = std::get<float>  (json->GetValue("SkillParams", "BlackHole_Flying",  "StopThreshold"));
+    blackHoleParams_.flyingScale      = std::get<Vector3>(json->GetValue("SkillParams", "BlackHole_Flying",  "FlyingScale"));
+    blackHoleParams_.flyingColor      = std::get<Vector4>(json->GetValue("SkillParams", "BlackHole_Flying",  "FlyingColor"));
+
+    blackHoleParams_.suckRadius       = std::get<float>  (json->GetValue("SkillParams", "BlackHole_Sucking", "SuckRadius"));
+    blackHoleParams_.suckForce        = std::get<float>  (json->GetValue("SkillParams", "BlackHole_Sucking", "SuckForce"));
+    blackHoleParams_.suckDuration     = std::get<float>  (json->GetValue("SkillParams", "BlackHole_Sucking", "SuckDuration"));
+    blackHoleParams_.suckingScale     = std::get<Vector3>(json->GetValue("SkillParams", "BlackHole_Sucking", "SuckingScale"));
+    blackHoleParams_.suckingColor     = std::get<Vector4>(json->GetValue("SkillParams", "BlackHole_Sucking", "SuckingColor"));
+
+    blackHoleParams_.vortexRotateSpeed= std::get<float>  (json->GetValue("SkillParams", "BlackHole_Vortex",  "VortexRotateSpeed"));
+    blackHoleParams_.vortexScale      = std::get<Vector3>(json->GetValue("SkillParams", "BlackHole_Vortex",  "VortexScale"));
+    blackHoleParams_.vortexColor      = std::get<Vector4>(json->GetValue("SkillParams", "BlackHole_Vortex",  "VortexColor"));
+}
+
+void SkillManager::SaveParams() {
+    const auto& json = Singleton<JsonParams>::GetInstance();
+
+    json->SetValue("SkillParams", "BlackHole_Flying",  "InitialSpeed",     blackHoleParams_.initialSpeed);
+    json->SetValue("SkillParams", "BlackHole_Flying",  "Deceleration",     blackHoleParams_.deceleration);
+    json->SetValue("SkillParams", "BlackHole_Flying",  "StopThreshold",    blackHoleParams_.stopThreshold);
+    json->SetValue("SkillParams", "BlackHole_Flying",  "FlyingScale",      blackHoleParams_.flyingScale);
+    json->SetValue("SkillParams", "BlackHole_Flying",  "FlyingColor",      blackHoleParams_.flyingColor);
+
+    json->SetValue("SkillParams", "BlackHole_Sucking", "SuckRadius",       blackHoleParams_.suckRadius);
+    json->SetValue("SkillParams", "BlackHole_Sucking", "SuckForce",        blackHoleParams_.suckForce);
+    json->SetValue("SkillParams", "BlackHole_Sucking", "SuckDuration",     blackHoleParams_.suckDuration);
+    json->SetValue("SkillParams", "BlackHole_Sucking", "SuckingScale",     blackHoleParams_.suckingScale);
+    json->SetValue("SkillParams", "BlackHole_Sucking", "SuckingColor",     blackHoleParams_.suckingColor);
+
+    json->SetValue("SkillParams", "BlackHole_Vortex",  "VortexRotateSpeed",blackHoleParams_.vortexRotateSpeed);
+    json->SetValue("SkillParams", "BlackHole_Vortex",  "VortexScale",      blackHoleParams_.vortexScale);
+    json->SetValue("SkillParams", "BlackHole_Vortex",  "VortexColor",      blackHoleParams_.vortexColor);
+
+    json->Save("SkillParams");
 }
 
 void SkillManager::SpawnBlackHole(const Vector3& _position, const Vector3& _direction) {

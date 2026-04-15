@@ -5,8 +5,6 @@
 
 #include "Enemy.hpp"
 #include "ParticleSystem/ParticleSystem.hpp"
-#include "Player/Movement/IMovementBehavior.hpp"
-#include "Command/ICommand.hpp"
 #include "Status/GameStatus.hpp"
 
 class Enemies {
@@ -17,11 +15,6 @@ class Enemies {
 
     GameObject* target_ = nullptr;
     std::vector<std::unique_ptr<Enemy>> enemies_;
-
-    std::unique_ptr<IMovementBehavior> walkBehavior_;
-    std::unique_ptr<IMovementBehavior> dashBehavior_;
-
-    std::unique_ptr<ICommand> toTargetCommand_;
 
     bool done_ = false;
 
@@ -45,7 +38,7 @@ public:
     void Update();
     void Draw() const;
 
-    [[nodiscard]] Vector3 GetNearest(Vector3 _pos) const;
+    [[nodiscard]] Vector3 GetNearest(const Vector3& _pos) const;
 
     void SetTarget(GameObject* _target);
 
@@ -55,7 +48,7 @@ public:
     bool Empty() const;
 
     // カメラ調整用の情報取得
-    [[nodiscard]] float GetFarthestEnemyDistance(Vector3 referencePos) const;
+    [[nodiscard]] float GetFarthestEnemyDistance(const Vector3& referencePos) const;
 
     [[nodiscard]] uint16_t GetDeathCount() const;
 

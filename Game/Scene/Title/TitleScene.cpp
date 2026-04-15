@@ -4,8 +4,6 @@
 #include "Pattern/Singleton.hpp"
 
 void TitleScene::Initialize() {
-    name_ = "title";
-
     exitTransition_ = Transition::Type::Fade;
     
     status_ = {
