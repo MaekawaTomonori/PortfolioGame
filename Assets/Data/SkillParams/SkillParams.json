@@ -18,6 +18,9 @@
             "VortexRotateSpeed": 3.0,
             "VortexScale": [5.0, 5.0, 1.0],
             "VortexColor": [1.0, 1.0, 1.0, 1.0]
+        },
+        "BlackHole_Cooldown": {
+            "CooldownDuration": 5.0
         }
     }
 }

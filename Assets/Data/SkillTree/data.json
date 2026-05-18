@@ -3,82 +3,210 @@
         {
             "Id": "root",
             "Name": "Start",
+            "Description": "Starting bonus",
             "Icon": "heart.png",
             "DisplayValue": 2,
             "Cost": 0,
+            "MaxLevel": 1,
             "Effect": { "hp": 2.0, "damage": 0.1 }
         },
         {
             "Id": "atk_up",
             "Name": "Attack Up",
+            "Description": "Boosts damage",
             "Icon": "sword.png",
             "DisplayValue": 5,
             "Cost": 1,
+            "MaxLevel": 3,
+            "Required": ["root"],
             "Effect": { "damage": 0.5 }
         },
         {
             "Id": "hp_up",
             "Name": "HP Up",
+            "Description": "Increases max HP",
             "Icon": "heart.png",
             "DisplayValue": 5,
             "Cost": 1,
+            "MaxLevel": 3,
+            "Required": ["root"],
             "Effect": { "hp": 5.0 }
         },
         {
             "Id": "spd_up",
             "Name": "Speed Up",
+            "Description": "Faster movement",
             "Icon": "ms.png",
             "DisplayValue": 3,
             "Cost": 1,
+            "MaxLevel": 3,
+            "Required": ["root"],
             "Effect": { "ms": 0.3 }
         },
         {
             "Id": "as_up",
             "Name": "AtkSpd Up",
+            "Description": "Faster attacks",
             "Icon": "as.png",
             "DisplayValue": 2,
             "Cost": 1,
+            "MaxLevel": 3,
+            "Required": ["root"],
             "Effect": { "as": 0.2 }
         },
         {
             "Id": "time_up",
             "Name": "Time Up",
+            "Description": "More game time",
             "Icon": "clock.png",
             "DisplayValue": 5,
             "Cost": 1,
+            "MaxLevel": 3,
+            "Required": ["root"],
             "Effect": { "time": 5.0 }
         },
         {
             "Id": "enemy_up",
             "Name": "More Enemies",
+            "Description": "More enemies spawn",
             "Icon": "enemy.png",
             "DisplayValue": 2,
             "Cost": 1,
+            "MaxLevel": 3,
+            "Required": ["root"],
             "Effect": { "maxEnemyCount": 2 }
         },
         {
             "Id": "atk_up_2",
             "Name": "Attack Up II",
+            "Description": "Big damage boost",
             "Icon": "sword.png",
             "DisplayValue": 15,
             "Cost": 2,
+            "MaxLevel": 2,
+            "Required": ["atk_up"],
             "Effect": { "damage": 1.5 }
         },
         {
             "Id": "hp_up_2",
             "Name": "HP Up II",
+            "Description": "Big HP boost",
             "Icon": "heart.png",
             "DisplayValue": 15,
             "Cost": 2,
+            "MaxLevel": 2,
+            "Required": ["hp_up"],
             "Effect": { "hp": 15.0 }
         },
         {
             "Id": "spawn_down",
             "Name": "Fast Spawn",
+            "Description": "Faster spawning",
             "Icon": "enemy.png",
             "DisplayValue": -3,
             "Cost": 2,
+            "MaxLevel": 2,
+            "Required": ["enemy_up"],
             "Effect": { "enemySpawnInterval": -0.3 }
+        },
+        {
+            "Id": "spd_up_2",
+            "Name": "Speed Up II",
+            "Description": "Greater speed boost",
+            "Icon": "ms.png",
+            "DisplayValue": 8,
+            "Cost": 2,
+            "MaxLevel": 2,
+            "Required": ["spd_up"],
+            "Effect": { "ms": 0.8 }
+        },
+        {
+            "Id": "spd_up_3",
+            "Name": "Speed Up III",
+            "Description": "Maximum speed",
+            "Icon": "ms.png",
+            "DisplayValue": 15,
+            "Cost": 3,
+            "MaxLevel": 1,
+            "Required": ["spd_up_2"],
+            "Effect": { "ms": 1.5 }
+        },
+        {
+            "Id": "as_up_2",
+            "Name": "AtkSpd Up II",
+            "Description": "Greater attack speed",
+            "Icon": "as.png",
+            "DisplayValue": 5,
+            "Cost": 2,
+            "MaxLevel": 2,
+            "Required": ["as_up"],
+            "Effect": { "as": 0.5 }
+        },
+        {
+            "Id": "as_up_3",
+            "Name": "AtkSpd Up III",
+            "Description": "Maximum attack speed",
+            "Icon": "as.png",
+            "DisplayValue": 10,
+            "Cost": 3,
+            "MaxLevel": 1,
+            "Required": ["as_up_2"],
+            "Effect": { "as": 1.0 }
+        },
+        {
+            "Id": "atk_up_3",
+            "Name": "Attack Up III",
+            "Description": "Huge damage boost",
+            "Icon": "sword.png",
+            "DisplayValue": 30,
+            "Cost": 3,
+            "MaxLevel": 2,
+            "Required": ["atk_up_2"],
+            "Effect": { "damage": 3.0 }
+        },
+        {
+            "Id": "atk_max",
+            "Name": "Attack MAX",
+            "Description": "Ultimate damage",
+            "Icon": "sword.png",
+            "DisplayValue": 50,
+            "Cost": 5,
+            "MaxLevel": 1,
+            "Required": ["atk_up_3"],
+            "Effect": { "damage": 5.0 }
+        },
+        {
+            "Id": "hp_up_3",
+            "Name": "HP Up III",
+            "Description": "Huge HP boost",
+            "Icon": "heart.png",
+            "DisplayValue": 30,
+            "Cost": 3,
+            "MaxLevel": 2,
+            "Required": ["hp_up_2"],
+            "Effect": { "hp": 30.0 }
+        },
+        {
+            "Id": "hp_max",
+            "Name": "HP MAX",
+            "Description": "Ultimate health",
+            "Icon": "heart.png",
+            "DisplayValue": 50,
+            "Cost": 5,
+            "MaxLevel": 1,
+            "Required": ["hp_up_3"],
+            "Effect": { "hp": 50.0 }
+        },
+        {
+            "Id": "time_up_2",
+            "Name": "Time Up II",
+            "Description": "Much more game time",
+            "Icon": "clock.png",
+            "DisplayValue": 15,
+            "Cost": 3,
+            "MaxLevel": 2,
+            "Required": ["time_up"],
+            "Effect": { "time": 15.0 }
         }
     ]
 }
