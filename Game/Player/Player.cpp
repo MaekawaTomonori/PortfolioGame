@@ -1,12 +1,10 @@
 #include "Player.hpp"
 #include "Pattern/Singleton.hpp"
-#include "Light/LightManager.hpp"
 #include "Math/MathUtils.hpp"
 #include "PostProcess/Executor/PostProcessExecutor.hpp"
 #include "ColliderType.hpp"
+#include "imgui.h"
 #include "Json/JsonParams.hpp"
-
-#include "imgui_internal.h"
 
 Player::Player(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
     particle_ = _particle;
@@ -14,18 +12,6 @@ Player::Player(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
 
     position_ = { 0.f, .5f,-5.f };
 
-    particle_->RegisterUpdateFunc("hit_explosion", [](float t, const Vector3&, Vector3& pos, Vector3& velocity, Vector4& color) {
-        (void)pos;
-        if (t < 0.01f) {
-            velocity = Vector3::Random() * 8.0f;
-        }
-        velocity = velocity * 0.92f;
-        velocity.y -= 0.05f;
-        color.w = 0.9f * (.7f - t);
-    });
-
-    particle_->Register("hit");
-    
     collider_ = std::make_unique<Collision::Collider>();
     collider_->SetEvent(Collision::EventType::Trigger, [this](const Collision::Collider* _collider) {OnCollision(_collider); })
         ->SetTranslate({ position_.x, position_.y, position_.z })
@@ -48,11 +34,10 @@ Player::Player(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
     movement_ = std::make_unique<Movement>();
     attack_ = std::make_unique<Attack>();
 
-    reticle_ = std::make_unique<Model>();
-    reticle_->Initialize("animatedCube");
-    reticle_->SetTexture("white_x16.png");
-    reticle_->SetColor({1.f, 0.f, 0.f, 1.f});
-    reticle_->SetScale({0.3f, 0.3f, 0.3f});
+    reticle_ = std::make_unique<Sprite>();
+    reticle_->Initialize("crosshair.png");
+    reticle_->SetSize({32.f, 32.f});
+    reticle_->SetColor({0.f, 0.7f, 1.f, 0.9f});
 }
 
 void Player::Initialize() {
@@ -83,44 +68,47 @@ void Player::Initialize() {
 
     attack_->Initialize();
     attack_->SetOwner(this);
+    attack_->SetStatus(status_);
 
     LoadParams();
     attack_->LoadParams();
 
     forLight_ = position_;
     forLight_.y += 3.f;
-    Singleton<LightManager>::GetInstance()->SetPosition(forLight_);
 }
 
 void Player::Update(const float _deltaTime) {
     if (!active_) return;
 
-    if (inputHandler_) {
-        inputHandler_->UpdateContext(movementContext_, position_);
-    }
+    if (enable_) {
+        if (inputHandler_) {
+            inputHandler_->UpdateContext(movementContext_, position_);
+        }
 
-    if (reticle_) {
-        reticle_->SetTranslate(movementContext_.targetPosition);
-    }
-#ifdef _DEBUG
-
-    if (!no_move)
-#endif
-        if (movement_) {
-            movement_->Update(movementContext_, _deltaTime);
+        if (reticle_) {
+            reticle_->SetPosition(Singleton<Input>::GetInstance()->GetMousePosition());
+            reticle_->Update();
         }
 
 #ifdef _DEBUG
-    if (!no_atk)
+        if (!no_move)
 #endif
-        UpdateAttack();
+            if (movement_) {
+                movement_->Update(movementContext_, _deltaTime);
+            }
 
-    // スキル発動
-    if (movementContext_.isSkillRequested && onSkillRequest_) {
-        Vector3 dir = (movementContext_.targetPosition - position_);
-        dir.y = 0.f;
-        if (dir.Length() > 0.01f) {
-            onSkillRequest_(position_, dir.Normalize());
+#ifdef _DEBUG
+        if (!no_atk)
+#endif
+            UpdateAttack();
+
+        // スキル発動
+        if (movementContext_.isSkillRequested && onSkillRequest_) {
+            Vector3 dir = (movementContext_.targetPosition - position_);
+            dir.y = 0.f;
+            if (dir.Length() > 0.01f) {
+                onSkillRequest_(position_, dir.Normalize());
+            }
         }
     }
 
@@ -130,7 +118,6 @@ void Player::Update(const float _deltaTime) {
 
     forLight_ = position_;
     forLight_.y += 3.0f;
-    Singleton<LightManager>::GetInstance()->SetPosition(forLight_);
 
     collider_->SetTranslate({ position_.x, position_.y, position_.z });
 
@@ -138,7 +125,7 @@ void Player::Update(const float _deltaTime) {
 }
 
 void Player::Draw() {
-    if (!active_ || !model_) return;
+    if (!model_) return;
 
     if (attack_) {
 #ifdef _DEBUG
@@ -147,8 +134,7 @@ void Player::Draw() {
           attack_->Draw();
     }
 
-
-    if (reticle_) {
+    if (active_ && enable_ && reticle_) {
         reticle_->Draw();
     }
 
@@ -210,12 +196,13 @@ void Player::SetCamera(FollowCamera* _camera) {
 
 void Player::SetStatus(const PlayerStatus& _status) {
     status_ = _status;
+    if (walk_) walk_->SetSpeed(baseWalkSpeed_ * _status.ms);
+    if (attack_) attack_->ApplyAttackSpeed(_status.as);
 }
 
 void Player::UpdateWithoutInput() {
     forLight_ = position_;
     forLight_.y += 3.0f;
-    Singleton<LightManager>::GetInstance()->SetPosition(forLight_);
 
     if (model_) {
         UpdateModel();
@@ -226,11 +213,14 @@ bool Player::IsDead() const {
     return status_.hp <= 0.f;
 }
 
-void Player::LoadParams() const {
+void Player::LoadParams() {
     const auto& json = Singleton<JsonParams>::GetInstance();
     if (!json->Load("PlayerParams")) return;
 
-    if (walk_)  walk_->SetSpeed   (std::get<float>(json->GetValue("PlayerParams", "Walk",  "Speed")));
+    if (walk_) {
+        baseWalkSpeed_ = std::get<float>(json->GetValue("PlayerParams", "Walk", "Speed"));
+        walk_->SetSpeed(baseWalkSpeed_);
+    }
     if (dash_) {
         dash_->SetSpeed   (std::get<float>(json->GetValue("PlayerParams", "Dash",  "Speed")));
         dash_->SetDuration(std::get<float>(json->GetValue("PlayerParams", "Dash",  "Duration")));

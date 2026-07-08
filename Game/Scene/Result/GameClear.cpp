@@ -1,7 +1,6 @@
 #include "GameClear.hpp"
 
 #include "Input.hpp"
-#include "imgui_internal.h"
 #include "Camera/Controller/CameraController.hpp"
 #include "Light/LightManager.hpp"
 #include "Pattern/Singleton.hpp"

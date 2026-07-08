@@ -4,6 +4,7 @@
 #include <algorithm>
 
 #include "Enemy/Enemies.hpp"
+#include "Math/Easing.hpp"
 
 void KillCounter::Initialize(Enemies* _enemies, const uint16_t _max) {
     enemies_ = _enemies;
@@ -34,5 +35,30 @@ void KillCounter::Draw() const {
 }
 
 void KillCounter::Debug() {
+}
+
+void KillCounter::SetActive(bool _active) {
+    if (ui_) ui_->SetActive(_active);
+}
+
+void KillCounter::PlayIntroAnim() {
+    if (!ui_) return;
+
+    const float    duration = 0.8f;
+    const Vector2  center   = { 640.f, 360.f };
+
+    for (size_t i = 0; i < ui_->GetElementCount(); ++i) {
+        auto* elem = ui_->GetElement(i);
+        if (!elem) continue;
+
+        const Vector2 startOffset = center - elem->GetPosition();
+        elem->SetShowFunc([startOffset, duration](float elapsed, Vector2& posOffset, Vector4& color) -> bool {
+            const float t = std::min(elapsed / duration, 1.f);
+            posOffset = Ease::Out::Cubic(startOffset, { 0.f, 0.f }, t);
+            color.w  *= t;
+            return t >= 1.f;
+        });
+        elem->PlayShow();
+    }
 }
 

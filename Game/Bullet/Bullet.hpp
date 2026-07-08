@@ -8,6 +8,7 @@ public:
     struct Params {
         float speed = 5.f;
         float lifetime = 2.f;
+        float damage = 1.f;
     };
 
 private:
@@ -15,6 +16,7 @@ private:
 
     float speed_ = 0.f;
     float lifetime_ = 2.f;
+    float damage_ = 1.f;
     float piercing_ = 0.f;
 
     std::unique_ptr<Collision::Collider> collider_;
@@ -23,6 +25,8 @@ public:
     void Initialize(GameObject* _owner, const Vector3& _direction, const Params& _params = {});
     void Update(float deltaTime) override;
     void Draw() override;
+
+    float GetDamage() const { return damage_; }
 
 private:
     void Initialize() override;

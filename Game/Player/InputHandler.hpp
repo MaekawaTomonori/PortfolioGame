@@ -3,17 +3,12 @@
 
 #include "Movement/MovementContext.hpp"
 #include "Input.hpp"
-#include "Scene/Result/GameClear.hpp"
 
 /**
  * @brief プレイヤー入力をMovementContextに変換
  */
 class InputHandler {
     Input* input_ = nullptr;
-
-    // ViewPort
-    // TODO: 固定としているが、全画面に対応するべき
-    const Vector2 Viewport = {1280.f, 720.f};
 
 public:
     /**

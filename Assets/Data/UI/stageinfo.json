@@ -1,0 +1,55 @@
+{
+    "Elements": [
+        {
+            "Color": [
+                0.05,
+                0.05,
+                0.1,
+                0.85
+            ],
+            "Name": "background",
+            "Position": [
+                640.0,
+                360.0
+            ],
+            "Size": [
+                600.0,
+                170.0
+            ],
+            "Texture": "white_x16.png",
+            "Type": "Sprite"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "FontSize": 34.0,
+            "Name": "time",
+            "Position": [
+                365.0,
+                308.0
+            ],
+            "Text": "Time Limit: -- s",
+            "Type": "Text"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "FontSize": 34.0,
+            "Name": "kill",
+            "Position": [
+                365.0,
+                378.0
+            ],
+            "Text": "Goal: Defeat -- enemies",
+            "Type": "Text"
+        }
+    ]
+}

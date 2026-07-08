@@ -16,6 +16,13 @@ void SkillManager::Initialize() {
 void SkillManager::Update() {
     std::erase_if(entities_, [](const auto& _entity) { return !_entity->IsActive(); });
 
+    if (blackHoleCooldownTimer_ > 0.f) {
+        blackHoleCooldownTimer_ -= 1.f / 60.f;
+        if (blackHoleCooldownTimer_ < 0.f) {
+            blackHoleCooldownTimer_ = 0.f;
+        }
+    }
+
     for (auto& entity : entities_) {
         entity->Update(1.f / 60.f);
     }
@@ -49,6 +56,14 @@ void SkillManager::Debug() {
             ImGui::DragFloat("Rotate Speed", &blackHoleParams_.vortexRotateSpeed, 0.1f, 0.f, 20.f);
             ImGui::DragFloat3("Vortex Scale", &blackHoleParams_.vortexScale.x, 0.1f, 0.1f, 20.f);
             ImGui::ColorEdit4("Vortex Color", &blackHoleParams_.vortexColor.x);
+
+            ImGui::SeparatorText("Cooldown");
+            ImGui::DragFloat("Cooldown Duration", &blackHoleParams_.cooldownDuration, 0.1f, 0.f, 30.f);
+            if (blackHoleCooldownTimer_ > 0.f) {
+                ImGui::TextColored({1.f, 0.4f, 0.f, 1.f}, "Remaining: %.2f s", blackHoleCooldownTimer_);
+            } else {
+                ImGui::TextColored({0.f, 1.f, 0.f, 1.f}, "Ready");
+            }
         }
 
         ImGui::Separator();
@@ -81,6 +96,8 @@ void SkillManager::LoadParams() {
     blackHoleParams_.vortexRotateSpeed= std::get<float>  (json->GetValue("SkillParams", "BlackHole_Vortex",  "VortexRotateSpeed"));
     blackHoleParams_.vortexScale      = std::get<Vector3>(json->GetValue("SkillParams", "BlackHole_Vortex",  "VortexScale"));
     blackHoleParams_.vortexColor      = std::get<Vector4>(json->GetValue("SkillParams", "BlackHole_Vortex",  "VortexColor"));
+
+    blackHoleParams_.cooldownDuration = std::get<float>  (json->GetValue("SkillParams", "BlackHole_Cooldown","CooldownDuration"));
 }
 
 void SkillManager::SaveParams() {
@@ -102,14 +119,20 @@ void SkillManager::SaveParams() {
     json->SetValue("SkillParams", "BlackHole_Vortex",  "VortexScale",      blackHoleParams_.vortexScale);
     json->SetValue("SkillParams", "BlackHole_Vortex",  "VortexColor",      blackHoleParams_.vortexColor);
 
+    json->SetValue("SkillParams", "BlackHole_Cooldown","CooldownDuration", blackHoleParams_.cooldownDuration);
+
     json->Save("SkillParams");
 }
 
 void SkillManager::SpawnBlackHole(const Vector3& _position, const Vector3& _direction) {
+    if (blackHoleCooldownTimer_ > 0.f) return;
+
     auto blackHole = std::make_unique<BlackHole>();
     blackHole->SetParams(&blackHoleParams_);
     blackHole->SetEnemies(enemies_);
     blackHole->SetParticle(particle_);
     blackHole->Initialize(_position, _direction);
     entities_.emplace_back(std::move(blackHole));
+
+    blackHoleCooldownTimer_ = blackHoleParams_.cooldownDuration;
 }

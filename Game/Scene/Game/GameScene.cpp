@@ -1,6 +1,6 @@
 #include "GameScene.hpp"
 
-#include "imgui_internal.h"
+#include "imgui.h"
 #include "Json/JsonParams.hpp"
 #include "Pattern/Singleton.hpp"
 #include "PostProcess/Executor/PostProcessExecutor.hpp"
@@ -53,9 +53,13 @@ void GameScene::Initialize() {
     
     keyGuide_ = std::make_unique<KeyGuide>();
     keyGuide_->Initialize();
+    keyGuide_->SetActive(false);
     
     killCounter_ = std::make_unique<KillCounter>();
-    
+
+    stageInfoUI_ = std::make_unique<StageInfoUI>();
+    stageInfoUI_->Initialize();
+
     skillTree_ = std::make_unique<SkillTree>();
     skillTree_->Initialize(&status_);
     skillTree_->SetOnContinue([this] {
@@ -64,8 +68,11 @@ void GameScene::Initialize() {
             stage_->Initialize();
             killCounter_->Initialize(stage_->GetEnemies(), status_.requirementKill);
             killCounter_->Update();
+            keyGuide_->SetActive(true);
             state_ = PLAY;
             skillTree_->Close();
+            killCounter_->PlayIntroAnim();
+            gameTimer_->PlayIntroAnim();
         });
     });
 #ifdef _DEBUG
@@ -91,17 +98,23 @@ void GameScene::Update() {
 
     switch (state_) {
     case INTRO:
-        if (!intro_)break;
+        if (!intro_) break;
         intro_->Update();
+        stage_->Update();
+        stageInfoUI_->Update(1.f / 60.f);
         followCamera_->Update();
 
-        if (intro_->IsCameraDone()){
+        if (intro_->IsCameraDone()) {
             followCamera_->SetActive(true);
         }
-        if (intro_->IsFinish()) {
+        if (intro_->IsFinish() && stageInfoUI_->IsFinish()) {
             state_ = PLAY;
             stage_->SetActive(true);
             killCounter_->Initialize(stage_->GetEnemies(), status_.requirementKill);
+            killCounter_->Update();
+            keyGuide_->SetActive(true);
+            killCounter_->PlayIntroAnim();
+            gameTimer_->PlayIntroAnim();
             UpdatePlay();
         }
         break;
@@ -118,7 +131,6 @@ void GameScene::Update() {
 void GameScene::Draw() {
     switch (state_) {
     case INTRO:
-        intro_->Draw();
         stage_->Draw();
         break;
     case PLAY:
@@ -186,6 +198,7 @@ void GameScene::SaveStatus() {
 
 void GameScene::OnEnable() {
     intro_->Initialize();
+    stageInfoUI_->Setup(status_.time, status_.requirementKill);
 }
 
 void GameScene::UpdatePlay() {
@@ -195,6 +208,13 @@ void GameScene::UpdatePlay() {
     killCounter_->Update();
     followCamera_->Update();
     keyGuide_->Update();
+
+    if (const auto* player = stage_->GetPlayer()) {
+        keyGuide_->SetCooldown(DIK_F, player->GetFlashCooldownRatio());
+    }
+    if (const auto* sm = stage_->GetSkillManager()) {
+        keyGuide_->SetCooldown(DIK_Q, sm->GetBlackHoleCooldownRatio());
+    }
 
     // is clear (タイマーより優先してチェック)
     if (stage_->IsClear() || Singleton<Input>::GetInstance()->IsTrigger(DIK_T)) {
@@ -207,9 +227,11 @@ void GameScene::UpdatePlay() {
         status_.point += stage_->GetEnemies()->GetDeathCount();
         PlayTransition(Transition::Type::Fade, [this] {
             state_ = UPGRADE;
+            keyGuide_->SetActive(false);
+            killCounter_->SetActive(false);
             skillTree_->Open();
             skillTree_->Update();
-            });
+        });
     }
 
     if (stage_->IsGameOver()) {

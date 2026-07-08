@@ -19,6 +19,8 @@ public:
     void Update();
     void Draw() const;
     void Debug();
+    void SetActive(bool _active);
+    void PlayIntroAnim();
 }; // class KillCounter
 
 #endif // KillCounter_HPP_

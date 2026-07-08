@@ -1,6 +1,8 @@
 #include "Stage.hpp"
 
 #include "Math/MathUtils.hpp"
+#include "Pattern/Singleton.hpp"
+#include "Light/LightManager.hpp"
 #include <cmath>
 
 #undef max
@@ -76,11 +78,27 @@ void Stage::Setup(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
             color.z = 0.42f;
         }
     );
+
+    // プレイヤー被弾時のヒットエフェクトの更新関数（弾け飛んで減衰しながらフェードアウト）
+    particle_->RegisterUpdateFunc("hit_explosion", [](float t, const Vector3&, Vector3& pos, Vector3& velocity, Vector4& color) {
+        (void)pos;
+        if (t < 0.01f) {
+            velocity = Vector3::Random() * 8.0f;
+        }
+        velocity = velocity * 0.92f;
+        velocity.y -= 0.05f;
+        color.w = 0.9f * (.7f - t);
+    });
+
+    particle_->Register("hit");
 }
 
 void Stage::Initialize() {
     player_->Initialize();
     player_->SetStatus(status_.playerStatus);
+
+    // プレイヤーの初期位置にライトを追従させる
+    Singleton<LightManager>::GetInstance()->SetPosition(player_->GetLightAnchor());
 
     enemies_->Initialize();
     enemies_->SetTarget(player_.get());
@@ -91,6 +109,7 @@ void Stage::Initialize() {
 void Stage::Update() {
     if (active_ != pending_) {
         active_ = pending_;
+        player_->SetEnable(active_);
     }
 
     skybox_->Update();
@@ -98,6 +117,8 @@ void Stage::Update() {
 
     if (!active_) {
         player_->UpdateWithoutInput();
+        // 非アクティブ時もプレイヤー位置にライトを追従させる
+        Singleton<LightManager>::GetInstance()->SetPosition(player_->GetLightAnchor());
         return;
     }
 
@@ -108,6 +129,9 @@ void Stage::Update() {
     }
 
     player_->Update(DeltaTime);
+
+    // プレイヤー位置にライトを追従させる
+    Singleton<LightManager>::GetInstance()->SetPosition(player_->GetLightAnchor());
 
     // フィールド霧エフェクトをプレイヤー位置を中心に継続発生
     fogTimer_ -= DeltaTime;

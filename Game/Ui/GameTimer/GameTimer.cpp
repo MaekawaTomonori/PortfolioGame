@@ -2,7 +2,11 @@
 
 #include <algorithm>
 
-#include "imgui_internal.h"
+#include "imgui.h"
+#include "Math/Easing.hpp"
+
+#undef min
+#undef max
 
 void GameTimer::Initialize() {
     sprites_[0] = std::make_unique<Sprite>();
@@ -26,24 +30,42 @@ void GameTimer::Initialize() {
 
 void GameTimer::Update(const float _deltaTime) {
     if (!active_) return;
-    time_ -= _deltaTime;
     done_ = false;
 
-    if (time_ <= 0.f) {
-        time_ = 0.f;
-        done_ = true;
+    Vector2 drawPos = position_;
+    float alpha = 1.f;
+
+    if (introAnimating_) {
+        introElapsed_ += _deltaTime;
+        const float t = std::min(introElapsed_ / INTRO_DURATION, 1.f);
+        drawPos = Ease::Out::Cubic(introStartPos_, position_, t);
+        alpha = t;
+        if (t >= 1.f) introAnimating_ = false;
+    } else {
+        time_ -= _deltaTime;
+        if (time_ <= 0.f) {
+            time_ = 0.f;
+            done_ = true;
+        }
     }
 
     int i = std::clamp(static_cast<int>(time_), 0, 99);
 
     for (int j = 1; j >= 0; --j) {
-        sprites_[j]->SetPosition({ position_.x + (j - 0.5f) * size_.x, position_.y });
+        sprites_[j]->SetPosition({ drawPos.x + (j - 0.5f) * size_.x, drawPos.y });
         sprites_[j]->SetSize(size_);
+        sprites_[j]->SetColor({ color_.x, color_.y, color_.z, color_.w * alpha });
         int v = (i % 10);
         sprites_[j]->SetTextureLeftTop({ v * TEXTURE_SIZE.x, 0.f });
         sprites_[j]->Update();
         i /= 10;
     }
+}
+
+void GameTimer::PlayIntroAnim() {
+    introStartPos_ = { 640.f, 360.f };
+    introElapsed_  = 0.f;
+    introAnimating_ = true;
 }
 
 void GameTimer::Draw() const {

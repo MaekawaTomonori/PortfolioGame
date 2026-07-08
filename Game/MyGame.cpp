@@ -1,9 +1,11 @@
 #include "MyGame.hpp"
 
 #include "Factory/PostEffectFactory.hpp"
-#include "Scene/Game/GameScene.hpp"
-#include "Scene/Result/GameOver.hpp"
+#include "Scene/Particle/ParticleScene.hpp"
 #include "Scene/Title/TitleScene.hpp"
+#include "Scene/Game/GameScene.hpp"
+#include "Scene/Result/GameClear.hpp"
+#include "Scene/Result/GameOver.hpp"
 
 void MyGame::Initialize(GameEngine::Config& _config) {
     // ゲーム固有の設定（Assets/Config/App.cnf に含まれないもの）
@@ -23,4 +25,5 @@ void MyGame::Register(){
     RegisterScene<GameScene>("game");
     RegisterScene<GameOver>("gameover");
     RegisterScene<GameClear>("gameclear");
+    RegisterScene<ParticleScene>("particle");
 }

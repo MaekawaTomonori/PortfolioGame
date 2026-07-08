@@ -2,6 +2,7 @@
 #include "Enemy/State/EnemyStateIdle.hpp"
 #include "Enemy/State/EnemyStateDeath.hpp"
 
+#include "Bullet/Bullet.hpp"
 #include "ColliderType.hpp"
 #include "Math/MathUtils.hpp"
 #include "imgui.h"
@@ -228,7 +229,10 @@ void Enemy::OnCollision(const Collision::Collider* _collider) {
         // Damage()
         {
             // Damage処理
-            --status_.hp;
+            const float dmg = _collider->GetOwner()
+                ? static_cast<const Bullet*>(_collider->GetOwner())->GetDamage()
+                : 1.f;
+            status_.hp -= dmg;
 
             // 無敵状態に移行
             invincible_ = true;

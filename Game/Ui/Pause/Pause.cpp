@@ -80,6 +80,20 @@ void Pause::HandleInput() {
 
         destination_ = {cursorX, cursorY};
     }
+    int canvasCursor = ui_->GetCursorIndex();
+    if (canvasCursor >= 0) {
+        for (int32_t i = 0; i < count; ++i) {
+            if (static_cast<int>(actionIndices_[i]) == canvasCursor && i != selectedIndex_) {
+                selectedIndex_ = i;
+                timer_ = 0.f;
+                start_ = cursor_->GetPosition();
+                auto rect = ui_->GetElementRect(actionIndices_[selectedIndex_]);
+                destination_ = {rect.position.x - rect.size.x / 2.f - 24.f, rect.position.y};
+                break;
+            }
+        }
+    }
+
     if (input_->IsTrigger(DIK_RETURN) || input_->IsTrigger(DIK_SPACE)) {
         Execute();
     }

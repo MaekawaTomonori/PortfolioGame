@@ -9,7 +9,7 @@
         "Stage": {
             "EnemySpawnInterval": 2.0,
             "MaxEnemyCount": 5,
-            "RequirementKill": 30,
+            "RequirementKill": 15,
             "Time": 15.0
         }
     }

@@ -5,18 +5,68 @@
                 1.0,
                 1.0,
                 1.0,
-                1.0
+                0.92
             ],
-            "Name": "KeyGuide",
+            "FontSize": 44.0,
+            "Name": "q_label",
             "Position": [
-                658.0,
-                386.0
+                545.0,
+                615.0
+            ],
+            "Text": "Q",
+            "Type": "Text"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0,
+                0.92
+            ],
+            "FontSize": 44.0,
+            "Name": "f_label",
+            "Position": [
+                705.0,
+                615.0
+            ],
+            "Text": "F",
+            "Type": "Text"
+        },
+        {
+            "Color": [
+                0.62,
+                0.62,
+                0.68,
+                0.92
+            ],
+            "Name": "q_cd_bar",
+            "Position": [
+                560.0,
+                640.0
             ],
             "Size": [
-                1280.0,
-                720.0
+                90.0,
+                90.0
             ],
-            "Texture": "guide.png"
+            "Texture": "white_x16.png"
+        },
+        {
+            "Color": [
+                0.62,
+                0.62,
+                0.68,
+                0.92
+            ],
+            "Name": "f_cd_bar",
+            "Position": [
+                720.0,
+                640.0
+            ],
+            "Size": [
+                90.0,
+                90.0
+            ],
+            "Texture": "white_x16.png"
         }
     ],
     "Position": [
