@@ -13,7 +13,7 @@
             "Cooldown": 3.0
         },
         "Attack": {
-            "Rate": 1.0
+            "Rate": 2.0
         },
         "Bullet": {
             "Speed": 5.0,

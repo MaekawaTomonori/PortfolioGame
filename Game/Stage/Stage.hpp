@@ -39,6 +39,7 @@ public:
     //Getter
     [[nodiscard]] Player* GetPlayer() const;
     [[nodiscard]] Enemies* GetEnemies() const;
+    [[nodiscard]] SkillManager* GetSkillManager() const { return skillManager_.get(); }
 
     bool IsClear() const;
     bool IsGameOver() const;

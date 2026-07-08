@@ -5,7 +5,7 @@
                 0.05000000074505806,
                 0.05000000074505806,
                 0.10000000149011612,
-                0.8500000238418579
+                0.9200000166893005
             ],
             "Name": "Background",
             "Position": [
@@ -16,7 +16,8 @@
                 1280.0,
                 720.0
             ],
-            "Texture": "white_x16.png"
+            "Texture": "white_x16.png",
+            "Type": "Sprite"
         },
         {
             "Color": [
@@ -27,14 +28,15 @@
             ],
             "Name": "hline_root",
             "Position": [
-                248.0,
-                360.0
+                188.0,
+                340.0
             ],
             "Size": [
-                60.0,
+                65.0,
                 4.0
             ],
-            "Texture": "white_x16.png"
+            "Texture": "white_x16.png",
+            "Type": "Sprite"
         },
         {
             "Color": [
@@ -43,70 +45,17 @@
                 0.6431372761726379,
                 1.0
             ],
-            "Name": "branch_root",
+            "Name": "stem_main",
             "Position": [
-                280.0,
-                360.0
+                220.0,
+                340.0
             ],
             "Size": [
                 4.0,
-                204.0
-            ],
-            "Texture": "white_x16.png"
-        },
-        {
-            "Color": [
-                0.6431372761726379,
-                0.6431372761726379,
-                0.6431372761726379,
-                1.0
-            ],
-            "Name": "branch_top",
-            "Position": [
-                300.0,
-                260.0
-            ],
-            "Size": [
-                40.0,
-                4.0
-            ],
-            "Texture": "white_x16.png"
-        },
-        {
-            "Color": [
-                0.6431372761726379,
-                0.6431372761726379,
-                0.6431372761726379,
-                1.0
-            ],
-            "Name": "branch_mid",
-            "Position": [
-                300.0,
-                360.0
-            ],
-            "Size": [
-                40.0,
-                4.0
-            ],
-            "Texture": "white_x16.png"
-        },
-        {
-            "Color": [
-                0.6431372761726379,
-                0.6431372761726379,
-                0.6431372761726379,
-                1.0
-            ],
-            "Name": "branch_bot",
-            "Position": [
-                300.0,
                 460.0
             ],
-            "Size": [
-                40.0,
-                4.0
-            ],
-            "Texture": "white_x16.png"
+            "Texture": "white_x16.png",
+            "Type": "Sprite"
         },
         {
             "Color": [
@@ -115,16 +64,17 @@
                 0.6431372761726379,
                 1.0
             ],
-            "Name": "hline_top_1_2",
+            "Name": "stem_to_r1",
             "Position": [
-                415.0,
-                260.0
+                252.0,
+                110.0
             ],
             "Size": [
-                90.0,
+                65.0,
                 4.0
             ],
-            "Texture": "white_x16.png"
+            "Texture": "white_x16.png",
+            "Type": "Sprite"
         },
         {
             "Color": [
@@ -133,16 +83,17 @@
                 0.6431372761726379,
                 1.0
             ],
-            "Name": "hline_top_2_3",
+            "Name": "stem_to_r2",
             "Position": [
-                555.0,
-                260.0
+                252.0,
+                225.0
             ],
             "Size": [
-                90.0,
+                65.0,
                 4.0
             ],
-            "Texture": "white_x16.png"
+            "Texture": "white_x16.png",
+            "Type": "Sprite"
         },
         {
             "Color": [
@@ -151,52 +102,55 @@
                 0.6431372761726379,
                 1.0
             ],
-            "Name": "hline_mid_1_2",
+            "Name": "stem_to_r3",
             "Position": [
-                415.0,
-                360.0
+                252.0,
+                340.0
             ],
             "Size": [
-                90.0,
+                65.0,
                 4.0
             ],
-            "Texture": "white_x16.png"
+            "Texture": "white_x16.png",
+            "Type": "Sprite"
         },
         {
             "Color": [
-                0.6431372761726379,
-                0.6431372761726379,
-                0.6431372761726379,
+                0.6430000066757202,
+                0.6430000066757202,
+                0.6430000066757202,
                 1.0
             ],
-            "Name": "hline_mid_2_3",
+            "Name": "stem_to_r4",
             "Position": [
-                555.0,
-                360.0
+                252.0,
+                455.0
             ],
             "Size": [
-                90.0,
+                65.0,
                 4.0
             ],
-            "Texture": "white_x16.png"
+            "Texture": "white_x16.png",
+            "Type": "Sprite"
         },
         {
             "Color": [
-                0.6431372761726379,
-                0.6431372761726379,
-                0.6431372761726379,
+                0.6430000066757202,
+                0.6430000066757202,
+                0.6430000066757202,
                 1.0
             ],
-            "Name": "hline_bot_1_2",
+            "Name": "stem_to_r5",
             "Position": [
-                415.0,
-                460.0
+                252.0,
+                570.0
             ],
             "Size": [
-                90.0,
+                65.0,
                 4.0
             ],
-            "Texture": "white_x16.png"
+            "Texture": "white_x16.png",
+            "Type": "Sprite"
         },
         {
             "Color": [
@@ -205,217 +159,628 @@
                 0.6431372761726379,
                 1.0
             ],
-            "Name": "hline_bot_2_3",
+            "Name": "r1_t1_to_t2",
             "Position": [
-                555.0,
-                460.0
+                400.0,
+                110.0
             ],
             "Size": [
-                90.0,
+                130.0,
                 4.0
             ],
-            "Texture": "white_x16.png"
+            "Texture": "white_x16.png",
+            "Type": "Sprite"
         },
         {
             "Color": [
-                0.800000011920929,
-                0.800000011920929,
-                0.4000000059604645,
+                0.6430000066757202,
+                0.6430000066757202,
+                0.6430000066757202,
                 1.0
             ],
+            "Name": "r2_t1_to_t2",
+            "Position": [
+                400.0,
+                225.0
+            ],
+            "Size": [
+                130.0,
+                4.0
+            ],
+            "Texture": "white_x16.png",
+            "Type": "Sprite"
+        },
+        {
+            "Color": [
+                0.6430000066757202,
+                0.6430000066757202,
+                0.6430000066757202,
+                1.0
+            ],
+            "Name": "r3_t1_to_t2",
+            "Position": [
+                400.0,
+                340.0
+            ],
+            "Size": [
+                130.0,
+                4.0
+            ],
+            "Texture": "white_x16.png",
+            "Type": "Sprite"
+        },
+        {
+            "Color": [
+                0.6430000066757202,
+                0.6430000066757202,
+                0.6430000066757202,
+                1.0
+            ],
+            "Name": "r4_t1_to_t2",
+            "Position": [
+                400.0,
+                455.0
+            ],
+            "Size": [
+                130.0,
+                4.0
+            ],
+            "Texture": "white_x16.png",
+            "Type": "Sprite"
+        },
+        {
+            "Color": [
+                0.6430000066757202,
+                0.6430000066757202,
+                0.6430000066757202,
+                1.0
+            ],
+            "Name": "r5_t1_to_t2",
+            "Position": [
+                400.0,
+                570.0
+            ],
+            "Size": [
+                130.0,
+                4.0
+            ],
+            "Texture": "white_x16.png",
+            "Type": "Sprite"
+        },
+        {
+            "Color": [
+                0.6430000066757202,
+                0.6430000066757202,
+                0.6430000066757202,
+                1.0
+            ],
+            "Name": "r1_t2_to_t3",
+            "Position": [
+                580.0,
+                110.0
+            ],
+            "Size": [
+                130.0,
+                4.0
+            ],
+            "Texture": "white_x16.png",
+            "Type": "Sprite"
+        },
+        {
+            "Color": [
+                0.6430000066757202,
+                0.6430000066757202,
+                0.6430000066757202,
+                1.0
+            ],
+            "Name": "r2_t2_to_t3",
+            "Position": [
+                580.0,
+                225.0
+            ],
+            "Size": [
+                130.0,
+                4.0
+            ],
+            "Texture": "white_x16.png",
+            "Type": "Sprite"
+        },
+        {
+            "Color": [
+                0.6430000066757202,
+                0.6430000066757202,
+                0.6430000066757202,
+                1.0
+            ],
+            "Name": "r3_t2_to_t3",
+            "Position": [
+                580.0,
+                340.0
+            ],
+            "Size": [
+                130.0,
+                4.0
+            ],
+            "Texture": "white_x16.png",
+            "Type": "Sprite"
+        },
+        {
+            "Color": [
+                0.6430000066757202,
+                0.6430000066757202,
+                0.6430000066757202,
+                1.0
+            ],
+            "Name": "r4_t2_to_t3",
+            "Position": [
+                580.0,
+                455.0
+            ],
+            "Size": [
+                130.0,
+                4.0
+            ],
+            "Texture": "white_x16.png",
+            "Type": "Sprite"
+        },
+        {
+            "Color": [
+                0.6430000066757202,
+                0.6430000066757202,
+                0.6430000066757202,
+                1.0
+            ],
+            "Name": "r5_t2_to_t3",
+            "Position": [
+                580.0,
+                570.0
+            ],
+            "Size": [
+                130.0,
+                4.0
+            ],
+            "Texture": "white_x16.png",
+            "Type": "Sprite"
+        },
+        {
+            "Color": [
+                0.6430000066757202,
+                0.6430000066757202,
+                0.6430000066757202,
+                1.0
+            ],
+            "Name": "r1_t3_to_t4",
+            "Position": [
+                760.0,
+                110.0
+            ],
+            "Size": [
+                130.0,
+                4.0
+            ],
+            "Texture": "white_x16.png",
+            "Type": "Sprite"
+        },
+        {
+            "Color": [
+                0.6430000066757202,
+                0.6430000066757202,
+                0.6430000066757202,
+                1.0
+            ],
+            "Name": "r2_t3_to_t4",
+            "Position": [
+                760.0,
+                225.0
+            ],
+            "Size": [
+                130.0,
+                4.0
+            ],
+            "Texture": "white_x16.png",
+            "Type": "Sprite"
+        },
+        {
+            "Color": [
+                0.6430000066757202,
+                0.6430000066757202,
+                0.6430000066757202,
+                1.0
+            ],
+            "Name": "r5_t3_to_t4",
+            "Position": [
+                760.0,
+                570.0
+            ],
+            "Size": [
+                130.0,
+                4.0
+            ],
+            "Texture": "white_x16.png",
+            "Type": "Sprite"
+        },
+        {
+            "Color": [
+                1.0,
+                0.6499999761581421,
+                0.15000000596046448,
+                1.0
+            ],
+            "Events": {
+                "Execute": "SkillTree.Upgrade.root"
+            },
             "Name": "root",
             "Position": [
-                200.0,
-                360.0
+                130.0,
+                340.0
             ],
+            "Selectable": true,
             "Size": [
                 50.0,
                 50.0
             ],
-            "Texture": "white_x16.png"
+            "Texture": "heart.png",
+            "Type": "Sprite"
         },
         {
             "Color": [
-                0.800000011920929,
-                0.800000011920929,
+                0.4000000059604645,
+                0.4000000059604645,
                 0.4000000059604645,
                 1.0
             ],
             "Name": "atk_up",
             "Position": [
-                345.0,
-                260.0
+                310.0,
+                110.0
             ],
+            "Selectable": true,
             "Size": [
                 50.0,
                 50.0
             ],
-            "Texture": "white_x16.png"
+            "Texture": "sword.png",
+            "Type": "Sprite"
         },
         {
             "Color": [
-                1.0,
-                1.0,
-                1.0,
+                0.4000000059604645,
+                0.4000000059604645,
+                0.4000000059604645,
                 1.0
             ],
-            "Events": {
-                "Execute": "SkillTree.Upgrade.hp_up"
-            },
             "Name": "hp_up",
             "Position": [
-                345.0,
-                360.0
+                310.0,
+                225.0
             ],
+            "Selectable": true,
             "Size": [
                 50.0,
                 50.0
             ],
-            "Texture": "white_x16.png"
+            "Texture": "heart.png",
+            "Type": "Sprite"
         },
         {
             "Color": [
-                1.0,
-                1.0,
-                1.0,
+                0.4000000059604645,
+                0.4000000059604645,
+                0.4000000059604645,
                 1.0
             ],
-            "Events": {
-                "Execute": "SkillTree.Upgrade.spd_up"
-            },
             "Name": "spd_up",
             "Position": [
-                345.0,
-                460.0
+                310.0,
+                340.0
             ],
+            "Selectable": true,
             "Size": [
                 50.0,
                 50.0
             ],
-            "Texture": "white_x16.png"
+            "Texture": "ms.png",
+            "Type": "Sprite"
         },
         {
             "Color": [
-                0.800000011920929,
-                0.800000011920929,
+                0.4000000059604645,
+                0.4000000059604645,
                 0.4000000059604645,
                 1.0
             ],
             "Name": "as_up",
             "Position": [
-                485.0,
-                260.0
+                310.0,
+                455.0
             ],
+            "Selectable": true,
             "Size": [
                 50.0,
                 50.0
             ],
-            "Texture": "white_x16.png"
+            "Texture": "as.png",
+            "Type": "Sprite"
         },
         {
             "Color": [
-                1.0,
-                1.0,
-                1.0,
+                0.4000000059604645,
+                0.4000000059604645,
+                0.4000000059604645,
                 1.0
             ],
-            "Events": {
-                "Execute": "SkillTree.Upgrade.time_up"
-            },
             "Name": "time_up",
             "Position": [
-                485.0,
-                360.0
+                310.0,
+                570.0
             ],
+            "Selectable": true,
             "Size": [
                 50.0,
                 50.0
             ],
-            "Texture": "white_x16.png"
+            "Texture": "clock.png",
+            "Type": "Sprite"
         },
         {
             "Color": [
-                1.0,
-                1.0,
-                1.0,
+                0.4000000059604645,
+                0.4000000059604645,
+                0.4000000059604645,
                 1.0
             ],
-            "Events": {
-                "Execute": "SkillTree.Upgrade.enemy_up"
-            },
-            "Name": "enemy_up",
-            "Position": [
-                485.0,
-                460.0
-            ],
-            "Size": [
-                50.0,
-                50.0
-            ],
-            "Texture": "white_x16.png"
-        },
-        {
-            "Color": [
-                1.0,
-                1.0,
-                1.0,
-                1.0
-            ],
-            "Events": {
-                "Execute": "SkillTree.Upgrade.atk_up_2"
-            },
             "Name": "atk_up_2",
             "Position": [
-                625.0,
-                260.0
+                490.0,
+                110.0
             ],
+            "Selectable": true,
             "Size": [
                 50.0,
                 50.0
             ],
-            "Texture": "white_x16.png"
+            "Texture": "sword.png",
+            "Type": "Sprite"
         },
         {
             "Color": [
-                1.0,
-                1.0,
-                1.0,
+                0.4000000059604645,
+                0.4000000059604645,
+                0.4000000059604645,
                 1.0
             ],
-            "Events": {
-                "Execute": "SkillTree.Upgrade.hp_up_2"
-            },
             "Name": "hp_up_2",
             "Position": [
-                625.0,
-                360.0
+                490.0,
+                225.0
             ],
+            "Selectable": true,
             "Size": [
                 50.0,
                 50.0
             ],
-            "Texture": "white_x16.png"
+            "Texture": "heart.png",
+            "Type": "Sprite"
         },
         {
             "Color": [
-                1.0,
-                1.0,
-                1.0,
+                0.4000000059604645,
+                0.4000000059604645,
+                0.4000000059604645,
                 1.0
             ],
-            "Events": {
-                "Execute": "SkillTree.Upgrade.spawn_down"
-            },
-            "Name": "spawn_down",
+            "Name": "spd_up_2",
             "Position": [
-                625.0,
-                460.0
+                490.0,
+                340.0
             ],
+            "Selectable": true,
             "Size": [
                 50.0,
                 50.0
             ],
-            "Texture": "white_x16.png"
+            "Texture": "ms.png",
+            "Type": "Sprite"
+        },
+        {
+            "Color": [
+                0.4000000059604645,
+                0.4000000059604645,
+                0.4000000059604645,
+                1.0
+            ],
+            "Name": "as_up_2",
+            "Position": [
+                490.0,
+                455.0
+            ],
+            "Selectable": true,
+            "Size": [
+                50.0,
+                50.0
+            ],
+            "Texture": "as.png",
+            "Type": "Sprite"
+        },
+        {
+            "Color": [
+                0.4000000059604645,
+                0.4000000059604645,
+                0.4000000059604645,
+                1.0
+            ],
+            "Name": "enemy_up",
+            "Position": [
+                490.0,
+                570.0
+            ],
+            "Selectable": true,
+            "Size": [
+                50.0,
+                50.0
+            ],
+            "Texture": "enemy.png",
+            "Type": "Sprite"
+        },
+        {
+            "Color": [
+                0.4000000059604645,
+                0.4000000059604645,
+                0.4000000059604645,
+                1.0
+            ],
+            "Name": "atk_up_3",
+            "Position": [
+                670.0,
+                110.0
+            ],
+            "Selectable": true,
+            "Size": [
+                50.0,
+                50.0
+            ],
+            "Texture": "sword.png",
+            "Type": "Sprite"
+        },
+        {
+            "Color": [
+                0.4000000059604645,
+                0.4000000059604645,
+                0.4000000059604645,
+                1.0
+            ],
+            "Name": "hp_up_3",
+            "Position": [
+                670.0,
+                225.0
+            ],
+            "Selectable": true,
+            "Size": [
+                50.0,
+                50.0
+            ],
+            "Texture": "heart.png",
+            "Type": "Sprite"
+        },
+        {
+            "Color": [
+                0.4000000059604645,
+                0.4000000059604645,
+                0.4000000059604645,
+                1.0
+            ],
+            "Name": "spd_up_3",
+            "Position": [
+                670.0,
+                340.0
+            ],
+            "Selectable": true,
+            "Size": [
+                50.0,
+                50.0
+            ],
+            "Texture": "ms.png",
+            "Type": "Sprite"
+        },
+        {
+            "Color": [
+                0.4000000059604645,
+                0.4000000059604645,
+                0.4000000059604645,
+                1.0
+            ],
+            "Name": "as_up_3",
+            "Position": [
+                670.0,
+                455.0
+            ],
+            "Selectable": true,
+            "Size": [
+                50.0,
+                50.0
+            ],
+            "Texture": "as.png",
+            "Type": "Sprite"
+        },
+        {
+            "Color": [
+                0.4000000059604645,
+                0.4000000059604645,
+                0.4000000059604645,
+                1.0
+            ],
+            "Name": "spawn_down",
+            "Position": [
+                670.0,
+                570.0
+            ],
+            "Selectable": true,
+            "Size": [
+                50.0,
+                50.0
+            ],
+            "Texture": "enemy.png",
+            "Type": "Sprite"
+        },
+        {
+            "Color": [
+                0.4000000059604645,
+                0.4000000059604645,
+                0.4000000059604645,
+                1.0
+            ],
+            "Name": "atk_max",
+            "Position": [
+                850.0,
+                110.0
+            ],
+            "Selectable": true,
+            "Size": [
+                50.0,
+                50.0
+            ],
+            "Texture": "sword.png",
+            "Type": "Sprite"
+        },
+        {
+            "Color": [
+                0.4000000059604645,
+                0.4000000059604645,
+                0.4000000059604645,
+                1.0
+            ],
+            "Name": "hp_max",
+            "Position": [
+                850.0,
+                225.0
+            ],
+            "Selectable": true,
+            "Size": [
+                50.0,
+                50.0
+            ],
+            "Texture": "heart.png",
+            "Type": "Sprite"
+        },
+        {
+            "Color": [
+                0.4000000059604645,
+                0.4000000059604645,
+                0.4000000059604645,
+                1.0
+            ],
+            "Name": "time_up_2",
+            "Position": [
+                850.0,
+                570.0
+            ],
+            "Selectable": true,
+            "Size": [
+                50.0,
+                50.0
+            ],
+            "Texture": "clock.png",
+            "Type": "Sprite"
         },
         {
             "Color": [
@@ -429,32 +794,51 @@
             },
             "Name": "Continue",
             "Position": [
-                150.0,
-                520.0
+                130.0,
+                650.0
             ],
+            "Selectable": true,
             "Size": [
                 50.0,
                 50.0
             ],
-            "Texture": "white_x16.png"
+            "Texture": "back.png",
+            "Type": "Sprite"
         },
         {
             "Color": [
-                0.35555553436279297,
-                0.35555553436279297,
-                0.35555553436279297,
-                1.0
+                0.18000000715255737,
+                0.18000000715255737,
+                0.25,
+                0.949999988079071
             ],
             "Name": "SelectedContent",
             "Position": [
-                125.0,
-                86.0
+                1100.0,
+                360.0
             ],
             "Size": [
-                240.0,
-                143.0
+                340.0,
+                700.0
             ],
-            "Texture": "white_x16.png"
+            "Texture": "white_x16.png",
+            "Type": "Sprite"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "FontSize": 26.0,
+            "Name": "pv_name",
+            "Position": [
+                950.0,
+                52.0
+            ],
+            "Text": "HP Up III",
+            "Type": "Text"
         },
         {
             "Color": [
@@ -465,14 +849,15 @@
             ],
             "Name": "pv_stat_icon",
             "Position": [
-                45.0,
-                45.0
+                980.0,
+                130.0
             ],
             "Size": [
-                32.0,
-                32.0
+                56.0,
+                56.0
             ],
-            "Texture": "as.png"
+            "Texture": "heart.png",
+            "Type": "Sprite"
         },
         {
             "Color": [
@@ -483,14 +868,15 @@
             ],
             "Name": "pv_sign",
             "Position": [
-                85.0,
-                45.0
+                1030.0,
+                130.0
             ],
             "Size": [
-                24.0,
-                32.0
+                30.0,
+                40.0
             ],
-            "Texture": "sign_plus.png"
+            "Texture": "sign_plus.png",
+            "Type": "Sprite"
         },
         {
             "Color": [
@@ -501,22 +887,23 @@
             ],
             "Name": "pv_val_d0",
             "Position": [
-                115.0,
-                45.0
+                1063.0,
+                130.0
             ],
             "Size": [
-                24.0,
-                32.0
+                30.0,
+                40.0
             ],
             "Texture": "numbers.png",
             "TextureLeftTop": [
-                0.0,
+                192.0,
                 0.0
             ],
             "TextureSize": [
                 64.0,
                 96.0
-            ]
+            ],
+            "Type": "Sprite"
         },
         {
             "Color": [
@@ -527,22 +914,55 @@
             ],
             "Name": "pv_val_d1",
             "Position": [
-                145.0,
-                45.0
+                1096.0,
+                130.0
             ],
             "Size": [
-                24.0,
-                32.0
+                30.0,
+                40.0
             ],
             "Texture": "numbers.png",
             "TextureLeftTop": [
-                128.0,
+                0.0,
                 0.0
             ],
             "TextureSize": [
                 64.0,
                 96.0
-            ]
+            ],
+            "Type": "Sprite"
+        },
+        {
+            "Color": [
+                0.5,
+                0.8999999761581421,
+                0.8999999761581421,
+                1.0
+            ],
+            "FontSize": 38.5,
+            "Name": "pv_level",
+            "Position": [
+                962.0,
+                390.0
+            ],
+            "Text": "Lv 0 / 2",
+            "Type": "Text"
+        },
+        {
+            "Color": [
+                0.75,
+                0.75,
+                0.75,
+                1.0
+            ],
+            "FontSize": 21.5,
+            "Name": "pv_description",
+            "Position": [
+                964.0,
+                175.0
+            ],
+            "Text": "Huge HP boost",
+            "Type": "Text"
         },
         {
             "Color": [
@@ -553,15 +973,15 @@
             ],
             "Name": "pv_pt_icon",
             "Position": [
-                45.0,
-                110.0
+                980.0,
+                320.0
             ],
             "Size": [
-                32.0,
-                32.0
+                28.0,
+                28.0
             ],
-            "Texture": "white_x16.png",
-            "Visible": false
+            "Texture": "pt_icon.png",
+            "Type": "Sprite"
         },
         {
             "Color": [
@@ -572,12 +992,12 @@
             ],
             "Name": "pv_pt_d0",
             "Position": [
-                85.0,
-                110.0
+                1020.0,
+                320.0
             ],
             "Size": [
-                24.0,
-                32.0
+                28.0,
+                38.0
             ],
             "Texture": "numbers.png",
             "TextureLeftTop": [
@@ -588,7 +1008,7 @@
                 64.0,
                 96.0
             ],
-            "Visible": false
+            "Type": "Sprite"
         },
         {
             "Color": [
@@ -599,23 +1019,23 @@
             ],
             "Name": "pv_pt_d1",
             "Position": [
-                115.0,
-                110.0
+                1050.0,
+                320.0
             ],
             "Size": [
-                24.0,
-                32.0
+                28.0,
+                38.0
             ],
             "Texture": "numbers.png",
             "TextureLeftTop": [
-                0.0,
+                192.0,
                 0.0
             ],
             "TextureSize": [
                 64.0,
                 96.0
             ],
-            "Visible": false
+            "Type": "Sprite"
         },
         {
             "Color": [
@@ -626,14 +1046,105 @@
             ],
             "Name": "pv_acquired",
             "Position": [
-                100.0,
-                110.0
+                1100.0,
+                320.0
             ],
             "Size": [
-                160.0,
-                48.0
+                220.0,
+                44.0
             ],
-            "Texture": "acquired.png"
+            "Texture": "white_x16.png",
+            "Type": "Sprite",
+            "Visible": false
+        },
+        {
+            "Color": [
+                0.5,
+                0.5,
+                0.6000000238418579,
+                0.6000000238418579
+            ],
+            "Name": "pv_sep1",
+            "Position": [
+                1100.0,
+                84.0
+            ],
+            "Size": [
+                290.0,
+                2.0
+            ],
+            "Texture": "white_x16.png",
+            "Type": "Sprite"
+        },
+        {
+            "Color": [
+                0.5,
+                0.5,
+                0.6000000238418579,
+                0.6000000238418579
+            ],
+            "Name": "pv_sep2",
+            "Position": [
+                1100.0,
+                220.0
+            ],
+            "Size": [
+                290.0,
+                2.0
+            ],
+            "Texture": "white_x16.png",
+            "Type": "Sprite"
+        },
+        {
+            "Color": [
+                0.5,
+                0.5,
+                0.6000000238418579,
+                0.6000000238418579
+            ],
+            "Name": "pv_sep3",
+            "Position": [
+                1100.0,
+                358.0
+            ],
+            "Size": [
+                290.0,
+                2.0
+            ],
+            "Texture": "white_x16.png",
+            "Type": "Sprite"
+        },
+        {
+            "Color": [
+                0.6000000238418579,
+                0.6000000238418579,
+                0.6000000238418579,
+                1.0
+            ],
+            "FontSize": 21.0,
+            "Name": "pv_cost_label",
+            "Position": [
+                955.0,
+                245.0
+            ],
+            "Text": "COST",
+            "Type": "Text"
+        },
+        {
+            "Color": [
+                1.0,
+                0.8999999761581421,
+                0.30000001192092896,
+                0.0
+            ],
+            "FontSize": 22.0,
+            "Name": "pv_levelup_badge",
+            "Position": [
+                975.0,
+                450.0
+            ],
+            "Text": "LEVEL UP!",
+            "Type": "Text"
         },
         {
             "Color": [
@@ -644,14 +1155,15 @@
             ],
             "Name": "point_icon",
             "Position": [
-                280.0,
-                40.0
+                605.0,
+                32.0
             ],
             "Size": [
                 32.0,
                 32.0
             ],
-            "Texture": "pt_icon.png"
+            "Texture": "pt_icon.png",
+            "Type": "Sprite"
         },
         {
             "Color": [
@@ -662,8 +1174,8 @@
             ],
             "Name": "point_d0",
             "Position": [
-                315.0,
-                40.0
+                645.0,
+                32.0
             ],
             "Size": [
                 24.0,
@@ -677,7 +1189,8 @@
             "TextureSize": [
                 64.0,
                 96.0
-            ]
+            ],
+            "Type": "Sprite"
         },
         {
             "Color": [
@@ -688,8 +1201,8 @@
             ],
             "Name": "point_d1",
             "Position": [
-                340.0,
-                40.0
+                672.0,
+                32.0
             ],
             "Size": [
                 24.0,
@@ -697,15 +1210,23 @@
             ],
             "Texture": "numbers.png",
             "TextureLeftTop": [
-                192.0,
+                0.0,
                 0.0
             ],
             "TextureSize": [
                 64.0,
                 96.0
-            ]
+            ],
+            "Type": "Sprite"
         }
     ],
+    "Modules": {
+        "Mouse": {
+            "HitPadding": 16.0,
+            "Size": 32.0,
+            "Texture": "mouse-pointer.png"
+        }
+    },
     "Position": [
         0.0,
         0.0

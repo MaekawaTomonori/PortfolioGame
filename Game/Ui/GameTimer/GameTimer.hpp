@@ -26,6 +26,12 @@ class GameTimer {
 
     bool active_ = true;
 
+    // Intro slide-in animation
+    const float INTRO_DURATION = 0.8f;
+    bool    introAnimating_ = false;
+    float   introElapsed_   = 0.f;
+    Vector2 introStartPos_  = {};
+
 public:
     void Initialize();
     void Update(float _deltaTime);
@@ -38,6 +44,8 @@ public:
     void SetPosition(const Vector2& _position) { position_ = _position; }
     void SetColor(const Vector4& _color) { color_ = _color; }
     void SetDuration(float _sec);
+
+    void PlayIntroAnim();
 
 private:
 

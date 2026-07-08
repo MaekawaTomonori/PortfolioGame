@@ -1,0 +1,16 @@
+{
+    "GameStatus": {
+        "Player": {
+            "AS": 5.0,
+            "Damage": 3.0,
+            "HP": 1000.0,
+            "MS": 1.0
+        },
+        "Stage": {
+            "EnemySpawnInterval": 2.0,
+            "MaxEnemyCount": 5,
+            "RequirementKill": 15,
+            "Time": 15.0
+        }
+    }
+}

@@ -1,7 +1,9 @@
 #include "InputHandler.hpp"
 
 #include "Camera/Controller/CameraController.hpp"
+#include "Math/MathUtils.hpp"
 #include "Pattern/Singleton.hpp"
+#include "Screen/Screen.hpp"
 #include "src/Camera/Camera.hpp"
 
 void InputHandler::Initialize() {
@@ -43,8 +45,8 @@ Vector3 InputHandler::GetMouseInWorld() const {
         Vector2 mousePos = input_->GetMousePosition();
         
         // スクリーン座標 → NDC に手動変換
-        float ndcX = (2.0f * mousePos.x / Viewport.x) - 1.0f;
-        float ndcY = 1.0f - (2.0f * mousePos.y / Viewport.y);
+        float ndcX = (2.0f * mousePos.x / Singleton<Screen>::GetInstance()->Width()) - 1.0f;
+        float ndcY = 1.0f - (2.0f * mousePos.y / Singleton<Screen>::GetInstance()->Height());
 
         // ViewProjectionの逆行列のみで逆変換
         Matrix4x4 mInv = camera->GetViewProjection().Inverse();

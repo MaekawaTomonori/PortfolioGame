@@ -2,7 +2,7 @@
 #define SkillTree_HPP_
 #include <memory>
 #include <functional>
-#include <unordered_set>
+#include <unordered_map>
 #include <vector>
 
 #include "Input.hpp"
@@ -14,9 +14,12 @@ class SkillTree {
     struct SkillDef {
         std::string id;
         std::string name;
+        std::string description;
+        std::vector<std::string> required;
         std::string iconTexture;
         int32_t displayValue = 0;
         uint32_t cost = 0;
+        uint32_t maxLevel = 1;
         PlayerStatus effect{};
         float time = 0.f;
         int16_t maxEnemyCount = 0;
@@ -28,7 +31,7 @@ class SkillTree {
     Input* input_ = nullptr;
 
     std::vector<SkillDef> skills_;
-    std::unordered_set<std::string> acquired_;
+    std::unordered_map<std::string, uint32_t> acquiredLevels_;
     GameStatus* status_ = nullptr;
 
     std::vector<size_t> selectableIndices_;
@@ -65,6 +68,12 @@ private:
     void UpdatePreview();
     void UpdatePointDisplay();
     void CollectNavigableIndices();
+    void PlayAcquireEffect(const std::string& _id, bool _isMaxed);
+    void PlayPanelEffect();
+    uint32_t GetAcquiredLevel(const std::string& _id) const;
+    bool IsRequirementSatisfied(const SkillDef& _skill) const;
+    bool IsSkillAcquirable(const SkillDef& _skill) const;
+    bool HasAcquirableMissingRequirement(const SkillDef& _skill) const;
     const SkillDef* FindSkillByElementIndex(size_t _elemIndex) const;
     const SkillDef* FindSkillByName(const std::string& _name) const;
 

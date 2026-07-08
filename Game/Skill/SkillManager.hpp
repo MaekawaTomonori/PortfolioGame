@@ -20,6 +20,7 @@ class SkillManager {
     ParticleSystem* particle_ = nullptr;
 
     BlackHole::Params blackHoleParams_;
+    float blackHoleCooldownTimer_ = 0.f;
 
 public:
     void Initialize();
@@ -32,6 +33,19 @@ public:
      ** @param _direction 発射方向
      **/
     void SpawnBlackHole(const Vector3& _position, const Vector3& _direction);
+
+    /** @brief ブラックホールが発動可能かを返す **/
+    bool IsBlackHoleReady() const { return blackHoleCooldownTimer_ <= 0.f; }
+
+    /** @brief ブラックホールのクールタイム残り時間を返す **/
+    float GetBlackHoleCooldown() const { return blackHoleCooldownTimer_; }
+
+    /** @brief ブラックホールのCT比率を返す (0=ready, 1=full) **/
+    float GetBlackHoleCooldownRatio() const {
+        return blackHoleParams_.cooldownDuration > 0.f
+            ? blackHoleCooldownTimer_ / blackHoleParams_.cooldownDuration
+            : 0.f;
+    }
 
     void SetEnemies(Enemies* _enemies) { enemies_ = _enemies; }
     void SetParticle(ParticleSystem* _particle) { particle_ = _particle; }

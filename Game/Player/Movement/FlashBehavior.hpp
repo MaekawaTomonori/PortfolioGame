@@ -25,6 +25,7 @@ public:
     void SetCooldown(float cooldown) { cooldown_ = cooldown; }
     float GetDistance() const { return distance_; }
     float GetCooldown() const { return cooldown_; }
+    float GetCurrentCooldown() const { return currentCooldown_; }
 
 private:
     bool IsCooldown();

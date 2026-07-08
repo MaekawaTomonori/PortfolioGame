@@ -36,6 +36,9 @@ public:
         float vortexRotateSpeed = 3.f;
         Vector3 vortexScale = {5.f, 5.f, 1.f};
         Vector4 vortexColor = {1.f, 1.f, 1.f, 1.f};
+
+        // Cooldown
+        float cooldownDuration = 5.f;
     };
 
 private:

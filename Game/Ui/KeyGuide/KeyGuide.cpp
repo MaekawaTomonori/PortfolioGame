@@ -1,5 +1,6 @@
 #include "KeyGuide.hpp"
 
+#include <algorithm>
 #include <fstream>
 
 #include "imgui.h"
@@ -20,6 +21,17 @@ void KeyGuide::Initialize() {
 
     ui_ = std::make_unique<Ui::Canvas>();
     ui_->Setup("Guide");
+
+    // CTオーバーレイ用Elementのフルサイズ・ベース位置をキャッシュ
+    for (auto& [code, key] : keys_) {
+        if (key.cooldownElementName.empty()) continue;
+        if (auto* elem = ui_->FindElementByName(key.cooldownElementName)) {
+            key.cooldownFullHeight = elem->GetSize().y;
+            key.cooldownBasePos   = elem->GetPosition();
+            elem->SetVisible(false);
+        }
+    }
+
     ui_->SetActive(true);
     ui_->SetCustomDebug([this]{ Debug(); });
 }
@@ -34,10 +46,31 @@ void KeyGuide::Update() {
     frame_->SetPosition(position_);
     frame_->Update();
 
-    for (const auto& [key ,value]: keys_) {
-        value.frame->SetColor(value.defaultColor);
-        if (input_->IsPress(key)) {
+    for (auto& [key, value]: keys_) {
+        const bool isOnCooldown = value.cooldownRatio > 0.001f;
+
+        if (value.failFlashTimer > 0.f) {
+            value.failFlashTimer -= 1.f / 60.f;
+            if (value.failFlashTimer < 0.f) value.failFlashTimer = 0.f;
+        }
+
+        if (isOnCooldown && input_->IsTrigger(key)) {
+            value.failFlashTimer = 0.3f;
+        }
+
+        if (value.failFlashTimer > 0.f) {
+            const float t = value.failFlashTimer / 0.3f;
+            const Vector4& d = value.defaultColor;
+            value.frame->SetColor({
+                d.x + (1.f - d.x) * t,
+                d.y + (0.1f - d.y) * t,
+                d.z + (0.1f - d.z) * t,
+                d.w + (0.9f - d.w) * t
+            });
+        } else if (!isOnCooldown && input_->IsPress(key)) {
             value.frame->SetColor(value.pressColor);
+        } else {
+            value.frame->SetColor(value.defaultColor);
         }
 
         if (value.frame) {
@@ -52,6 +85,8 @@ void KeyGuide::Update() {
 }
 
 void KeyGuide::Draw() const {
+    if (!active_) return;
+
     if (frame_) {
         frame_->Draw();
     }
@@ -64,6 +99,11 @@ void KeyGuide::Draw() const {
             key.key->Draw();
         }
     }
+}
+
+void KeyGuide::SetActive(bool _active) {
+    active_ = _active;
+    if (ui_) ui_->SetActive(_active);
 }
 
 void KeyGuide::Debug() {
@@ -283,6 +323,24 @@ void KeyGuide::Debug() {
                 ImGui::ColorEdit4("##PressColor", &key.pressColor.x);
 
                 ImGui::Separator();
+                ImGui::Text("CT Overlay Element");
+                char cdBuf[256];
+                strcpy_s(cdBuf, sizeof(cdBuf), key.cooldownElementName.c_str());
+                if (ImGui::InputText("##CooldownElement", cdBuf, sizeof(cdBuf))) {
+                    key.cooldownElementName = cdBuf;
+                    // 新しいElementをキャッシュし直す
+                    if (!key.cooldownElementName.empty()) {
+                        if (auto* elem = ui_->FindElementByName(key.cooldownElementName)) {
+                            key.cooldownFullHeight = elem->GetSize().y;
+                            key.cooldownBasePos   = elem->GetPosition();
+                            elem->SetVisible(false);
+                        }
+                    }
+                }
+                ImGui::SameLine();
+                ImGui::TextDisabled("(Guide.json element name)");
+
+                ImGui::Separator();
 
                 // コピーボタン
                 if (ImGui::Button("Copy This Key")) {
@@ -442,6 +500,9 @@ void KeyGuide::Load() {
                 };
             }
 
+            // CTオーバーレイ用Elementの名前
+            newKey.cooldownElementName = keyData.value("CooldownElement", "");
+
             // 位置を保存（オフセット）
             newKey.position = frameOffset;
 
@@ -511,6 +572,10 @@ void KeyGuide::Save() {
         keyJson["DefaultColor"] = { key.defaultColor.x, key.defaultColor.y, key.defaultColor.z, key.defaultColor.w };
         keyJson["PressColor"] = { key.pressColor.x, key.pressColor.y, key.pressColor.z, key.pressColor.w };
 
+        if (!key.cooldownElementName.empty()) {
+            keyJson["CooldownElement"] = key.cooldownElementName;
+        }
+
         keysArray.push_back(keyJson);
     }
     root["Keys"] = keysArray;
@@ -543,4 +608,21 @@ void KeyGuide::Register(const BYTE& _code, Key _key) {
     keys_[_code] = std::move(_key);
 }
 
+void KeyGuide::SetCooldown(const BYTE _key, float _ratio) {
+    auto it = keys_.find(_key);
+    if (it == keys_.end() || it->second.cooldownElementName.empty()) return;
 
+    auto& key = it->second;
+    key.cooldownRatio = std::clamp(_ratio, 0.f, 1.f);
+
+    auto* elem = ui_->FindElementByName(key.cooldownElementName);
+    if (!elem) return;
+
+    elem->SetVisible(key.cooldownRatio > 0.001f);
+    if (key.cooldownRatio <= 0.001f) return;
+
+    const float newH    = key.cooldownFullHeight * key.cooldownRatio;
+    const float topEdge = key.cooldownBasePos.y - key.cooldownFullHeight * 0.5f;
+    elem->SetSize({elem->GetSize().x, newH});
+    elem->SetPosition({key.cooldownBasePos.x, topEdge + newH * 0.5f});
+}

@@ -5,6 +5,7 @@
 void Bullet::Initialize(GameObject* _owner, const Vector3& _direction, const Params& _params) {
     speed_    = _params.speed;
     lifetime_ = _params.lifetime;
+    damage_   = _params.damage;
     owner_    = _owner;
     velocity_  = _direction.Normalize() * speed_;
     Initialize();

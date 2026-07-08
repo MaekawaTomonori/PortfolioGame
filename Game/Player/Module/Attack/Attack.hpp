@@ -24,6 +24,7 @@ class Attack {
     std::vector<std::unique_ptr<Bullet>> bullets_;
 
     float attackRate_ = 1.f;
+    float baseAttackRate_ = 1.f;
     Bullet::Params bulletParams_;
     float timer_ = 0.f;
 
@@ -40,6 +41,9 @@ public:
     void SetDirection(const Vector3& _direction);
 
     void SetStatus(PlayerStatus& _status);
+
+    /** @brief 攻撃速度倍率を適用する (as=1.0 で通常速度) **/
+    void ApplyAttackSpeed(float _as);
 
     void Clear();
 

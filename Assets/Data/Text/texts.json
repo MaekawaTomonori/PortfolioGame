@@ -1,0 +1,18 @@
+{
+    "textboxes": [
+        {
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "fontSize": 251.5,
+            "name": "TextBox_0",
+            "text": "test",
+            "visible": false,
+            "x": 227.0,
+            "y": 344.0
+        }
+    ]
+}

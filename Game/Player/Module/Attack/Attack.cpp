@@ -1,7 +1,11 @@
 #include "Attack.hpp"
 
+#include <algorithm>
 #include "Json/JsonParams.hpp"
 #include "Pattern/Singleton.hpp"
+
+#undef min
+#undef max
 
 void Attack::Initialize() {
     timer_ = 0.f;
@@ -48,9 +52,13 @@ void Attack::Clear() {
 }
 
 void Attack::Execute() {
-    if (!owner_ && !owner_->IsActive()) return;
+    if (!owner_ || !owner_->IsActive()) return;
 
     direction_.y = 0.f;
+
+    if (status_) {
+        bulletParams_.damage = status_->get().damage;
+    }
 
     auto atk = std::make_unique<Bullet>();
     atk->Initialize(owner_, direction_, bulletParams_);
@@ -61,9 +69,16 @@ void Attack::LoadParams() {
     const auto& json = Singleton<JsonParams>::GetInstance();
     if (!json->Load("PlayerParams")) return;
 
-    attackRate_           = std::get<float>(json->GetValue("PlayerParams", "Attack",  "Rate"));
+    baseAttackRate_       = std::get<float>(json->GetValue("PlayerParams", "Attack",  "Rate"));
+    attackRate_           = baseAttackRate_;
     bulletParams_.speed   = std::get<float>(json->GetValue("PlayerParams", "Bullet",  "Speed"));
     bulletParams_.lifetime= std::get<float>(json->GetValue("PlayerParams", "Bullet",  "Lifetime"));
+}
+
+void Attack::ApplyAttackSpeed(const float _as) {
+    if (_as > 0.f) {
+        attackRate_ = std::max(1.0f, baseAttackRate_ / _as);
+    }
 }
 
 void Attack::SaveParams() {

@@ -1,5 +1,5 @@
-#ifndef CAMERA_CONTROLLER_HPP_
-#define CAMERA_CONTROLLER_HPP_
+#ifndef FOLLOW_CAMERA_HPP_
+#define FOLLOW_CAMERA_HPP_
 
 #include "Math/Vector3.hpp"
 #include "Camera/Controller/CameraController.hpp"
@@ -60,4 +60,4 @@ private:
     void ApplyShake();
 };
 
-#endif // CAMERA_CONTROLLER_HPP_
+#endif // FOLLOW_CAMERA_HPP_

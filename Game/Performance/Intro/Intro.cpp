@@ -4,41 +4,13 @@
 #include "Pattern/Singleton.hpp"
 
 void Intro::Initialize() {
-    
-    time_ = 0.f;
     cameraDone_ = false;
-    spriteDone_ = false;
-
-    sprite_ = std::make_unique<Sprite>();
-    sprite_->Initialize("intro.png");
-    sprite_->SetPosition({640, 360});
 
     Singleton<CameraDirector>::GetInstance()->SetAnchor({0.f, 0.f, -5.f});
     Singleton<CameraDirector>::GetInstance()->Run("intro", false, true);
 }
 
 void Intro::Update() {
-    if (!cameraDone_) {
-        auto camera = Singleton<CameraDirector>::GetInstance();
-        cameraDone_ = !camera->IsPlaying();
-        return;
-    }
-
-    if (spriteDone_)return; 
-
-    time_ += 1.f / 60.f /* delta time or some time increment */;
-
-    if (time_ >= duration_) {
-        spriteDone_ = true;
-    }
-}
-
-void Intro::Draw() {
-    if (cameraDone_ && !spriteDone_){
-        sprite_->Draw();
-    }
-}
-
-bool Intro::IsFinish() const {
-    return cameraDone_ && spriteDone_;
+    if (cameraDone_) return;
+    cameraDone_ = !Singleton<CameraDirector>::GetInstance()->IsPlaying();
 }

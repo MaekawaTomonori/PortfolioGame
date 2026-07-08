@@ -17,6 +17,13 @@ class KeyGuide {
 
         std::unique_ptr<Sprite> key;
         std::unique_ptr<Sprite> frame;
+
+        // CTオーバーレイ用（Canvasエレメント名で指定）
+        std::string cooldownElementName;
+        float cooldownRatio = 0.f;
+        float cooldownFullHeight = 0.f;
+        Vector2 cooldownBasePos = {};
+        float failFlashTimer = 0.f;
     };
 
     const std::string JsonPath = "Assets/Data/KeyGuide/data.json";
@@ -36,6 +43,7 @@ class KeyGuide {
     char newKeyTexture_[256] = "white_x16.png";
 
     bool reload_ = false;
+    bool active_ = true;
 
     // コピー用バッファ
     bool hasClipboard_ = false;
@@ -53,6 +61,10 @@ public:
     void Update();
     void Draw() const;
     void Debug();
+    void SetActive(bool _active);
+
+    /** @brief 指定キーのCT比率を設定する (0=ready, 1=full cooldown) **/
+    void SetCooldown(BYTE _key, float _ratio);
 
 private:
     void Load();

@@ -19,6 +19,7 @@
 #include "InputHandler.hpp"
 #include "FollowCamera.hpp"
 #include "Status/PlayerStatus.hpp"
+#include "Sprite.hpp"
 
 class Player : public GameObject {
     ParticleSystem* particle_ = nullptr;
@@ -50,6 +51,8 @@ class Player : public GameObject {
     DashBehavior*  dash_  = nullptr;
     FlashBehavior* flash_ = nullptr;
 
+    float baseWalkSpeed_ = 5.f;
+
     bool invulnerability_ = false;
     float invulnerabilityTimer_ = 1.f;
     const float InvulnerabilityDuration = 1.f;
@@ -59,7 +62,8 @@ class Player : public GameObject {
     bool no_move = false;
 #endif
 
-    std::unique_ptr<Model> reticle_;
+    std::unique_ptr<Sprite> reticle_;
+    bool enable_ = false;
 
 public:
     Player(ParticleSystem* _particle, PostProcessExecutor* _postEffect);
@@ -76,19 +80,31 @@ public:
 
     void SetStatus(const PlayerStatus& _status);
 
+    void SetEnable(bool _enable) { enable_ = _enable; }
+
     /** @brief スキル発動時のコールバックを設定
      ** @param _callback (発射位置, 発射方向) を受け取るコールバック
      **/
     void SetOnSkillRequest(std::function<void(const Vector3&, const Vector3&)> _callback) { onSkillRequest_ = std::move(_callback); }
 
+    /** @brief フラッシュのCT比率を返す (0=ready, 1=full) **/
+    float GetFlashCooldownRatio() const {
+        if (!flash_) return 0.f;
+        const float max = flash_->GetCooldown();
+        return max > 0.f ? flash_->GetCurrentCooldown() / max : 0.f;
+    }
+
     void UpdateWithoutInput();
 
     bool IsDead() const;
 
+    /** @brief ライト追従用のアンカー位置(プレイヤー位置に補間された座標)を返す **/
+    const Vector3& GetLightAnchor() const { return forLight_; }
+
 private:
     std::function<void(const Vector3&, const Vector3&)> onSkillRequest_;
 
-    void LoadParams() const;
+    void LoadParams();
     void SaveParams() const;
     void UpdateInvulnerability(float _deltaTime);
     void UpdateAttack();

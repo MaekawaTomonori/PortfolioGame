@@ -1,0 +1,50 @@
+{
+    "DefaultFocus": "NoName",
+    "Elements": [
+        {
+            "Color": [
+                1.0,
+                0.5843137502670288,
+                0.34117648005485535,
+                1.0
+            ],
+            "Name": "NoName",
+            "Position": [
+                369.0,
+                407.0
+            ],
+            "Selectable": true,
+            "Size": [
+                64.0,
+                64.0
+            ],
+            "Texture": "white_x16.png",
+            "Type": "Sprite"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "FontSize": 91.0,
+            "Name": "NoName",
+            "Position": [
+                270.0,
+                352.0
+            ],
+            "Text": "Text",
+            "Type": "Text"
+        }
+    ],
+    "Modules": {
+        "Mouse": {
+            "Texture": "mouse-pointer.png"
+        }
+    },
+    "Position": [
+        0.0,
+        0.0
+    ]
+}
