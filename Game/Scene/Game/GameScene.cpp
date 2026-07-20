@@ -5,6 +5,7 @@
 #include "Pattern/Singleton.hpp"
 #include "PostProcess/Executor/PostProcessExecutor.hpp"
 #include "Debug/Debugger.hpp"
+#include "src/Time/Time.hpp"
 
 void GameScene::Initialize() {
     entryTransition_ = Transition::Type::Fade;
@@ -202,8 +203,7 @@ void GameScene::OnEnable() {
 }
 
 void GameScene::UpdatePlay() {
-    constexpr float DeltaTime = 1.f / 60.f;
-    gameTimer_->Update(DeltaTime);
+    gameTimer_->Update(Time::GetDeltaTime());
     stage_->Update();
     killCounter_->Update();
     followCamera_->Update();

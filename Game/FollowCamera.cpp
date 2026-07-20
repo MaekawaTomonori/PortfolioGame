@@ -8,8 +8,22 @@
 #include "Json/JsonParams.hpp"
 #include "Pattern/Singleton.hpp"
 #include "Math/MathUtils.hpp"
+#include "src/Time/Time.hpp"
 
-FollowCamera::FollowCamera() : 
+namespace {
+    constexpr Vector3 INITIAL_CAMERA_POSITION = {0.f, 4.1f, -7.6f};
+    constexpr Vector3 INITIAL_CAMERA_ROTATION = {0.89f, 0.f, 0.f};
+
+    constexpr float IDLE_ZOOM_LERP_SPEED  = 0.05f;
+    constexpr float DEFAULT_FOV           = 0.45f;
+    constexpr float MIN_PITCH_COS         = 0.65f;
+    constexpr float ENEMY_DISTANCE_WEIGHT = 0.3f;
+    constexpr float ZOOM_IN_LERP_SPEED    = 0.1f;
+    constexpr float ZOOM_OUT_LERP_SPEED   = 0.03f;
+    constexpr float SHAKE_DECAY_RATE      = 0.9f;
+}
+
+FollowCamera::FollowCamera() :
     cameraController_(nullptr) {
 }
 
@@ -18,8 +32,8 @@ FollowCamera::~FollowCamera() {
 
 void FollowCamera::Initialize() {
     cameraController_ = Singleton<CameraController>::GetInstance();
-    cameraController_->GetActive()->transform_.translate = { 0.f, 4.1f, -7.6f };
-    cameraController_->GetActive()->transform_.rotate = Vector3{0.89f, 0.f, 0.f};
+    cameraController_->GetActive()->transform_.translate = INITIAL_CAMERA_POSITION;
+    cameraController_->GetActive()->transform_.rotate = INITIAL_CAMERA_ROTATION;
 
     Load();
     UpdateCameraDistance();
@@ -55,10 +69,6 @@ void FollowCamera::Load() {
         minDistance_ = std::get<float>(json->GetValue("FollowCamera", "Settings", "MinDistance"));
         maxDistance_ = std::get<float>(json->GetValue("FollowCamera", "Settings", "MaxDistance"));
         zoomSensitivity_ = std::get<float>(json->GetValue("FollowCamera", "Settings", "ZoomSensitivity"));
-    } else {
-        distance_ = 15.0f;
-        yaw_ = 0.0f;
-        pitch_ = -0.785f;
     }
 }
 
@@ -75,7 +85,7 @@ void FollowCamera::Save() {
 
 void FollowCamera::UpdateCameraDistance() {
     if (!enemies_ || !target_) {
-        distance_ = MathUtils::Lerp(distance_, minDistance_, 0.05f);
+        distance_ = MathUtils::Lerp(distance_, minDistance_, IDLE_ZOOM_LERP_SPEED);
         return;
     }
 
@@ -85,21 +95,21 @@ void FollowCamera::UpdateCameraDistance() {
 
     if (0.f < maxEnemyDistance) {
         auto camera = cameraController_->GetActive();
-        float fov = 0.45f;
+        float fov = DEFAULT_FOV;
         if (camera) {
             fov = camera->GetFov();
         }
 
         float halfFov = fov * 0.5f;
         float verticalViewDistance = maxEnemyDistance / tanf(halfFov);
-        float pitchFactor = 1.0f / std::max(0.65f, cosf(pitch_));
+        float pitchFactor = 1.0f / std::max(MIN_PITCH_COS, cosf(pitch_));
 
-        targetDistance = (verticalViewDistance * pitchFactor + maxEnemyDistance * 0.3f) * zoomSensitivity_;
+        targetDistance = (verticalViewDistance * pitchFactor + maxEnemyDistance * ENEMY_DISTANCE_WEIGHT) * zoomSensitivity_;
     }
 
     targetDistance = std::clamp(targetDistance, minDistance_, maxDistance_);
 
-    float lerpSpeed = (targetDistance > distance_) ? 0.1f : 0.03f;
+    float lerpSpeed = (targetDistance > distance_) ? ZOOM_IN_LERP_SPEED : ZOOM_OUT_LERP_SPEED;
     distance_ = MathUtils::Lerp(distance_, targetDistance, lerpSpeed);
 }
 
@@ -183,8 +193,8 @@ void FollowCamera::ApplyShake() {
         shake = {0.f, 0.f, 0.f};
     }
 
-    shakeTimer_ -= 1.f / 60.f;
+    shakeTimer_ -= Time::GetDeltaTime();
     shake = Vector3::Random() * shakePower_;
     cameraController_->GetActive()->transform_.translate += shake;
-    shakePower_ *= 0.9f;
+    shakePower_ *= SHAKE_DECAY_RATE;
 }

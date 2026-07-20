@@ -1,9 +1,9 @@
 {
     "EnemyParams": {
         "Basic": {
-            "MaxHp": 3.0,
-            "MoveSpeed": 3.0,
+            "MaxHp": 10.0,
             "MinDistance": 0.5,
+            "MoveSpeed": 3.0,
             "SpawnDistance": [
                 10.300000190734863,
                 12.300000190734863
@@ -17,8 +17,8 @@
             "LineLength": 0.44999998807907104,
             "LineWidth": 1.5,
             "Speed": 34.0,
-            "TriggerChance": 0.4000000059604645,
-            "TriggerInterval": 3.200000047683716
+            "TriggerChance": 0.4099999964237213,
+            "TriggerInterval": 1.0
         },
         "Death": {
             "Duration": 0.800000011920929

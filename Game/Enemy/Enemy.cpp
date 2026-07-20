@@ -53,7 +53,7 @@ void Enemy::Initialize() {
     model_->SetColor(BASE_COLOR);
 
     status_ = {
-        .hp = params_ ? params_->maxHp : 3.0f,
+        .hp = params_ ? params_->maxHp : 10.0f,
         .damage = 0.f
     };
 

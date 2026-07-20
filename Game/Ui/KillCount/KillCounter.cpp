@@ -6,6 +6,10 @@
 #include "Enemy/Enemies.hpp"
 #include "Math/Easing.hpp"
 
+namespace {
+    constexpr float DURATION = 0.8f;
+}
+
 void KillCounter::Initialize(Enemies* _enemies, const uint16_t _max) {
     enemies_ = _enemies;
     max_ = _max;
@@ -44,7 +48,7 @@ void KillCounter::SetActive(bool _active) {
 void KillCounter::PlayIntroAnim() {
     if (!ui_) return;
 
-    const float    duration = 0.8f;
+    const float    duration = DURATION;
     const Vector2  center   = { 640.f, 360.f };
 
     for (size_t i = 0; i < ui_->GetElementCount(); ++i) {

@@ -3,6 +3,10 @@
 #include "Camera/Director/CameraDirector.hpp"
 #include "Pattern/Singleton.hpp"
 
+namespace {
+    constexpr float FADE_SPEED = 0.02f;
+}
+
 void TitleScene::Initialize() {
     exitTransition_ = Transition::Type::Fade;
     
@@ -50,7 +54,7 @@ void TitleScene::Update() {
 
     stage_->Update();
 
-    alpha_ += increase_ ? 0.02f : -0.02f;
+    alpha_ += increase_ ? FADE_SPEED : -FADE_SPEED;
     if (alpha_ >= 1.f) { alpha_ = 1.f; increase_ = false; }
     else if (alpha_ <= 0.f) { alpha_ = 0.f; increase_ = true; }
 

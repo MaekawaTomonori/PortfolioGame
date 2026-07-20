@@ -6,6 +6,7 @@
 #include "imgui.h"
 #include "Json/JsonParams.hpp"
 #include "Pattern/Singleton.hpp"
+#include "src/Time/Time.hpp"
 
 Enemies::Enemies(ParticleSystem* _particle, const GameStatus& _status) :status_(_status) {
     if (!_particle){Utils::Alert("ParticleSystem is null");}
@@ -40,8 +41,6 @@ void Enemies::Initialize() {
 }
 
 void Enemies::Update() {
-    constexpr float DeltaTime = 1.f / 60.f;
-
     uint16_t killed = 0;
     for (const auto& enemy : enemies_) {
         if (!enemy->IsActive() && enemy->IsKilledByBullet()) {
@@ -109,7 +108,7 @@ void Enemies::Update() {
             timer_ = 0.f;
             Spawn();
         } else {
-            timer_ += DeltaTime;
+            timer_ += Time::GetDeltaTime();
         }
 
 #ifdef _DEBUG
@@ -117,7 +116,7 @@ void Enemies::Update() {
 #endif
 
     for (const auto& enemy : enemies_) {
-        enemy->Update(DeltaTime);
+        enemy->Update(Time::GetDeltaTime());
     }
 }
 

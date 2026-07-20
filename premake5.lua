@@ -146,6 +146,7 @@ project "Engine"
         "Engine/src/Sky/Skybox.hpp",
         "Engine/src/Sprite/Common/SpriteCommon.hpp",
         "Engine/src/Texture/TextureManager.hpp",
+        "Engine/src/Time/Time.hpp",
         "Engine/src/Timer/Timer.hpp",
         "Engine/src/Window/Window.hpp",
         
@@ -214,6 +215,7 @@ project "Engine"
         "Engine/src/System/Log.cpp",
         "Engine/src/System/Singleton/Singleton.cpp",
         "Engine/src/Texture/TextureManager.cpp",
+        "Engine/src/Time/Time.cpp",
         "Engine/src/Timer/Timer.cpp",
         "Engine/src/Utils/Utils.cpp",
         "Engine/src/Window/Window.cpp",

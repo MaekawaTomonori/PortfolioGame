@@ -3,6 +3,7 @@
 #include "imgui.h"
 #include "Math/Easing.hpp"
 #include "Pattern/Singleton.hpp"
+#include "src/Time/Time.hpp"
 
 void Pause::Initialize() {
     input_ = Singleton<Input>::GetInstance();
@@ -101,8 +102,7 @@ void Pause::HandleInput() {
 
 void Pause::UpdateCursor() {
     if (interpolationTime_<timer_)return;
-    // TODO DeltaTime
-    timer_ += 1.f/60.f;
+    timer_ += Time::GetDeltaTime();
 
     Vector2 pos = Ease::Out::Cubic(start_, destination_, timer_ / interpolationTime_);
 
