@@ -4,6 +4,7 @@
 #include <memory>
 
 #include "Enemy.hpp"
+#include "Enemy/Module/DashActionModule.hpp"
 #include "ParticleSystem/ParticleSystem.hpp"
 #include "Status/GameStatus.hpp"
 
@@ -25,7 +26,8 @@ class Enemies {
 
     // 敵の共通パラメータ
     Enemy::Params enemyParams_;
-    
+    DashActionModule::Params dashParams_;
+
 
 #ifdef _DEBUG
     bool autoSpawn_ = true;

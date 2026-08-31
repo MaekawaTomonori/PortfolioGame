@@ -1,11 +1,14 @@
 #include "Enemy.hpp"
+#include "Enemy/Module/IEnemyActionModule.hpp"
 #include "Enemy/State/EnemyStateIdle.hpp"
 #include "Enemy/State/EnemyStateDeath.hpp"
 
 #include "Bullet/Bullet.hpp"
 #include "ColliderType.hpp"
 #include "Math/MathUtils.hpp"
+#include "Time/Time.hpp"
 #include "imgui.h"
+#include "Skill/ISkillEntity.hpp"
 
 namespace {
     // 外観
@@ -76,20 +79,22 @@ void Enemy::Initialize() {
     state_->Enter();
 }
 
-void Enemy::Update(float deltaTime) {
+void Enemy::Update() {
     if (!active_) return;
+
+    float deltaTime = Time::GetDeltaTime();
 
     if (knockback_) UpdateKnockback(deltaTime);
 
     if (state_) {
-        if (auto next = state_->Update(deltaTime)) TransitionState(std::move(next));
+        if (auto next = state_->Update()) TransitionState(std::move(next));
     }
 
     UpdateInvincible(deltaTime);
     UpdateShake();
     UpdatePulse(deltaTime);
 
-    ApplyVelocity(deltaTime);
+    ApplyVelocity();
     collider_->SetTranslate({position_.x, position_.y, position_.z});
     hpBar_->Update(status_.hp / params_->maxHp);
     UpdateModel();
@@ -99,6 +104,7 @@ void Enemy::Draw() {
     if (!active_ || !model_) return;
     model_->Draw();
     if (state_) state_->Draw();
+    if (actionModule_) actionModule_->Draw();
     hpBar_->Draw();
 }
 
@@ -226,43 +232,46 @@ void Enemy::OnCollision(const Collision::Collider* _collider) {
     }
 
     if (_collider->GetAttribute() & static_cast<uint32_t>(CollisionType::P_Bullet)) {
-        // Damage()
-        {
-            // Damage処理
-            const float dmg = _collider->GetOwner()
-                ? static_cast<const Bullet*>(_collider->GetOwner())->GetDamage()
-                : 1.f;
-            status_.hp -= dmg;
+        const float dmg = _collider->GetOwner()
+            ? static_cast<const Bullet*>(_collider->GetOwner())->GetDamage()
+            : 1.f;
+        ApplyDamage(dmg, _collider->GetTranslate());
+        return;
+    }
 
-            // 無敵状態に移行
-            invincible_ = true;
-
-            // 強烈に白く光る
-            model_->SetColor(HIT_FLASH_COLOR);
-
-            // Knockback処理
-            Vector3 d = (collider_->GetTranslate() - _collider->GetTranslate());
-            ApplyKnockback({d.x, d.y, d.z}, HIT_KNOCKBACK_FORCE, HIT_KNOCKBACK_DURATION);
-
-            // Shake
-            ApplyShake(HIT_SHAKE_FRAMES, HIT_SHAKE_POWER);
-
-            // ScalePulse
-            ApplyScalePulse(HIT_PULSE_DURATION);
-
-            // Particle
-            if (particle_) {
-                Vector3 p = position_;
-                p.y += PARTICLE_Y_OFFSET;
-                particle_->Emit("enemy_hit", p);
-            }
-
-            if (status_.hp <= 0.f) {
-                killedByBullet_ = true;
-                collider_->Disable();
-                TransitionState(std::make_unique<EnemyStateDeath>(this));
-            }
+    if (_collider->GetAttribute() & static_cast<uint32_t>(CollisionType::Skill)) {
+        const float dmg = _collider->GetOwner()
+            ? static_cast<const ISkillEntity*>(_collider->GetOwner())->GetDamage()
+            : 0.f;
+        if (dmg > 0.f) {
+            ApplyDamage(dmg, _collider->GetTranslate());
         }
+    }
+}
+
+void Enemy::ApplyDamage(const float _damage, const Vector3& _fromPosition) {
+    status_.hp -= _damage;
+
+    invincible_ = true;
+
+    model_->SetColor(HIT_FLASH_COLOR);
+
+    Vector3 d = (collider_->GetTranslate() - _fromPosition);
+    ApplyKnockback({d.x, d.y, d.z}, HIT_KNOCKBACK_FORCE, HIT_KNOCKBACK_DURATION);
+
+    ApplyShake(HIT_SHAKE_FRAMES, HIT_SHAKE_POWER);
+    ApplyScalePulse(HIT_PULSE_DURATION);
+
+    if (particle_) {
+        Vector3 p = position_;
+        p.y += PARTICLE_Y_OFFSET;
+        particle_->Emit("enemy_hit", p);
+    }
+
+    if (status_.hp <= 0.f) {
+        killedByBullet_ = true;
+        collider_->Disable();
+        TransitionState(std::make_unique<EnemyStateDeath>(this));
     }
 }
 

@@ -59,7 +59,7 @@ private:
 
 public:
     void Initialize(const Vector3& _position, const Vector3& _direction) override;
-    void Update(float _deltaTime) override;
+    void Update() override;
     void Draw() override;
 
     void SetParams(const Params* _params) { params_ = _params; }

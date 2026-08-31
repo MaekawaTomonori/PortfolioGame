@@ -14,9 +14,6 @@
 /// 自動攻撃を担当する
 /// </summary>
 class Attack {
-    // consts
-    static constexpr float DELTA_TIME = 1.f / 60.f;
-
     // refs
     GameObject* owner_ = nullptr;
 

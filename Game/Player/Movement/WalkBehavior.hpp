@@ -15,7 +15,7 @@ public:
     explicit WalkBehavior(float speed) : speed_(speed) {}
     ~WalkBehavior() override = default;
 
-    Vector3 Calculate(const MovementContext& context, float deltaTime) override;
+    Vector3 Calculate(const MovementContext& context) override;
     bool CanExecute(const MovementContext& context) override;
     int GetPriority() const override { return 0; }
 

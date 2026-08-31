@@ -24,6 +24,8 @@ public:
     virtual void Initialize(const Vector3& _position, const Vector3& _direction) = 0;
 
     void Initialize() override {}
+
+    virtual float GetDamage() const { return 0.f; }
 };
 
 #endif // I_SKILL_ENTITY_HPP_

@@ -1,10 +1,15 @@
 #include "Player.hpp"
+#include <algorithm>
 #include "Pattern/Singleton.hpp"
 #include "Math/MathUtils.hpp"
 #include "PostProcess/Executor/PostProcessExecutor.hpp"
 #include "ColliderType.hpp"
 #include "imgui.h"
 #include "Json/JsonParams.hpp"
+#include "Time/Time.hpp"
+
+#undef min
+#undef max
 
 Player::Player(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
     particle_ = _particle;
@@ -77,7 +82,7 @@ void Player::Initialize() {
     forLight_.y += 3.f;
 }
 
-void Player::Update(const float _deltaTime) {
+void Player::Update() {
     if (!active_) return;
 
     if (enable_) {
@@ -94,7 +99,7 @@ void Player::Update(const float _deltaTime) {
         if (!no_move)
 #endif
             if (movement_) {
-                movement_->Update(movementContext_, _deltaTime);
+                movement_->Update(movementContext_);
             }
 
 #ifdef _DEBUG
@@ -112,9 +117,10 @@ void Player::Update(const float _deltaTime) {
         }
     }
 
-    UpdateInvulnerability(_deltaTime);
+    UpdateInvulnerability(Time::GetDeltaTime());
 
-    ApplyVelocity(_deltaTime);
+    ApplyVelocity();
+    ClampToFieldBounds();
 
     forLight_ = position_;
     forLight_.y += 3.0f;
@@ -165,7 +171,7 @@ void Player::SetTargetPosition(const Vector3& _position) {
 }
 
 void Player::OnCollision(const Collision::Collider* _collider) {
-    if (_collider->GetAttribute() & static_cast<uint32_t>(CollisionType::Enemy)) {
+    if (_collider->GetAttribute() & (static_cast<uint32_t>(CollisionType::Enemy) | static_cast<uint32_t>(CollisionType::E_Bullet))) {
         if (invulnerability_)return;
         if (0.f < status_.hp) {
             //Damage Motion
@@ -246,6 +252,26 @@ void Player::SaveParams() const {
     }
     attack_->SaveParams();
     json->Save("PlayerParams");
+}
+
+void Player::ClampToFieldBounds() {
+    if (fieldHalfExtent_ <= 0.f) return;
+
+    position_.x = std::clamp(position_.x, -fieldHalfExtent_, fieldHalfExtent_);
+    position_.z = std::clamp(position_.z, -fieldHalfExtent_, fieldHalfExtent_);
+
+    float distanceToEdge = fieldHalfExtent_ - std::max(std::abs(position_.x), std::abs(position_.z));
+    bool nearEdge = distanceToEdge <= FieldEdgeWarningDistance;
+    if (nearEdge == isNearFieldEdge_) return;
+    isNearFieldEdge_ = nearEdge;
+
+    if (!postEffect_) return;
+
+    if (isNearFieldEdge_) {
+        postEffect_->ApplyPreset("FieldEdge", "maintain_state");
+        return;
+    }
+    postEffect_->SetActive("FieldEdge", false);
 }
 
 void Player::UpdateInvulnerability(const float _deltaTime) {

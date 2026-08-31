@@ -16,7 +16,7 @@ public:
     explicit FlashBehavior(float distance, float cooldown)
         : distance_(distance), cooldown_(cooldown) {}
 
-    Vector3 Calculate(const MovementContext& context, float deltaTime) override;
+    Vector3 Calculate(const MovementContext& context) override;
     bool CanExecute(const MovementContext& context) override;
     int GetPriority() const override { return 100; }
     void Debug() const override;

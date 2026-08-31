@@ -3,6 +3,7 @@
 #include <algorithm>
 #include "Json/JsonParams.hpp"
 #include "Pattern/Singleton.hpp"
+#include "Time/Time.hpp"
 
 #undef min
 #undef max
@@ -12,9 +13,11 @@ void Attack::Initialize() {
 }
 
 void Attack::Update() {
+    float deltaTime = Time::GetDeltaTime();
+
     std::erase_if(bullets_, [](const auto& bullet) { return !bullet->IsActive(); });
     for (auto& bullet : bullets_) {
-        bullet->Update(DELTA_TIME);
+        bullet->Update();
     }
 
     if (timer_ < 0.f) {
@@ -26,7 +29,7 @@ void Attack::Update() {
         return;
     }
 
-    timer_ -= DELTA_TIME;
+    timer_ -= deltaTime;
 }
 
 void Attack::Draw() {

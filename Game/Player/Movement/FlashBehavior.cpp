@@ -2,14 +2,15 @@
 
 #include <algorithm>
 #include "imgui.h"
+#include "Time/Time.hpp"
 
 namespace {
-    constexpr float DELTA_TIME = 1.f / 60.f;
     constexpr float MIN_DELTA_TIME = 0.0001f;
     constexpr float MIN_DIRECTION_LENGTH = 0.01f;
 }
 
-Vector3 FlashBehavior::Calculate(const MovementContext& context, float deltaTime) {
+Vector3 FlashBehavior::Calculate(const MovementContext& context) {
+    float deltaTime = Time::GetDeltaTime();
     if (deltaTime <= MIN_DELTA_TIME) return {};
 
     Vector3 direction = context.targetPosition - context.position;
@@ -28,7 +29,7 @@ Vector3 FlashBehavior::Calculate(const MovementContext& context, float deltaTime
 
 bool FlashBehavior::CanExecute(const MovementContext& context) {
     if (currentCooldown_ > 0.0f) {
-        currentCooldown_ -= DELTA_TIME;
+        currentCooldown_ -= Time::GetDeltaTime();
         currentCooldown_ = std::max(currentCooldown_, 0.0f);
     }
 

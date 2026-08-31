@@ -6,14 +6,18 @@
 
 class GameObject;
 class Enemies;
+class Player;
 
 class FollowCamera {
     CameraController* cameraController_;
-    
+
     GameObject* target_ = nullptr;
     Enemies* enemies_ = nullptr;
+    Player* player_ = nullptr;
 
     Vector3 offset_ {};
+
+    float fov_ = 0.f;
 
     // カメラパラメータ（角度と距離で表現）
     float distance_ = 15.f;           // カメラとターゲットの距離
@@ -46,6 +50,7 @@ public:
     // Target設定
     void SetTarget(GameObject* _target) { target_ = _target; }
     void SetEnemies(Enemies* _enemies) { enemies_ = _enemies; }
+    void SetPlayer(Player* _player) { player_ = _player; }
 
     const Camera* GetCamera() const { return cameraController_ ? cameraController_->GetActive() : nullptr; }
 
@@ -57,6 +62,7 @@ private:
 
     void UpdateCameraDistance();
     void UpdateCameraPosition();
+    void UpdateFov();
     void ApplyShake();
 };
 

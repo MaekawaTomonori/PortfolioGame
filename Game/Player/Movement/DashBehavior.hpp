@@ -22,7 +22,7 @@ public:
         : speed_(speed), duration_(duration), cooldown_(cooldown) {}
     ~DashBehavior() override = default;
 
-    Vector3 Calculate(const MovementContext& context, float deltaTime) override;
+    Vector3 Calculate(const MovementContext& context) override;
     bool CanExecute(const MovementContext& context) override;
     void Debug() const override;
 

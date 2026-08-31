@@ -34,7 +34,7 @@ class GameTimer {
 
 public:
     void Initialize();
-    void Update(float _deltaTime);
+    void Update();
     void Draw() const;
 
     void Debug();

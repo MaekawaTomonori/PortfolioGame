@@ -62,6 +62,7 @@ private:
     void UpdateCursor();
     void Execute() const;
     void Refresh();
+    void UpdateConnectionLines(const std::unordered_map<std::string, bool>& _reachableSkills) const;
     void LoadSkills(const std::string& _path);
     void ApplySkill(const std::string& _id);
     void PositionCursorAtSelected();

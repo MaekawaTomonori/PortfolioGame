@@ -68,7 +68,7 @@ class Player : public GameObject {
 public:
     Player(ParticleSystem* _particle, PostProcessExecutor* _postEffect);
     void Initialize() override;
-    void Update(float _deltaTime) override;
+    void Update() override;
     void Draw() override;
     void Debug() override;
 
@@ -94,6 +94,10 @@ public:
         return max > 0.f ? flash_->GetCurrentCooldown() / max : 0.f;
     }
 
+    bool IsDashing() const { return dash_ && dash_->IsDashing(); }
+
+    void SetFieldBounds(float _halfExtent) { fieldHalfExtent_ = _halfExtent; }
+
     void UpdateWithoutInput();
 
     bool IsDead() const;
@@ -104,9 +108,14 @@ public:
 private:
     std::function<void(const Vector3&, const Vector3&)> onSkillRequest_;
 
+    float fieldHalfExtent_ = 0.f;
+    bool isNearFieldEdge_ = false;
+    static constexpr float FieldEdgeWarningDistance = 8.f;
+
     void LoadParams();
     void SaveParams() const;
     void UpdateInvulnerability(float _deltaTime);
     void UpdateAttack();
+    void ClampToFieldBounds();
 };
 #endif // PLAYER_HPP_

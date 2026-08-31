@@ -31,7 +31,7 @@ public:
     virtual ~GameObject() = default;
     virtual void Initialize() = 0;
     // 基本更新・描画
-    virtual void Update(float deltaTime) = 0;
+    virtual void Update() = 0;
     virtual void Draw() = 0;
     virtual void Debug() {}
 
@@ -61,7 +61,7 @@ protected:
     /// <summary>
     /// velocityを位置に適用（継承先のUpdate内で呼び出す）
     /// </summary>
-    void ApplyVelocity(float deltaTime);
+    void ApplyVelocity();
 
     void SetModel(const std::string& _name);
 

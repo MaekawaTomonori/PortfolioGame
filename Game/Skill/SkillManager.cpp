@@ -3,6 +3,7 @@
 #include "Enemy/Enemies.hpp"
 #include "Json/JsonParams.hpp"
 #include "Pattern/Singleton.hpp"
+#include "src/Time/Time.hpp"
 
 #ifdef _DEBUG
 #include <imgui.h>
@@ -14,17 +15,19 @@ void SkillManager::Initialize() {
 }
 
 void SkillManager::Update() {
+    float deltaTime = Time::GetDeltaTime();
+
     std::erase_if(entities_, [](const auto& _entity) { return !_entity->IsActive(); });
 
     if (blackHoleCooldownTimer_ > 0.f) {
-        blackHoleCooldownTimer_ -= 1.f / 60.f;
+        blackHoleCooldownTimer_ -= deltaTime;
         if (blackHoleCooldownTimer_ < 0.f) {
             blackHoleCooldownTimer_ = 0.f;
         }
     }
 
     for (auto& entity : entities_) {
-        entity->Update(1.f / 60.f);
+        entity->Update();
     }
 }
 

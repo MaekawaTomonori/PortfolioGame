@@ -1,19 +1,26 @@
 #include "Bullet.hpp"
 
 #include "ColliderType.hpp"
+#include "Time/Time.hpp"
 
-void Bullet::Initialize(GameObject* _owner, const Vector3& _direction, const Params& _params) {
+void Bullet::Initialize(GameObject* _owner, const Vector3& _direction, const Params& _params,
+    CollisionType _attribute, CollisionType _ignoreAttribute, CollisionType _targetAttribute) {
     speed_    = _params.speed;
     lifetime_ = _params.lifetime;
     damage_   = _params.damage;
     owner_    = _owner;
     velocity_  = _direction.Normalize() * speed_;
+    attribute_ = _attribute;
+    ignoreAttribute_ = _ignoreAttribute;
+    targetAttribute_ = _targetAttribute;
     Initialize();
 }
 
-void Bullet::Update(float deltaTime) {
-    position_ += velocity_ * deltaTime;
-    lifetime_ -= deltaTime;
+void Bullet::Update() {
+    const float dt = Time::GetDeltaTime();
+
+    position_ += velocity_ * dt;
+    lifetime_ -= dt;
     if (lifetime_ <= 0.0f) {
         active_ = false;
     }
@@ -43,14 +50,14 @@ void Bullet::Initialize() {
         ->SetType(Collision::Type::Sphere)
         ->SetSize(0.3f)
         ->SetTranslate({ position_.x, position_.y, position_.z })
-        ->AddAttribute(static_cast<uint32_t>(CollisionType::P_Bullet))
-        ->AddIgnore(static_cast<uint32_t>(CollisionType::Player))
-        ->AddIgnore(static_cast<uint32_t>(CollisionType::P_Bullet))
+        ->AddAttribute(static_cast<uint32_t>(attribute_))
+        ->AddIgnore(static_cast<uint32_t>(ignoreAttribute_))
+        ->AddIgnore(static_cast<uint32_t>(attribute_))
         ->Enable();
 }
 
 void Bullet::OnCollision(const Collision::Collider* _collider) {
-    if (_collider->GetAttribute() & static_cast<uint32_t>(CollisionType::Enemy)){
+    if (_collider->GetAttribute() & static_cast<uint32_t>(targetAttribute_)){
         if (piercing_ > 0) {
             piercing_--;
         } else {

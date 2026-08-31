@@ -1,12 +1,14 @@
 #include "DashBehavior.hpp"
 #include "imgui.h"
+#include "Time/Time.hpp"
 
 namespace {
-    constexpr float DELTA_TIME = 1.f / 60.f;
     constexpr float MIN_MOVE_THRESHOLD = 0.0001f;
 }
 
-Vector3 DashBehavior::Calculate(const MovementContext& context, const float deltaTime) {
+Vector3 DashBehavior::Calculate(const MovementContext& context) {
+    float deltaTime = Time::GetDeltaTime();
+
     if (!isDashing_ && CanExecute(context)) {
         isDashing_ = true;
         currentDuration_ = duration_;
@@ -62,6 +64,6 @@ bool DashBehavior::IsCooldown() {
         return false;
     }
 
-    currentCooldown_ -= DELTA_TIME;
+    currentCooldown_ -= Time::GetDeltaTime();
     return true;
 }

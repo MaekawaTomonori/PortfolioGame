@@ -138,8 +138,9 @@ xcopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)d
     <ClInclude Include="Bullet\Bullet.hpp" />
     <ClInclude Include="ColliderType.hpp" />
     <ClInclude Include="Enemy\Enemies.hpp" />
-    <ClInclude Include="Enemy\State\EnemyStateCharging.hpp" />
-    <ClInclude Include="Enemy\State\EnemyStateDash.hpp" />
+    <ClInclude Include="Enemy\Module\IEnemyActionModule.hpp" />
+    <ClInclude Include="Enemy\Module\DashActionModule.hpp" />
+    <ClInclude Include="Enemy\Module\RangedActionModule.hpp" />
     <ClInclude Include="Enemy\State\EnemyStateDeath.hpp" />
     <ClInclude Include="Enemy\State\EnemyStateIdle.hpp" />
     <ClInclude Include="Enemy\State\IEnemyState.hpp" />
@@ -182,8 +183,8 @@ xcopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)d
   <ItemGroup>
     <ClCompile Include="Bullet\Bullet.cpp" />
     <ClCompile Include="Enemy\Enemies.cpp" />
-    <ClCompile Include="Enemy\State\EnemyStateCharging.cpp" />
-    <ClCompile Include="Enemy\State\EnemyStateDash.cpp" />
+    <ClCompile Include="Enemy\Module\DashActionModule.cpp" />
+    <ClCompile Include="Enemy\Module\RangedActionModule.cpp" />
     <ClCompile Include="Enemy\State\EnemyStateDeath.cpp" />
     <ClCompile Include="Enemy\State\EnemyStateIdle.cpp" />
     <ClCompile Include="FollowCamera.cpp" />

@@ -5,6 +5,7 @@
 #include "Math/MathUtils.hpp"
 #include "ParticleSystem/ParticleSystem.hpp"
 #include "Random/RandomEngine.hpp"
+#include "Time/Time.hpp"
 
 #undef max
 
@@ -80,15 +81,17 @@ void BlackHole::Initialize(const Vector3& _position, const Vector3& _direction) 
     }
 }
 
-void BlackHole::Update(float _deltaTime) {
+void BlackHole::Update() {
     if (!active_) return;
+
+    float deltaTime = Time::GetDeltaTime();
 
     switch (state_) {
     case State::Flying:
-        UpdateFlying(_deltaTime);
+        UpdateFlying(deltaTime);
         break;
     case State::Sucking:
-        UpdateSucking(_deltaTime);
+        UpdateSucking(deltaTime);
         break;
     }
 

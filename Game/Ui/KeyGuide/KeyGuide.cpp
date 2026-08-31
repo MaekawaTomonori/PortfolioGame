@@ -9,6 +9,7 @@
 #include "Input.hpp"
 #include "externals/json/json.hpp"
 #include "Pattern/Singleton.hpp"
+#include "src/Time/Time.hpp"
 
 void KeyGuide::Initialize() {
     input_ = Singleton<Input>::GetInstance();
@@ -50,7 +51,7 @@ void KeyGuide::Update() {
         const bool isOnCooldown = value.cooldownRatio > 0.001f;
 
         if (value.failFlashTimer > 0.f) {
-            value.failFlashTimer -= 1.f / 60.f;
+            value.failFlashTimer -= Time::GetDeltaTime();
             if (value.failFlashTimer < 0.f) value.failFlashTimer = 0.f;
         }
 

@@ -1,6 +1,7 @@
 #include "StageInfoUI.hpp"
 
 #include <algorithm>
+#include "src/Time/Time.hpp"
 
 void StageInfoUI::Initialize() {
     ui_ = std::make_unique<Ui::Canvas>();
@@ -23,10 +24,12 @@ void StageInfoUI::Setup(const float _time, const uint16_t _requireKill) {
     elapsed_ = 0.f;
 }
 
-void StageInfoUI::Update(const float _deltaTime) {
+void StageInfoUI::Update() {
+    float deltaTime = Time::GetDeltaTime();
+
     switch (phase_) {
     case Phase::Showing:
-        elapsed_ += _deltaTime;
+        elapsed_ += deltaTime;
         if (elapsed_ >= FADE_DURATION) {
             phase_   = Phase::Hold;
             elapsed_ = 0.f;
@@ -34,7 +37,7 @@ void StageInfoUI::Update(const float _deltaTime) {
         break;
 
     case Phase::Hold:
-        elapsed_ += _deltaTime;
+        elapsed_ += deltaTime;
         if (elapsed_ >= HOLD_DURATION) {
             ApplyFadeFunc(false);
             phase_   = Phase::Hiding;
@@ -43,7 +46,7 @@ void StageInfoUI::Update(const float _deltaTime) {
         break;
 
     case Phase::Hiding:
-        elapsed_ += _deltaTime;
+        elapsed_ += deltaTime;
         if (elapsed_ >= FADE_DURATION) {
             // SetActive(false) 内部の PlayHide() が即完了するようにヒド関数を解除
             for (size_t i = 0; i < ui_->GetElementCount(); ++i) {

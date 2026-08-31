@@ -14,10 +14,9 @@ public:
     /**
      * @brief 移動ベクトルを計算
      * @param context 移動コンテキスト
-     * @param deltaTime フレーム時間
      * @return 計算された移動ベクトル
      */
-    virtual Vector3 Calculate(const MovementContext& context, float deltaTime) = 0;
+    virtual Vector3 Calculate(const MovementContext& context) = 0;
 
     /**
      * @brief この動作が実行可能かチェック

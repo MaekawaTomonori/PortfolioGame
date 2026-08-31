@@ -5,7 +5,6 @@
 #include "Pattern/Singleton.hpp"
 #include "PostProcess/Executor/PostProcessExecutor.hpp"
 #include "Debug/Debugger.hpp"
-#include "src/Time/Time.hpp"
 
 void GameScene::Initialize() {
     entryTransition_ = Transition::Type::Fade;
@@ -33,6 +32,7 @@ void GameScene::Initialize() {
     followCamera_->Initialize();
     followCamera_->SetTarget(stage_->GetPlayer());
     followCamera_->SetEnemies(stage_->GetEnemies());
+    followCamera_->SetPlayer(stage_->GetPlayer());
     followCamera_->SetActive(false);
 
     stage_->SetCamera(followCamera_.get());
@@ -102,7 +102,7 @@ void GameScene::Update() {
         if (!intro_) break;
         intro_->Update();
         stage_->Update();
-        stageInfoUI_->Update(1.f / 60.f);
+        stageInfoUI_->Update();
         followCamera_->Update();
 
         if (intro_->IsCameraDone()) {
@@ -203,7 +203,7 @@ void GameScene::OnEnable() {
 }
 
 void GameScene::UpdatePlay() {
-    gameTimer_->Update(Time::GetDeltaTime());
+    gameTimer_->Update();
     stage_->Update();
     killCounter_->Update();
     followCamera_->Update();
@@ -217,7 +217,11 @@ void GameScene::UpdatePlay() {
     }
 
     // is clear (タイマーより優先してチェック)
-    if (stage_->IsClear() || Singleton<Input>::GetInstance()->IsTrigger(DIK_T)) {
+    bool isClear = stage_->IsClear();
+#ifdef _DEBUG
+    isClear |= Singleton<Input>::GetInstance()->IsTrigger(DIK_T);
+#endif
+    if (isClear) {
         state_ = OUTRO;
         PostEffect()->ApplyPreset("DarkScene", "replace", {}, [&] {
             next_ = "gameclear";

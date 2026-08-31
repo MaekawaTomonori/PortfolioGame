@@ -22,5 +22,17 @@
             }
         ],
         "mode": "maintain_state"
+    },
+    "FieldEdge": {
+        "duration": 0.4,
+        "ignoreList": [],
+        "members": [
+            {
+                "autoCreate": true,
+                "name": "FieldEdge",
+                "type": "Vignette"
+            }
+        ],
+        "mode": "maintain_state"
     }
 }

@@ -21,7 +21,7 @@ class StageInfoUI {
 public:
     void Initialize();
     void Setup(float _time, uint16_t _requireKill);
-    void Update(float _deltaTime);
+    void Update();
 
     bool IsFinish() const { return phase_ == Phase::Done; }
 }; // class StageInfoUI

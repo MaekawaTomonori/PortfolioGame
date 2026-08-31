@@ -1,19 +1,21 @@
 #include "EnemyStateDeath.hpp"
 #include "Enemy/Enemy.hpp"
 #include "Math/MathUtils.hpp"
+#include "Time/Time.hpp"
 
 void EnemyStateDeath::Enter() {
     enemy_->SetVelocity({ 0.f, 0.f, 0.f });
     elapsedTime_ = 0.f;
 }
 
-std::unique_ptr<IEnemyState> EnemyStateDeath::Update(float deltaTime) {
+std::unique_ptr<IEnemyState> EnemyStateDeath::Update() {
     const auto* params = enemy_->GetParams();
     if (!params) {
         enemy_->SetActive(false);
         return nullptr;
     }
 
+    float deltaTime = Time::GetDeltaTime();
     elapsedTime_ += deltaTime;
 
     if (elapsedTime_ >= params->deathDuration) {

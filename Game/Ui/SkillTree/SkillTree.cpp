@@ -3,12 +3,14 @@
 #include <algorithm>
 #include <cmath>
 #include <fstream>
+#include <utility>
 
 #include "imgui.h"
 #include "json/JsonParams.hpp"
 #include "Log.hpp"
 #include "Math/Easing.hpp"
 #include "Pattern/Singleton.hpp"
+#include "src/Time/Time.hpp"
 
 #undef min
 #undef max
@@ -68,6 +70,22 @@ namespace {
         col.z = std::min(1.f, col.z + k * 0.5f);
         col.w = std::min(1.f, col.w + k * 0.2f);
         return t >= kDur;
+    };
+
+    // 接続線: 今すぐ取得可能/取得済みへの線は白、まだ届かない線はグレーのまま
+    constexpr Vector4 kLineColorReachable = {1.0f, 1.0f, 1.0f, 1.0f};
+    constexpr Vector4 kLineColorLocked    = {0.6f, 0.6f, 0.6f, 1.0f};
+
+    // 接続線スプライト名 -> その線が指す先(子)スキルID
+    const std::vector<std::pair<std::string, std::string>> kLineTargets = {
+        {"hline_root", "root"}, {"stem_main", "root"},
+        {"stem_to_r1", "atk_up"}, {"stem_to_r2", "hp_up"}, {"stem_to_r3", "spd_up"},
+        {"stem_to_r4", "as_up"}, {"stem_to_r5", "time_up"},
+        {"r1_t1_to_t2", "atk_up_2"}, {"r2_t1_to_t2", "hp_up_2"}, {"r3_t1_to_t2", "spd_up_2"},
+        {"r4_t1_to_t2", "as_up_2"}, {"r5_t1_to_t2", "enemy_up"},
+        {"r1_t2_to_t3", "atk_up_3"}, {"r2_t2_to_t3", "hp_up_3"}, {"r3_t2_to_t3", "spd_up_3"},
+        {"r4_t2_to_t3", "as_up_3"}, {"r5_t2_to_t3", "spawn_down"},
+        {"r1_t3_to_t4", "atk_max"}, {"r2_t3_to_t4", "hp_max"}, {"r5_t3_to_t4", "time_up_2"},
     };
 }
 
@@ -250,7 +268,7 @@ void SkillTree::HandleInput() {
 
 void SkillTree::UpdateCursor() {
     if (interpolationTime_ < timer_) return;
-    timer_ += 1.f / 60.f;
+    timer_ += Time::GetDeltaTime();
 
     Vector2 pos = Ease::Out::Cubic(start_, destination_, timer_ / interpolationTime_);
     cursor_->SetPosition(pos);
@@ -274,6 +292,8 @@ void SkillTree::Refresh() {
     constexpr Vector4 colorPrereqHint = {0.7f, 0.62f, 0.45f, 1.f};
     constexpr Vector4 colorDisabled   = {0.4f, 0.4f, 0.4f, 1.f};
 
+    std::unordered_map<std::string, bool> reachableSkills;
+
     for (auto& skill : skills_) {
         auto* elem = ui_->FindElementByName(skill.id);
         if (!elem) continue;
@@ -289,6 +309,9 @@ void SkillTree::Refresh() {
         bool requirementsMet = IsRequirementSatisfied(skill);
         bool affordable = (status_->point >= skill.cost);
         bool prereqHint = (!requirementsMet && affordable && HasAcquirableMissingRequirement(skill));
+
+        // 線の色分け用: 「既に取得済み/今すぐ取得可能」かどうか
+        reachableSkills[skill.id] = maxed || acquired || (requirementsMet && affordable);
 
         if (maxed) {
             ui_->SetElementEvent(skill.id, Ui::EventKey::Execute, "");
@@ -308,6 +331,8 @@ void SkillTree::Refresh() {
         }
     }
 
+    UpdateConnectionLines(reachableSkills);
+
     CollectNavigableIndices();
 
     if (!selectableIndices_.empty()) {
@@ -318,6 +343,17 @@ void SkillTree::Refresh() {
 
     UpdatePreview();
     UpdatePointDisplay();
+}
+
+void SkillTree::UpdateConnectionLines(const std::unordered_map<std::string, bool>& _reachableSkills) const {
+    for (const auto& [lineName, skillId] : kLineTargets) {
+        auto* lineElem = ui_->FindElementByName(lineName);
+        if (!lineElem) continue;
+
+        auto it = _reachableSkills.find(skillId);
+        bool reachable = (it != _reachableSkills.end()) && it->second;
+        lineElem->SetColor(reachable ? kLineColorReachable : kLineColorLocked);
+    }
 }
 
 void SkillTree::LoadSkills(const std::string& _path) {

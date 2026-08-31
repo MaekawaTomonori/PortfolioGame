@@ -1,5 +1,7 @@
 #include "GameObject.hpp"
 
+#include "Time/Time.hpp"
+
 void GameObject::SetPosition(const Vector3& position) {
     position_ = position;
     UpdateTransform();
@@ -21,8 +23,8 @@ void GameObject::UpdateTransform() {
     transform_.scale = scale_;
 }
 
-void GameObject::ApplyVelocity(float deltaTime) {
-    position_ += velocity_ * deltaTime;
+void GameObject::ApplyVelocity() {
+    position_ += velocity_ * Time::GetDeltaTime();
 }
 
 void GameObject::SetModel(const std::string& _name) {

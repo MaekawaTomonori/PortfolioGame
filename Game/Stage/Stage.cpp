@@ -4,7 +4,6 @@
 #include "Pattern/Singleton.hpp"
 #include "Light/LightManager.hpp"
 #include "src/Time/Time.hpp"
-#include <cmath>
 
 #undef max
 
@@ -31,6 +30,11 @@ namespace {
     constexpr float HIT_EXPLOSION_GRAVITY     = 0.05f;
     constexpr float HIT_EXPLOSION_LIFETIME    = 0.7f;
     constexpr float HIT_EXPLOSION_ALPHA_SCALE = 0.9f;
+
+    constexpr float TERRAIN_SIZE = 100.f;
+    // 見た目の地形端より内側でプレイヤーの移動を止めるための余白
+    constexpr float FIELD_BOUNDARY_MARGIN = 5.f;
+    constexpr float FIELD_HALF_EXTENT = TERRAIN_SIZE * 0.5f - FIELD_BOUNDARY_MARGIN;
 }
 
 void Stage::Setup(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
@@ -46,7 +50,7 @@ void Stage::Setup(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
 
     terrain_ = std::make_unique<Model>();
     terrain_->Initialize("plane");
-    terrain_->SetScale({ 100.f, 100.f, 1.f });
+    terrain_->SetScale({ TERRAIN_SIZE, TERRAIN_SIZE, 1.f });
     terrain_->SetTilingMultiply({ 10.f, 10.f });
     terrain_->SetRotate({ -(MathUtils::F_PI / 2.f), 0.f, 0.f });
     terrain_->SetEnvironmentTexture("rostock.dds");
@@ -54,6 +58,7 @@ void Stage::Setup(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
     terrain_->SetName("Field");
 
     player_ = std::make_unique<Player>(particle_, postEffect_);
+    player_->SetFieldBounds(FIELD_HALF_EXTENT);
     enemies_ = std::make_unique<Enemies>(particle_, status_);
 
     skillManager_ = std::make_unique<SkillManager>();
@@ -146,7 +151,7 @@ void Stage::Update() {
         player_->SetTargetPosition(enemies_->GetNearest(player_->GetPosition()));
     }
 
-    player_->Update(Time::GetDeltaTime());
+    player_->Update();
 
     // プレイヤー位置にライトを追従させる
     Singleton<LightManager>::GetInstance()->SetPosition(player_->GetLightAnchor());

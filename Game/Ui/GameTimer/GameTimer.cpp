@@ -4,6 +4,7 @@
 
 #include "imgui.h"
 #include "Math/Easing.hpp"
+#include "src/Time/Time.hpp"
 
 #undef min
 #undef max
@@ -28,21 +29,23 @@ void GameTimer::Initialize() {
     sprites_[1]->SetTextureSize(TEXTURE_SIZE);
 }
 
-void GameTimer::Update(const float _deltaTime) {
+void GameTimer::Update() {
     if (!active_) return;
     done_ = false;
+
+    float deltaTime = Time::GetDeltaTime();
 
     Vector2 drawPos = position_;
     float alpha = 1.f;
 
     if (introAnimating_) {
-        introElapsed_ += _deltaTime;
+        introElapsed_ += deltaTime;
         const float t = std::min(introElapsed_ / INTRO_DURATION, 1.f);
         drawPos = Ease::Out::Cubic(introStartPos_, position_, t);
         alpha = t;
         if (t >= 1.f) introAnimating_ = false;
     } else {
-        time_ -= _deltaTime;
+        time_ -= deltaTime;
         if (time_ <= 0.f) {
             time_ = 0.f;
             done_ = true;

@@ -116,7 +116,7 @@ void Enemies::Update() {
 #endif
 
     for (const auto& enemy : enemies_) {
-        enemy->Update(Time::GetDeltaTime());
+        enemy->Update();
     }
 }
 
@@ -223,30 +223,30 @@ void Enemies::Debug() {
         // Dash
         ImGui::TextColored(ImVec4(0.4f, 0.8f, 1.0f, 1.0f), "Dash");
         ImGui::SetNextItemWidth(inputWidth);
-        ImGui::DragFloat("Charge Time", &enemyParams_.dash.chargeMaxTime, 0.1f, 0.1f, 5.0f, "%.2fs");
+        ImGui::DragFloat("Charge Time", &dashParams_.chargeMaxTime, 0.1f, 0.1f, 5.0f, "%.2fs");
         ImGui::SetNextItemWidth(inputWidth);
-        ImGui::DragFloat("Dash Duration", &enemyParams_.dash.duration, 0.05f, 0.1f, 2.0f, "%.2fs");
+        ImGui::DragFloat("Dash Duration", &dashParams_.duration, 0.05f, 0.1f, 2.0f, "%.2fs");
         ImGui::SetNextItemWidth(inputWidth);
-        ImGui::DragFloat("Dash Speed", &enemyParams_.dash.speed, 0.5f, 5.0f, 50.0f, "%.1f");
+        ImGui::DragFloat("Dash Speed", &dashParams_.speed, 0.5f, 5.0f, 50.0f, "%.1f");
         ImGui::SetNextItemWidth(inputWidth);
-        ImGui::DragFloat("Trigger Interval", &enemyParams_.dash.triggerInterval, 0.1f, 0.5f, 10.0f, "%.2fs");
+        ImGui::DragFloat("Trigger Interval", &dashParams_.triggerInterval, 0.1f, 0.5f, 10.0f, "%.2fs");
         ImGui::SetNextItemWidth(inputWidth);
-        float chancePercent = enemyParams_.dash.triggerChance * 100.0f;
+        float chancePercent = dashParams_.triggerChance * 100.0f;
         if (ImGui::SliderFloat("Trigger Chance", &chancePercent, 0.0f, 100.0f, "%.0f%%")) {
-            enemyParams_.dash.triggerChance = chancePercent / 100.0f;
+            dashParams_.triggerChance = chancePercent / 100.0f;
         }
 
         ImGui::Spacing();
         ImGui::Text("Prediction Line");
         ImGui::Indent();
         ImGui::SetNextItemWidth(inputWidth);
-        ImGui::DragFloat("Enemy Offset", &enemyParams_.dash.enemyOffset, 0.1f, 0.0f, 5.0f, "%.2f");
+        ImGui::DragFloat("Enemy Offset", &dashParams_.enemyOffset, 0.1f, 0.0f, 5.0f, "%.2f");
         ImGui::SetNextItemWidth(inputWidth);
-        ImGui::DragFloat("Line Length", &enemyParams_.dash.lineLength, 0.05f, 0.1f, 2.0f, "%.2f");
+        ImGui::DragFloat("Line Length", &dashParams_.lineLength, 0.05f, 0.1f, 2.0f, "%.2f");
         ImGui::SetNextItemWidth(inputWidth);
-        ImGui::DragFloat("Line Width", &enemyParams_.dash.lineWidth, 0.1f, 0.5f, 5.0f, "%.2f");
+        ImGui::DragFloat("Line Width", &dashParams_.lineWidth, 0.1f, 0.5f, 5.0f, "%.2f");
         ImGui::SetNextItemWidth(inputWidth);
-        ImGui::DragFloat("Center Offset", &enemyParams_.dash.lineCenterOffset, 0.05f, 0.0f, 1.0f, "%.2f");
+        ImGui::DragFloat("Center Offset", &dashParams_.lineCenterOffset, 0.05f, 0.0f, 1.0f, "%.2f");
         ImGui::Unindent();
 
         ImGui::Separator();
@@ -316,6 +316,10 @@ void Enemies::Spawn() {
     // 共通パラメータへのポインタを設定（すべてのEnemyが同じパラメータを参照）
     enemy->SetParams(&enemyParams_);
 
+    auto dash = std::make_unique<DashActionModule>();
+    dash->SetParams(&dashParams_);
+    enemy->SetActionModule(std::move(dash));
+
     enemies_.push_back(std::move(enemy));
 }
 
@@ -359,15 +363,15 @@ void Enemies::LoadParams() {
         enemyParams_.deathDuration = std::get<float>(json->GetValue("EnemyParams", "Death", "Duration"));
 
         // ダッシュアクション
-        enemyParams_.dash.chargeMaxTime = std::get<float>(json->GetValue("EnemyParams", "Dash", "ChargeMaxTime"));
-        enemyParams_.dash.duration = std::get<float>(json->GetValue("EnemyParams", "Dash", "Duration"));
-        enemyParams_.dash.speed = std::get<float>(json->GetValue("EnemyParams", "Dash", "Speed"));
-        enemyParams_.dash.triggerInterval = std::get<float>(json->GetValue("EnemyParams", "Dash", "TriggerInterval"));
-        enemyParams_.dash.triggerChance = std::get<float>(json->GetValue("EnemyParams", "Dash", "TriggerChance"));
-        enemyParams_.dash.enemyOffset = std::get<float>(json->GetValue("EnemyParams", "Dash", "EnemyOffset"));
-        enemyParams_.dash.lineLength = std::get<float>(json->GetValue("EnemyParams", "Dash", "LineLength"));
-        enemyParams_.dash.lineWidth = std::get<float>(json->GetValue("EnemyParams", "Dash", "LineWidth"));
-        enemyParams_.dash.lineCenterOffset = std::get<float>(json->GetValue("EnemyParams", "Dash", "LineCenterOffset"));
+        dashParams_.chargeMaxTime = std::get<float>(json->GetValue("EnemyParams", "Dash", "ChargeMaxTime"));
+        dashParams_.duration = std::get<float>(json->GetValue("EnemyParams", "Dash", "Duration"));
+        dashParams_.speed = std::get<float>(json->GetValue("EnemyParams", "Dash", "Speed"));
+        dashParams_.triggerInterval = std::get<float>(json->GetValue("EnemyParams", "Dash", "TriggerInterval"));
+        dashParams_.triggerChance = std::get<float>(json->GetValue("EnemyParams", "Dash", "TriggerChance"));
+        dashParams_.enemyOffset = std::get<float>(json->GetValue("EnemyParams", "Dash", "EnemyOffset"));
+        dashParams_.lineLength = std::get<float>(json->GetValue("EnemyParams", "Dash", "LineLength"));
+        dashParams_.lineWidth = std::get<float>(json->GetValue("EnemyParams", "Dash", "LineWidth"));
+        dashParams_.lineCenterOffset = std::get<float>(json->GetValue("EnemyParams", "Dash", "LineCenterOffset"));
     }
     // JSONファイルが存在しない場合はデフォルト値を使用
 }
@@ -392,15 +396,15 @@ void Enemies::SaveParams() {
     json->SetValue("EnemyParams", "Death", "Duration", enemyParams_.deathDuration);
 
     // ダッシュアクション
-    json->SetValue("EnemyParams", "Dash", "ChargeMaxTime", enemyParams_.dash.chargeMaxTime);
-    json->SetValue("EnemyParams", "Dash", "Duration", enemyParams_.dash.duration);
-    json->SetValue("EnemyParams", "Dash", "Speed", enemyParams_.dash.speed);
-    json->SetValue("EnemyParams", "Dash", "TriggerInterval", enemyParams_.dash.triggerInterval);
-    json->SetValue("EnemyParams", "Dash", "TriggerChance", enemyParams_.dash.triggerChance);
-    json->SetValue("EnemyParams", "Dash", "EnemyOffset", enemyParams_.dash.enemyOffset);
-    json->SetValue("EnemyParams", "Dash", "LineLength", enemyParams_.dash.lineLength);
-    json->SetValue("EnemyParams", "Dash", "LineWidth", enemyParams_.dash.lineWidth);
-    json->SetValue("EnemyParams", "Dash", "LineCenterOffset", enemyParams_.dash.lineCenterOffset);
+    json->SetValue("EnemyParams", "Dash", "ChargeMaxTime", dashParams_.chargeMaxTime);
+    json->SetValue("EnemyParams", "Dash", "Duration", dashParams_.duration);
+    json->SetValue("EnemyParams", "Dash", "Speed", dashParams_.speed);
+    json->SetValue("EnemyParams", "Dash", "TriggerInterval", dashParams_.triggerInterval);
+    json->SetValue("EnemyParams", "Dash", "TriggerChance", dashParams_.triggerChance);
+    json->SetValue("EnemyParams", "Dash", "EnemyOffset", dashParams_.enemyOffset);
+    json->SetValue("EnemyParams", "Dash", "LineLength", dashParams_.lineLength);
+    json->SetValue("EnemyParams", "Dash", "LineWidth", dashParams_.lineWidth);
+    json->SetValue("EnemyParams", "Dash", "LineCenterOffset", dashParams_.lineCenterOffset);
 
     json->Save("EnemyParams");
 }

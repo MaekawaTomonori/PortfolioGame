@@ -5,6 +5,7 @@
 #include "imgui.h"
 #include "GameObject/GameObject.hpp"
 #include "Enemy/Enemies.hpp"
+#include "Player/Player.hpp"
 #include "Json/JsonParams.hpp"
 #include "Pattern/Singleton.hpp"
 #include "Math/MathUtils.hpp"
@@ -19,8 +20,11 @@ namespace {
     constexpr float MIN_PITCH_COS         = 0.65f;
     constexpr float ENEMY_DISTANCE_WEIGHT = 0.3f;
     constexpr float ZOOM_IN_LERP_SPEED    = 0.1f;
-    constexpr float ZOOM_OUT_LERP_SPEED   = 0.03f;
+    constexpr float ZOOM_OUT_LERP_SPEED   = 0.08f;
     constexpr float SHAKE_DECAY_RATE      = 0.9f;
+
+    constexpr float DASH_FOV_MULTIPLIER = 1.15f;
+    constexpr float FOV_LERP_SPEED      = 0.1f;
 }
 
 FollowCamera::FollowCamera() :
@@ -36,6 +40,7 @@ void FollowCamera::Initialize() {
     cameraController_->GetActive()->transform_.rotate = INITIAL_CAMERA_ROTATION;
 
     Load();
+    fov_ = cameraController_->GetActive()->GetFov();
     UpdateCameraDistance();
     UpdateCameraPosition();
 }
@@ -46,6 +51,7 @@ void FollowCamera::Update() {
 
     UpdateCameraDistance();
     UpdateCameraPosition();
+    UpdateFov();
     ApplyShake();
 }
 
@@ -182,6 +188,16 @@ void FollowCamera::UpdateCameraPosition() {
     Vector3 destination = target_->GetPosition() + offset_ * distance_;
     active.translate = MathUtils::Lerp(active.translate, destination, interpolationTime_);
     active.rotate = Vector3{ pitch_, yaw_, 0.f };
+}
+
+void FollowCamera::UpdateFov() {
+    auto camera = cameraController_->GetActive();
+    if (!camera) return;
+
+    bool dashing = player_ && player_->IsDashing();
+    float targetFov = dashing ? DEFAULT_FOV * DASH_FOV_MULTIPLIER : DEFAULT_FOV;
+    fov_ = MathUtils::Lerp(fov_, targetFov, FOV_LERP_SPEED);
+    camera->SetFov(fov_);
 }
 
 void FollowCamera::ApplyShake() {

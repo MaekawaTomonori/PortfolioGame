@@ -14,7 +14,7 @@ public:
     virtual ~IEnemyState() = default;
 
     virtual void Enter() {}
-    virtual std::unique_ptr<IEnemyState> Update(float deltaTime) = 0;
+    virtual std::unique_ptr<IEnemyState> Update() = 0;
     virtual void Exit() {}
     virtual void Draw() {}
     virtual bool IsDying() const { return false; }

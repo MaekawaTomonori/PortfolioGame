@@ -7,7 +7,7 @@ public:
     explicit EnemyStateDeath(Enemy* enemy) : IEnemyState(enemy) {}
 
     void Enter() override;
-    std::unique_ptr<IEnemyState> Update(float deltaTime) override;
+    std::unique_ptr<IEnemyState> Update() override;
 
     bool IsDying() const override { return true; }
     const char* GetStateName() const override { return "Death"; }

@@ -1,11 +1,10 @@
 #include "ItemShowcase.hpp"
 
 #include "imgui.h"
+#include "Time/Time.hpp"
 
 void ItemShowcase::Update() {
     if (!model_)return;
-
-    static const float DT = 1.f / 60.f;
 
     transform_.rotate.y += angle_ * rotateSpd_;
     transform_.rotate.y = fmod(transform_.rotate.y, MathUtils::F_PI * 2.f);
@@ -13,7 +12,7 @@ void ItemShowcase::Update() {
     // sine wave motion
     // t_ : 0 -> 2PI
     // y : -1 -> 1
-    t_ += DT;
+    t_ += Time::GetDeltaTime();
     t_ = fmod(t_, MathUtils::F_PI * 2.f);
     transform_.translate.y = originalP.y + std::sin(t_) * waveAmp_;
 

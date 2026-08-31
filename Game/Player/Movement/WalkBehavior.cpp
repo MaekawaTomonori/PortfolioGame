@@ -4,8 +4,7 @@ namespace {
     constexpr float MIN_MOVE_THRESHOLD = 0.0001f;
 }
 
-Vector3 WalkBehavior::Calculate(const MovementContext& context, float deltaTime) {
-    (void)deltaTime;
+Vector3 WalkBehavior::Calculate(const MovementContext& context) {
     return context.moveDirection * speed_;
 }
 
