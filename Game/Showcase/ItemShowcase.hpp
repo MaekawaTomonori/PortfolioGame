@@ -3,6 +3,7 @@
 #include <memory>
 
 #include "Model.hpp"
+#include "Math/MathUtils.hpp"
 
 /// <summary>
 /// モデルぷかぷか展示クラス

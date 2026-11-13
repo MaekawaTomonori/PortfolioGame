@@ -43,7 +43,7 @@ private:
     Vector3 externalForce_{};
 
     bool invincible_ = false;
-    float invincibleTimer_ = Params{}.invincibleDuration;
+    float invincibleTimer_ = 0.f;
 
     bool killedByBullet_ = false;
 
@@ -65,6 +65,8 @@ private:
     std::unique_ptr<IEnemyActionModule> actionModule_;
 
 public:
+    ~Enemy() override;
+
     void Initialize() override;
 
     void Update() override;
@@ -89,7 +91,7 @@ public:
     void SetParams(const Params* _params) { params_ = _params; }
     const Params* GetParams() const { return params_; }
 
-    void SetActionModule(std::unique_ptr<IEnemyActionModule> _module) { actionModule_ = std::move(_module); }
+    void SetActionModule(std::unique_ptr<IEnemyActionModule> _module);
     IEnemyActionModule* GetActionModule() const { return actionModule_.get(); }
 
     // 状態クラスからのアクセス用

@@ -4,6 +4,7 @@
 #include <memory>
 
 #include "Enemy.hpp"
+#include "Line.hpp"
 #include "Enemy/Module/DashActionModule.hpp"
 #include "ParticleSystem/ParticleSystem.hpp"
 #include "Status/GameStatus.hpp"

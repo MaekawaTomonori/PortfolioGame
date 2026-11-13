@@ -2,91 +2,113 @@
 
 #include <algorithm>
 #include <cmath>
+#include <format>
 #include <fstream>
 #include <utility>
 
 #include "imgui.h"
 #include "json/JsonParams.hpp"
 #include "Log.hpp"
-#include "Math/Easing.hpp"
 #include "Pattern/Singleton.hpp"
 #include "src/Time/Time.hpp"
+#include "Ui/HudStyle.hpp"
 
 #undef min
 #undef max
 
 namespace {
     // レベルアップ: 白フラッシュ + 上バウンス (0.4s)
-    const Ui::AnimFunc kLevelUpAnim = [](float t, Vector2& pos, Vector4& col) -> bool {
-        constexpr float kDur  = 0.4f;
-        constexpr float kPeak = 0.08f;
-        float k = (t <= kPeak) ? (t / kPeak) : std::max(0.f, 1.f - (t - kPeak) / (kDur - kPeak));
+    bool LevelUpAnim(float t, Vector2& pos, Vector4& col, float& /*scale*/) {
+        constexpr float DURATION  = 0.4f;
+        constexpr float PEAK_TIME = 0.08f;
+        float k = (t <= PEAK_TIME) ? (t / PEAK_TIME) : std::max(0.f, 1.f - (t - PEAK_TIME) / (DURATION - PEAK_TIME));
         col.x = std::min(1.f, col.x + k * 0.7f);
         col.y = std::min(1.f, col.y + k * 0.7f);
         col.z = std::min(1.f, col.z + k * 0.7f);
         pos.y -= k * 10.f;
-        return t >= kDur;
-    };
+        return t >= DURATION;
+    }
 
-    // MAXレベル: ゴールドフラッシュ + 大バウンス (0.6s)
-    const Ui::AnimFunc kMaxedAnim = [](float t, Vector2& pos, Vector4& col) -> bool {
-        constexpr float kDur  = 0.6f;
-        constexpr float kPeak = 0.12f;
-        float k = (t <= kPeak) ? (t / kPeak)
-                               : std::max(0.f, 1.f - (t - kPeak) / (kDur - kPeak));
+    // MAXレベル: 白フラッシュ + 大バウンス + 拡大 (0.6s)
+    bool MaxedAnim(float t, Vector2& pos, Vector4& col, float& scale) {
+        constexpr float DURATION  = 0.6f;
+        constexpr float PEAK_TIME = 0.12f;
+        float k = (t <= PEAK_TIME) ? (t / PEAK_TIME)
+                               : std::max(0.f, 1.f - (t - PEAK_TIME) / (DURATION - PEAK_TIME));
         col.x = std::min(1.f, col.x + k);
-        col.y = std::min(1.f, col.y + k * 0.75f);
-        col.z = col.z * (1.f - k * 0.7f);
+        col.y = std::min(1.f, col.y + k);
+        col.z = std::min(1.f, col.z + k);
         pos.y -= k * 18.f;
-        return t >= kDur;
-    };
+        scale += k * 0.15f;
+        return t >= DURATION;
+    }
 
-    // アニメなし (開幕リセット用)
-    const Ui::AnimFunc kNoop = [](float, Vector2&, Vector4&) -> bool { return true; };
-
-    // LEVEL UP バッジ: フェードイン → 保持 → フェードアウト + 上昇 (1.17s)
-    const Ui::AnimFunc kPopupAnim = [](float t, Vector2& pos, Vector4& col) -> bool {
-        constexpr float kIn   = 0.12f;
-        constexpr float kHold = 0.55f;
-        constexpr float kOut  = 0.5f;
-        constexpr float kDur  = kIn + kHold + kOut;
+    // LEVEL UP の文字: 大きく出て縮む → 保持 → フェードアウト + 上昇 (1.17s)
+    bool PopupAnim(float t, Vector2& pos, Vector4& col, float& scale) {
+        constexpr float FADE_IN_DURATION   = 0.12f;
+        constexpr float HOLD_DURATION = 0.55f;
+        constexpr float FADE_OUT_DURATION  = 0.5f;
+        constexpr float DURATION  = FADE_IN_DURATION + HOLD_DURATION + FADE_OUT_DURATION;
         float alpha;
-        if (t < kIn)               alpha = t / kIn;
-        else if (t < kIn + kHold)  alpha = 1.f;
-        else                       alpha = std::max(0.f, 1.f - (t - kIn - kHold) / kOut);
+        if (t < FADE_IN_DURATION)               alpha = t / FADE_IN_DURATION;
+        else if (t < FADE_IN_DURATION + HOLD_DURATION)  alpha = 1.f;
+        else                       alpha = std::max(0.f, 1.f - (t - FADE_IN_DURATION - HOLD_DURATION) / FADE_OUT_DURATION);
         col.w = alpha;
-        pos.y -= (t / kDur) * 18.f;
-        return t >= kDur;
+        pos.y -= (t / DURATION) * 18.f;
+        scale += std::max(0.f, 1.f - t / FADE_IN_DURATION) * 0.5f;
+        return t >= DURATION;
+    }
+
+    // 届かない線と、取れないノードの色
+    constexpr Vector4 COLOR_LOCKED = {0.35f, 0.35f, 0.35f, 1.f};
+
+    // 位置の計算は基準解像度の px で行い、親（画面）に対する割合へ直す
+    constexpr Vector2 SCREEN_SIZE  = {1280.f, 720.f};
+    // Assets/UI/SkillTree.json のノード（選択中は 1.1 倍）と SkillTreeTooltip.json の大きさ
+    constexpr float   NODE_HALF    = 36.f * 1.1f;
+    constexpr Vector2 TOOLTIP_SIZE = {300.f, 172.f};
+    constexpr float   TOOLTIP_GAP  = 12.f;
+    constexpr float   SCREEN_MARGIN = 16.f;
+    constexpr float   BADGE_GAP    = 8.f;
+
+    // ツールチップの行: 左の余白、1 行目（名前）の位置と、2 行目からの間隔(px)
+    constexpr float TOOLTIP_PADDING   = 14.f;
+    constexpr float TOOLTIP_TITLE_TOP  = 10.f;
+    constexpr float TOOLTIP_FIRST_LINE = 40.f;
+    constexpr float TOOLTIP_LINE_STEP  = 24.f;
+
+    // ツールチップの出方: 少しずれた位置から、薄い状態で出てくる
+    constexpr float TOOLTIP_FADE_TIME = 0.2f;
+    constexpr float TOOLTIP_SLIDE    = 8.f;
+
+    // スキル 1 つで変わる能力値。効果が 0 のものは表示しない
+    struct StatChange {
+        const char* label;
+        float current;
+        float delta;
+        const char* unit;
+        bool integer;
     };
 
-    // パネル: 明転フラッシュ (0.3s)
-    const Ui::AnimFunc kPanelFlashAnim = [](float t, Vector2& /*pos*/, Vector4& col) -> bool {
-        constexpr float kDur  = 0.3f;
-        constexpr float kPeak = 0.05f;
-        float k = (t <= kPeak) ? (t / kPeak)
-                               : std::max(0.f, 1.f - (t - kPeak) / (kDur - kPeak));
-        col.x = std::min(1.f, col.x + k * 0.5f);
-        col.y = std::min(1.f, col.y + k * 0.5f);
-        col.z = std::min(1.f, col.z + k * 0.5f);
-        col.w = std::min(1.f, col.w + k * 0.2f);
-        return t >= kDur;
-    };
+    std::string FormatStat(float _value, const StatChange& _stat) {
+        if (_stat.integer) {
+            return std::format("{}{}", static_cast<int>(std::round(_value)), _stat.unit);
+        }
+        return std::format("{:.1f}{}", _value, _stat.unit);
+    }
 
-    // 接続線: 今すぐ取得可能/取得済みへの線は白、まだ届かない線はグレーのまま
-    constexpr Vector4 kLineColorReachable = {1.0f, 1.0f, 1.0f, 1.0f};
-    constexpr Vector4 kLineColorLocked    = {0.6f, 0.6f, 0.6f, 1.0f};
+    Vector2 ToScreenPixels(const Vector2& _offset) {
+        return {_offset.x * SCREEN_SIZE.x, _offset.y * SCREEN_SIZE.y};
+    }
 
-    // 接続線スプライト名 -> その線が指す先(子)スキルID
-    const std::vector<std::pair<std::string, std::string>> kLineTargets = {
-        {"hline_root", "root"}, {"stem_main", "root"},
-        {"stem_to_r1", "atk_up"}, {"stem_to_r2", "hp_up"}, {"stem_to_r3", "spd_up"},
-        {"stem_to_r4", "as_up"}, {"stem_to_r5", "time_up"},
-        {"r1_t1_to_t2", "atk_up_2"}, {"r2_t1_to_t2", "hp_up_2"}, {"r3_t1_to_t2", "spd_up_2"},
-        {"r4_t1_to_t2", "as_up_2"}, {"r5_t1_to_t2", "enemy_up"},
-        {"r1_t2_to_t3", "atk_up_3"}, {"r2_t2_to_t3", "hp_up_3"}, {"r3_t2_to_t3", "spd_up_3"},
-        {"r4_t2_to_t3", "as_up_3"}, {"r5_t2_to_t3", "spawn_down"},
-        {"r1_t3_to_t4", "atk_max"}, {"r2_t3_to_t4", "hp_max"}, {"r5_t3_to_t4", "time_up_2"},
-    };
+    Vector2 ToScreenRatio(const Vector2& _pixels) {
+        return {_pixels.x / SCREEN_SIZE.x, _pixels.y / SCREEN_SIZE.y};
+    }
+}
+
+SkillTree::~SkillTree() {
+    tooltip_.canvas.Unload();
+    ui_.Unload();
 }
 
 void SkillTree::Initialize(GameStatus* _status) {
@@ -95,67 +117,70 @@ void SkillTree::Initialize(GameStatus* _status) {
 
     LoadSkills("Assets/Data/SkillTree/data.json");
 
-    ui_ = std::make_unique<Ui::Canvas>();
-    ui_->Setup("skilltree");
-    ui_->SetActive(false);
+    ui_ = GEUI::Canvas::Load("Assets/UI/SkillTree.json");
+    ui_.SetVisible(false);
 
-    for (auto& skill : skills_) {
-        std::string actionKey = "SkillTree.Upgrade." + skill.id;
-        ui_->RegisterAction(actionKey, [this, id = skill.id]() { ApplySkill(id); });
+    GEUI::Widget tree = ui_.Find("Tree");
+    for (size_t i = 0; i < skills_.size(); ++i) {
+        GEUI::Widget button = tree.Find(skills_[i].id);
+        if (!button.IsValid()) {
+            Log::Send(Log::Level::WARNING, "SkillTree: node not found in canvas - " + skills_[i].id);
+            continue;
+        }
+        // 線は行き先のスキルIDで引く。前提の無い起点には線が無い
+        GEUI::Widget line = skills_[i].required.empty() ? GEUI::Widget() : tree.Find("line_" + skills_[i].id);
+        nodes_.push_back({button, button.Find("Icon"), button.Find("Level"), line, i});
+        nodes_.back().icon.SetImage(skills_[i].iconTexture);
     }
+    continue_ = tree.Find("Continue");
+    points_ = ui_.Find("Points/Label");
+    badge_ = ui_.Find("Badge");
 
-    ui_->RegisterAction("SkillTree.Continue", [this]() {
-        if (onContinue_) onContinue_();
-    });
-
-    ui_->SetCustomDebug([this]{ Debug(); });
-
-    cursor_ = std::make_unique<Sprite>();
-    cursor_->Initialize("white_x16.png");
-    cursor_->SetSize({16.f, 16.f});
+    tooltip_.canvas = GEUI::Canvas::Load("Assets/UI/SkillTreeTooltip.json");
+    tooltip_.canvas.SetVisible(false);
+    tooltip_.root = tooltip_.canvas.Find("Tooltip");
+    tooltip_.title = tooltip_.root.Find("Title");
+    tooltip_.description = tooltip_.root.Find("Description");
+    tooltip_.effects = {tooltip_.root.Find("Effect0"), tooltip_.root.Find("Effect1")};
+    tooltip_.cost = tooltip_.root.Find("Cost");
+    tooltip_.need = tooltip_.root.Find("Need");
 
     Refresh();
-    PositionCursorAtSelected();
 }
 
 void SkillTree::Update() {
-    if (!ui_ || !ui_->IsActive()) return;
+    if (!IsOpen()) return;
 
     HandleInput();
-    UpdateCursor();
-
-    cursor_->Update();
-}
-
-void SkillTree::Draw() {
-    if (!ui_ || !ui_->IsActive()) return;
-
-    cursor_->Draw();
+    UpdateEffects(Time().GetDeltaTime());
+    UpdateTooltipFade(Time().GetDeltaTime());
 }
 
 void SkillTree::Open() {
-    if (!ui_) return;
+    // 前回の取得演出が開幕に残らないよう、元の見た目へ戻す
+    StopAllEffects();
 
-    // 前回の取得演出が開幕に再生されないようリセット
-    if (auto* lv = ui_->FindElementByName("pv_level"))
-        lv->SetShowFunc(kNoop);
-    if (auto* badge = ui_->FindElementByName("pv_levelup_badge"))
-        badge->SetShowFunc(kNoop);
-
-    ui_->SetActive(true);
-    ui_->SetFocused(true);
+    ui_.SetVisible(true);
+    if (!nodes_.empty()) {
+        nodes_.front().button.SetSelected(true);
+    }
+    focused_ = ui_.GetFocused();
+    hovered_ = {};
+    // 開いた直後は説明を出さない。キーを押すか、マウスを動かしてノードに乗ったときに初めて出す
+    keyboardMode_ = false;
+    openMousePosition_ = input_->GetMousePosition();
+    mouseMoved_ = false;
     Refresh();
-    selectedIndex_ = 0;
-    PositionCursorAtSelected();
 }
 
-void SkillTree::Close() const {
-    if (!ui_) return;
-    ui_->SetActive(false);
+void SkillTree::Close() {
+    ui_.SetVisible(false);
+    tooltip_.canvas.SetVisible(false);
+    tooltip_.target = nullptr;
 }
 
 bool SkillTree::IsOpen() const {
-    return ui_ && ui_->IsActive();
+    return ui_.IsVisible();
 }
 
 void SkillTree::Debug() {
@@ -184,8 +209,6 @@ void SkillTree::Debug() {
         }
         ImGui::Separator();
     }
-
-    ImGui::DragFloat("Interpolation", &interpolationTime_, 0.01f, 0.0f, 10.0f);
 }
 
 void SkillTree::SetOnContinue(std::function<void()> _callback) {
@@ -193,114 +216,73 @@ void SkillTree::SetOnContinue(std::function<void()> _callback) {
 }
 
 void SkillTree::HandleInput() {
-    if (selectableIndices_.empty()) return;
+    bool tooltipChanged = false;
 
-    bool up    = input_->IsTrigger(DIK_UP)    || input_->IsTrigger(DIK_W);
-    bool down  = input_->IsTrigger(DIK_DOWN)  || input_->IsTrigger(DIK_S);
-    bool left  = input_->IsTrigger(DIK_LEFT)  || input_->IsTrigger(DIK_A);
-    bool right = input_->IsTrigger(DIK_RIGHT) || input_->IsTrigger(DIK_D);
-
-    if (up || down || left || right) {
-        auto currentRect = ui_->GetElementRect(selectableIndices_[selectedIndex_]);
-        Vector2 cur = currentRect.position;
-
-        float dx = right ? 1.f : (left ? -1.f : 0.f);
-        float dy = down  ? 1.f : (up   ? -1.f : 0.f);
-
-        int32_t bestIndex = -1;
-        float bestScore = 1e9f;
-
-        for (int32_t i = 0; i < static_cast<int32_t>(selectableIndices_.size()); ++i) {
-            if (i == selectedIndex_) continue;
-
-            auto rect = ui_->GetElementRect(selectableIndices_[i]);
-            float diffX = rect.position.x - cur.x;
-            float diffY = rect.position.y - cur.y;
-
-            float dot = diffX * dx + diffY * dy;
-            if (dot <= 0.f) continue;
-
-            float crossAbs = std::abs(diffX * dy - diffY * dx);
-            float dist = std::sqrt(diffX * diffX + diffY * diffY);
-
-            float score = dist + crossAbs * 2.f;
-            if (score < bestScore) {
-                bestScore = score;
-                bestIndex = i;
-            }
+    const auto navigate = [this, &tooltipChanged](GEUI::Direction _direction) {
+        ui_.Navigate(_direction);
+        if (!keyboardMode_) {
+            keyboardMode_ = true;
+            tooltipChanged = true;
         }
+    };
+    if (input_->IsTrigger(DIK_UP)    || input_->IsTrigger(DIK_W)) navigate(GEUI::Direction::Up);
+    if (input_->IsTrigger(DIK_DOWN)  || input_->IsTrigger(DIK_S)) navigate(GEUI::Direction::Down);
+    if (input_->IsTrigger(DIK_LEFT)  || input_->IsTrigger(DIK_A)) navigate(GEUI::Direction::Left);
+    if (input_->IsTrigger(DIK_RIGHT) || input_->IsTrigger(DIK_D)) navigate(GEUI::Direction::Right);
+    const bool submitted = input_->IsTrigger(DIK_RETURN) || input_->IsTrigger(DIK_SPACE);
+    if (submitted) ui_.Submit();
 
-        if (bestIndex >= 0) {
-            selectedIndex_ = bestIndex;
-
-            timer_ = 0.f;
-            start_ = cursor_->GetPosition();
-
-            auto rect = ui_->GetElementRect(selectableIndices_[selectedIndex_]);
-            destination_ = {
-                rect.position.x,
-                rect.position.y - rect.size.y / 2.f - 16.f
-            };
-
-            UpdatePreview();
-        }
+    // 開いたときにたまたまノードに重なっていたカーソルには反応しない。動かしてから受け付ける
+    if (!mouseMoved_) {
+        const Vector2 mouse = input_->GetMousePosition();
+        mouseMoved_ = (mouse.x != openMousePosition_.x || mouse.y != openMousePosition_.y);
     }
 
-    int canvasCursor = ui_->GetCursorIndex();
-    if (canvasCursor >= 0) {
-        for (int32_t i = 0; i < static_cast<int32_t>(selectableIndices_.size()); ++i) {
-            if (static_cast<int>(selectableIndices_[i]) == canvasCursor && i != selectedIndex_) {
-                selectedIndex_ = i;
-                timer_ = 0.f;
-                start_ = cursor_->GetPosition();
-                auto rect = ui_->GetElementRect(selectableIndices_[selectedIndex_]);
-                destination_ = {rect.position.x, rect.position.y - rect.size.y / 2.f - 16.f};
-                UpdatePreview();
-                break;
-            }
+    // カーソルが別のノードへ乗ったら、マウスの操作として扱う
+    GEUI::Widget hovered;
+    for (const Node& node : nodes_) {
+        if (mouseMoved_ && node.button.IsHovered()) {
+            hovered = node.button;
+            break;
         }
     }
-
-    if (input_->IsTrigger(DIK_RETURN) || input_->IsTrigger(DIK_SPACE)) {
-        Execute();
+    if (hovered != hovered_) {
+        hovered_ = hovered;
+        if (hovered_.IsValid()) {
+            keyboardMode_ = false;
+        }
+        tooltipChanged = true;
     }
-}
 
-void SkillTree::UpdateCursor() {
-    if (interpolationTime_ < timer_) return;
-    timer_ += Time::GetDeltaTime();
+    // 選択はキーでもマウスでも変わるので、変わったときにまとめて出し直す
+    if (GEUI::Widget focused = ui_.GetFocused(); focused != focused_) {
+        focused_ = focused;
+        tooltipChanged = true;
+    }
+    if (tooltipChanged) {
+        UpdateTooltip();
+    }
 
-    Vector2 pos = Ease::Out::Cubic(start_, destination_, timer_ / interpolationTime_);
-    cursor_->SetPosition(pos);
-}
+    // マウスを動かす前のクリックは、開いた直後の押し間違いとして無視する（キーの決定は受け付ける）
+    const bool acceptPress = submitted || mouseMoved_;
+    if (!acceptPress) return;
 
-void SkillTree::Execute() const {
-    if (selectableIndices_.empty()) return;
-
-    size_t elemIndex = selectableIndices_[selectedIndex_];
-    ui_->ExecuteActionAt(elemIndex, Ui::EventKey::Execute);
+    for (const Node& node : nodes_) {
+        if (node.button.WasPressed()) {
+            ApplySkill(skills_[node.skill].id);
+            break;
+        }
+    }
+    if (continue_.WasPressed() && onContinue_) {
+        onContinue_();
+    }
 }
 
 void SkillTree::Refresh() {
     if (!status_) return;
 
-    // lime = max level, aqua = acquired, orange = currently acquirable,
-    // muted amber = prerequisite can be taken now, gray = locked
-    constexpr Vector4 colorMaxed      = {0.2f, 1.0f, 0.2f, 1.f};
-    constexpr Vector4 colorAcquired   = {0.4f, 0.85f, 0.85f, 1.f};
-    constexpr Vector4 colorAvailable  = {1.0f, 0.65f, 0.15f, 1.f};
-    constexpr Vector4 colorPrereqHint = {0.7f, 0.62f, 0.45f, 1.f};
-    constexpr Vector4 colorDisabled   = {0.4f, 0.4f, 0.4f, 1.f};
-
-    std::unordered_map<std::string, bool> reachableSkills;
-
-    for (auto& skill : skills_) {
-        auto* elem = ui_->FindElementByName(skill.id);
-        if (!elem) continue;
-
-        // ノードのアイコンをステータスアイコンに設定
-        elem->SetTexture(skill.iconTexture);
-        elem->SetTextureRegion({}, {});
+    for (Node& node : nodes_) {
+        const SkillDef& skill = skills_[node.skill];
 
         uint32_t level = GetAcquiredLevel(skill.id);
         bool maxed = (level >= skill.maxLevel);
@@ -310,50 +292,30 @@ void SkillTree::Refresh() {
         bool affordable = (status_->point >= skill.cost);
         bool prereqHint = (!requirementsMet && affordable && HasAcquirableMissingRequirement(skill));
 
-        // 線の色分け用: 「既に取得済み/今すぐ取得可能」かどうか
-        reachableSkills[skill.id] = maxed || acquired || (requirementsMet && affordable);
+        // 取れないノードも説明を見られるよう、選べるまま押せなくする
+        const bool pressable = !maxed && requirementsMet && affordable;
+        node.button.SetEnabled(pressable);
 
-        if (maxed) {
-            ui_->SetElementEvent(skill.id, Ui::EventKey::Execute, "");
-            elem->SetColor(colorMaxed);
-        } else if (requirementsMet && affordable) {
-            ui_->SetElementEvent(skill.id, Ui::EventKey::Execute, "SkillTree.Upgrade." + skill.id);
-            elem->SetColor(acquired ? colorAcquired : colorAvailable);
-        } else {
-            ui_->SetElementEvent(skill.id, Ui::EventKey::Execute, "");
-            if (acquired) {
-                elem->SetColor(colorAcquired);
-            } else if (prereqHint) {
-                elem->SetColor(colorPrereqHint);
-            } else {
-                elem->SetColor(colorDisabled);
-            }
+        // 黄 = MAX, 緑 = 取得済み, 白 = 今すぐ取れる, 灰 = 前提を今取れる, 暗い灰 = 取れない
+        const Vector4* color = &COLOR_LOCKED;
+        if (maxed)           color = &HudStyle::YELLOW;
+        else if (acquired)   color = &HudStyle::GREEN;
+        else if (pressable)  color = &HudStyle::WHITE;
+        else if (prereqHint) color = &HudStyle::GRAY;
+        node.icon.SetColor(*color);
+
+        node.level.SetText(maxed ? "MAX" : std::format("{}/{}", level, skill.maxLevel));
+        node.level.SetColor(*color);
+
+        // 既に取得済み/今すぐ取れるノードへの線は白、まだ届かない線は暗い灰
+        if (node.line.IsValid()) {
+            const bool reachable = acquired || pressable;
+            node.line.SetColor(reachable ? HudStyle::WHITE : COLOR_LOCKED);
         }
     }
 
-    UpdateConnectionLines(reachableSkills);
-
-    CollectNavigableIndices();
-
-    if (!selectableIndices_.empty()) {
-        if (selectedIndex_ >= static_cast<int32_t>(selectableIndices_.size())) {
-            selectedIndex_ = 0;
-        }
-    }
-
-    UpdatePreview();
+    UpdateTooltip();
     UpdatePointDisplay();
-}
-
-void SkillTree::UpdateConnectionLines(const std::unordered_map<std::string, bool>& _reachableSkills) const {
-    for (const auto& [lineName, skillId] : kLineTargets) {
-        auto* lineElem = ui_->FindElementByName(lineName);
-        if (!lineElem) continue;
-
-        auto it = _reachableSkills.find(skillId);
-        bool reachable = (it != _reachableSkills.end()) && it->second;
-        lineElem->SetColor(reachable ? kLineColorReachable : kLineColorLocked);
-    }
 }
 
 void SkillTree::LoadSkills(const std::string& _path) {
@@ -381,7 +343,6 @@ void SkillTree::LoadSkills(const std::string& _path) {
         skill.name        = skillData.value("Name", "");
         skill.description = skillData.value("Description", "");
         skill.iconTexture = skillData.value("Icon", "white_x16.png");
-        skill.displayValue = skillData.value("DisplayValue", 0);
         skill.cost        = skillData.value("Cost", 0u);
         skill.maxLevel    = skillData.value("MaxLevel", 1u);
 
@@ -419,7 +380,8 @@ void SkillTree::LoadSkills(const std::string& _path) {
 void SkillTree::ApplySkill(const std::string& _id) {
     if (!status_) return;
 
-    for (auto& skill : skills_) {
+    for (const Node& node : nodes_) {
+        SkillDef& skill = skills_[node.skill];
         if (skill.id != _id) continue;
 
         uint32_t level = GetAcquiredLevel(skill.id);
@@ -438,168 +400,205 @@ void SkillTree::ApplySkill(const std::string& _id) {
 
         acquiredLevels_[skill.id]++;
         bool isMaxed = (acquiredLevels_[skill.id] >= skill.maxLevel);
-        PlayAcquireEffect(skill.id, isMaxed);
-        PlayPanelEffect();
+        // 演出は戻す先の見た目を読むので、新しい状態の色にしてから始める
         Refresh();
+        PlayAcquireEffect(node, isMaxed);
         return;
     }
 }
 
-void SkillTree::PositionCursorAtSelected() {
-    if (selectableIndices_.empty()) return;
+void SkillTree::UpdateTooltip() {
+    const Node* node = GetTooltipTarget();
+    if (!node || !status_) {
+        tooltip_.canvas.SetVisible(false);
+        tooltip_.target = nullptr;
+        return;
+    }
 
-    size_t elemIndex = selectableIndices_[selectedIndex_];
-    auto rect = ui_->GetElementRect(elemIndex);
-    float cursorX = rect.position.x;
-    float cursorY = rect.position.y - rect.size.y / 2.f - 16.f;
+    const SkillDef& skill = skills_[node->skill];
+    const uint32_t level = GetAcquiredLevel(skill.id);
+    const bool maxed = (level >= skill.maxLevel);
 
-    cursor_->SetPosition({cursorX, cursorY});
-    start_ = {cursorX, cursorY};
-    destination_ = start_;
-    timer_ = interpolationTime_ + 1.f;
+    // 1 行目は名前とレベル。2 行目からは出す行だけを上から詰める
+    tooltip_.title.SetText(maxed ? std::format("{}   MAX", skill.name)
+                                 : std::format("{}   Lv {}/{}", skill.name, level, skill.maxLevel));
+    tooltip_.title.SetOffset({TOOLTIP_PADDING / TOOLTIP_SIZE.x, TOOLTIP_TITLE_TOP / TOOLTIP_SIZE.y});
 
-    UpdatePreview();
+    float lineTop = TOOLTIP_FIRST_LINE;
+    const auto showLine = [&lineTop](GEUI::Widget& _line, std::string_view _text, const Vector4& _color) {
+        _line.SetText(_text);
+        _line.SetColor(_color);
+        _line.SetOffset({TOOLTIP_PADDING / TOOLTIP_SIZE.x, lineTop / TOOLTIP_SIZE.y});
+        _line.SetVisible(true);
+        lineTop += TOOLTIP_LINE_STEP;
+    };
+
+    showLine(tooltip_.description, skill.description, HudStyle::GRAY);
+
+    // 効果は今の値と取得後の値を並べる。MAX なら今の値だけ
+    const StatChange stats[] = {
+        {"HP",          status_->playerStatus.hp,     skill.effect.hp,     "",  false},
+        {"Damage",      status_->playerStatus.damage, skill.effect.damage, "",  false},
+        {"Speed",       status_->playerStatus.ms,     skill.effect.ms,     "",  false},
+        {"Attack Speed", status_->playerStatus.as,    skill.effect.as,     "",  false},
+        {"Time",        status_->time,                skill.time,          "s", false},
+        {"Max Enemies", static_cast<float>(status_->maxEnemyCount), static_cast<float>(skill.maxEnemyCount), "", true},
+        {"Spawn Time",  status_->enemySpawnInterval,  skill.enemySpawnInterval, "s", false},
+    };
+    size_t effectCount = 0;
+    for (const StatChange& stat : stats) {
+        if (stat.delta == 0.f) continue;
+        if (effectCount >= tooltip_.effects.size()) {
+            Log::Send(Log::Level::WARNING, "SkillTree: too many effects to show - " + skill.id);
+            break;
+        }
+        std::string text = std::format("{}: {}", stat.label, FormatStat(stat.current, stat));
+        if (!maxed) {
+            text += " -> " + FormatStat(stat.current + stat.delta, stat);
+        }
+        showLine(tooltip_.effects[effectCount++], text, HudStyle::WHITE);
+    }
+    for (size_t i = effectCount; i < tooltip_.effects.size(); ++i) {
+        tooltip_.effects[i].SetVisible(false);
+    }
+
+    // MAX ならもう払わないので、コストは出さない
+    if (maxed) {
+        tooltip_.cost.SetVisible(false);
+    } else {
+        const bool affordable = (status_->point >= skill.cost);
+        showLine(tooltip_.cost, std::format("Cost: {}pt", skill.cost), affordable ? HudStyle::WHITE : HudStyle::RED);
+    }
+
+    // 前提は MAX まで取る必要があるので、まだ足りない前提だけを出す
+    std::string missing;
+    for (const auto& required : skill.required) {
+        const SkillDef* requiredSkill = FindSkillByName(required);
+        if (!requiredSkill || GetAcquiredLevel(required) >= requiredSkill->maxLevel) continue;
+        if (!missing.empty()) missing += ", ";
+        missing += requiredSkill->name;
+    }
+    if (missing.empty()) {
+        tooltip_.need.SetVisible(false);
+    } else {
+        showLine(tooltip_.need, std::format("(Need: {})", missing), HudStyle::RED);
+    }
+
+    // ノードの右に出し、画面からはみ出すなら左に出す。上下は画面の内側に収める
+    const Vector2 center = ToScreenPixels(node->button.GetOffset());
+    Vector2 topLeft = {center.x + NODE_HALF + TOOLTIP_GAP, center.y - TOOLTIP_SIZE.y * 0.5f};
+    float slide = -TOOLTIP_SLIDE;
+    if (topLeft.x + TOOLTIP_SIZE.x > SCREEN_SIZE.x - SCREEN_MARGIN) {
+        topLeft.x = center.x - NODE_HALF - TOOLTIP_GAP - TOOLTIP_SIZE.x;
+        slide = TOOLTIP_SLIDE;
+    }
+    topLeft.y = std::clamp(topLeft.y, SCREEN_MARGIN, SCREEN_SIZE.y - SCREEN_MARGIN - TOOLTIP_SIZE.y);
+    tooltip_.offset = ToScreenRatio(topLeft);
+    tooltip_.slide = slide;
+
+    // 出す相手が変わったときだけ出し直す。取得で中身が変わっただけなら、そのまま見せる
+    if (tooltip_.target != node) {
+        tooltip_.target = node;
+        tooltip_.time = 0.f;
+    }
+    tooltip_.canvas.SetVisible(true);
+    UpdateTooltipFade(0.f);
 }
 
-void SkillTree::UpdatePreview() {
-    if (selectableIndices_.empty()) return;
+void SkillTree::UpdateTooltipFade(float _deltaTime) {
+    if (!tooltip_.target) return;
 
-    size_t elemIndex = selectableIndices_[selectedIndex_];
-    const SkillDef* skill = FindSkillByElementIndex(elemIndex);
+    tooltip_.time = std::min(tooltip_.time + _deltaTime, TOOLTIP_FADE_TIME);
+    const float t = tooltip_.time / TOOLTIP_FADE_TIME;
+    // 出始めが速く、止まる直前でゆっくりになるように
+    const float eased = 1.f - (1.f - t) * (1.f - t);
 
-    constexpr Vector2 DIGIT_TEX_SIZE = {64.f, 96.f};
-
-    auto setDigit = [this, &DIGIT_TEX_SIZE](const std::string& _name, int32_t _digit, bool _visible = true) {
-        auto* elem = ui_->FindElementByName(_name);
-        if (!elem) return;
-        elem->SetTexture("numbers.png");
-        elem->SetTextureRegion({static_cast<float>(std::abs(_digit) % 10) * DIGIT_TEX_SIZE.x, 0.f}, DIGIT_TEX_SIZE);
-        elem->SetVisible(_visible);
-    };
-
-    auto setIcon = [this](const std::string& _name, const std::string& _tex, bool _visible = true) {
-        auto* elem = ui_->FindElementByName(_name);
-        if (!elem) return;
-        elem->SetTexture(_tex);
-        elem->SetTextureRegion({}, {});
-        elem->SetVisible(_visible);
-    };
-
-    auto setText = [this](const std::string& _name, const std::string& _text, bool _visible = true) {
-        auto* elem = ui_->FindElementByName(_name);
-        if (!elem) return;
-        elem->SetText(_text);
-        elem->SetVisible(_visible);
-    };
-
-    if (skill) {
-        uint32_t level  = GetAcquiredLevel(skill->id);
-        bool     maxed  = (level >= skill->maxLevel);
-
-        int32_t absVal = std::abs(skill->displayValue);
-
-        // スキル名テキスト
-        setText("pv_name", skill->name);
-
-        // 説明テキスト
-        setText("pv_description", skill->description);
-
-        // レベル表示 (MAX は金色、通常はシアン)
-        {
-            auto* lvElem = ui_->FindElementByName("pv_level");
-            if (lvElem) {
-                lvElem->SetVisible(true);
-                if (maxed) {
-                    lvElem->SetText("MAX");
-                    lvElem->SetColor({1.f, 0.82f, 0.1f, 1.f});
-                } else {
-                    lvElem->SetText("Lv " + std::to_string(level) + " / " + std::to_string(skill->maxLevel));
-                    lvElem->SetColor({0.5f, 0.9f, 0.9f, 1.f});
-                }
-            }
-        }
-
-        setIcon("pv_stat_icon", skill->iconTexture);
-        setIcon("pv_sign", skill->displayValue >= 0 ? "sign_plus.png" : "sign_minus.png");
-        setDigit("pv_val_d0", absVal / 10);
-        setDigit("pv_val_d1", absVal % 10);
-
-        if (maxed) {
-            setText("pv_cost_label", "COST", false);
-            setIcon("pv_pt_icon", "white_x16.png", false);
-            setDigit("pv_pt_d0", 0, false);
-            setDigit("pv_pt_d1", 0, false);
-        } else {
-            int32_t cost = static_cast<int32_t>(skill->cost);
-            setText("pv_cost_label", "COST", true);
-            setIcon("pv_pt_icon", "pt_icon.png", true);
-            setDigit("pv_pt_d0", cost / 10, true);
-            setDigit("pv_pt_d1", cost % 10, true);
-        }
-
-        // バッジをリセット (選択変更時に前回の残像を消す)
-        auto* badge = ui_->FindElementByName("pv_levelup_badge");
-        if (badge) {
-            Vector4 c = badge->GetColor();
-            c.w = 0.f;
-            badge->SetColor(c);
-        }
-    } else {
-        setText("pv_name", "", false);
-        setText("pv_description", "", false);
-        setText("pv_level", "", false);
-        setText("pv_cost_label", "COST", false);
-        setIcon("pv_stat_icon", "white_x16.png", false);
-        setIcon("pv_sign", "white_x16.png", false);
-        setDigit("pv_val_d0", 0, false);
-        setDigit("pv_val_d1", 0, false);
-        setIcon("pv_pt_icon", "white_x16.png", false);
-        setDigit("pv_pt_d0", 0, false);
-        setDigit("pv_pt_d1", 0, false);
-        auto* badge = ui_->FindElementByName("pv_levelup_badge");
-        if (badge) {
-            Vector4 c = badge->GetColor();
-            c.w = 0.f;
-            badge->SetColor(c);
-        }
-    }
+    tooltip_.canvas.SetAlpha(eased);
+    const float slide = tooltip_.slide * (1.f - eased) / SCREEN_SIZE.x;
+    tooltip_.root.SetOffset({tooltip_.offset.x + slide, tooltip_.offset.y});
 }
 
 void SkillTree::UpdatePointDisplay() {
     if (!status_) return;
 
-    constexpr Vector2 DIGIT_TEX_SIZE = {64.f, 96.f};
-
-    auto setDigit = [this, &DIGIT_TEX_SIZE](const std::string& _name, int32_t _digit) {
-        auto* elem = ui_->FindElementByName(_name);
-        if (!elem) return;
-        elem->SetTexture("numbers.png");
-        elem->SetTextureRegion({static_cast<float>(std::abs(_digit) % 10) * DIGIT_TEX_SIZE.x, 0.f}, DIGIT_TEX_SIZE);
-    };
-
-    int32_t pt = static_cast<int32_t>(status_->point);
-    setDigit("point_d0", pt / 10);
-    setDigit("point_d1", pt % 10);
+    points_.SetText(std::format("PT {}", status_->point));
 }
 
-void SkillTree::CollectNavigableIndices() {
-    selectableIndices_.clear();
+void SkillTree::PlayAcquireEffect(const Node& _node, bool _isMaxed) {
+    PlayEffect(_node.icon, _node.button, _isMaxed ? MaxedAnim : LevelUpAnim);
 
-    for (size_t i = 0; i < ui_->GetElementCount(); ++i) {
-        auto* elem = ui_->GetElement(i);
-        if (!elem) continue;
+    // 文字はノードの真上から始める。戻す先の位置を読むので、前の演出を止めてから置く
+    StopEffect(badge_);
+    const Vector2 center = ToScreenPixels(_node.button.GetOffset());
+    badge_.SetOffset(ToScreenRatio({center.x, center.y - NODE_HALF - BADGE_GAP}));
+    badge_.SetText(_isMaxed ? "MAXED!" : "LEVEL UP!");
+    PlayEffect(badge_, badge_, PopupAnim);
+}
 
-        const auto& name = elem->GetName();
+void SkillTree::PlayEffect(GEUI::Widget _colored, GEUI::Widget _moved, AnimFunc _func) {
+    // 同じ相手の演出を重ねると戻す先がずれるので、前の演出を戻してから始める
+    StopEffect(_colored);
 
-        if (name == "Continue") {
-            selectableIndices_.push_back(i);
-            continue;
-        }
-
-        if (FindSkillByName(name)) {
-            selectableIndices_.push_back(i);
-        }
+    Effect effect;
+    effect.colored = _colored;
+    effect.moved = _moved;
+    effect.func = _func;
+    effect.baseColor = _colored.GetColor();
+    if (_moved.IsValid()) {
+        effect.baseOffset = _moved.GetOffset();
+        effect.baseScale = _moved.GetScale();
     }
+    effects_.push_back(effect);
+}
+
+void SkillTree::StopEffect(const GEUI::Widget& _colored) {
+    std::erase_if(effects_, [this, &_colored](Effect& _effect) {
+        if (_effect.colored != _colored) return false;
+        RestoreEffect(_effect);
+        return true;
+    });
+}
+
+void SkillTree::StopAllEffects() {
+    for (Effect& effect : effects_) {
+        RestoreEffect(effect);
+    }
+    effects_.clear();
+}
+
+void SkillTree::UpdateEffects(float _deltaTime) {
+    std::erase_if(effects_, [this, _deltaTime](Effect& _effect) {
+        _effect.time += _deltaTime;
+        Vector2 pos{};
+        Vector4 col = _effect.baseColor;
+        float scale = 1.f;
+        const bool finished = _effect.func(_effect.time, pos, col, scale);
+        if (finished) {
+            RestoreEffect(_effect);
+            return true;
+        }
+
+        _effect.colored.SetColor(col);
+        if (_effect.moved.IsValid()) {
+            const Vector2 move = ToScreenRatio(pos);
+            _effect.moved.SetOffset({_effect.baseOffset.x + move.x, _effect.baseOffset.y + move.y});
+            _effect.moved.SetScale(_effect.baseScale * scale);
+        }
+        return false;
+    });
+}
+
+void SkillTree::RestoreEffect(Effect& _effect) {
+    _effect.colored.SetColor(_effect.baseColor);
+    if (_effect.moved.IsValid()) {
+        _effect.moved.SetOffset(_effect.baseOffset);
+        _effect.moved.SetScale(_effect.baseScale);
+    }
+}
+
+const SkillTree::Node* SkillTree::GetTooltipTarget() const {
+    // マウス操作中にどのノードにも乗っていなければ出さない
+    return FindNodeByWidget(keyboardMode_ ? focused_ : hovered_);
 }
 
 uint32_t SkillTree::GetAcquiredLevel(const std::string& _id) const {
@@ -643,37 +642,12 @@ bool SkillTree::HasAcquirableMissingRequirement(const SkillDef& _skill) const {
     return hasMissingRequirement;
 }
 
-void SkillTree::PlayAcquireEffect(const std::string& _id, bool _isMaxed) {
-    auto* elem = ui_->FindElementByName(_id);
-    if (!elem) return;
-    elem->SetShowFunc(_isMaxed ? kMaxedAnim : kLevelUpAnim);
-    elem->PlayShow();
-
-    auto* levelElem = ui_->FindElementByName("pv_level");
-    if (levelElem) {
-        levelElem->SetShowFunc(_isMaxed ? kMaxedAnim : kLevelUpAnim);
-        levelElem->PlayShow();
+const SkillTree::Node* SkillTree::FindNodeByWidget(const GEUI::Widget& _widget) const {
+    if (!_widget.IsValid()) return nullptr;
+    for (const Node& node : nodes_) {
+        if (node.button == _widget) return &node;
     }
-
-    auto* badge = ui_->FindElementByName("pv_levelup_badge");
-    if (badge) {
-        badge->SetText(_isMaxed ? "MAXED!" : "LEVEL UP!");
-        badge->SetShowFunc(kPopupAnim);
-        badge->PlayShow();
-    }
-}
-
-void SkillTree::PlayPanelEffect() {
-    auto* panel = ui_->FindElementByName("SelectedContent");
-    if (!panel) return;
-    panel->SetShowFunc(kPanelFlashAnim);
-    panel->PlayShow();
-}
-
-const SkillTree::SkillDef* SkillTree::FindSkillByElementIndex(size_t _elemIndex) const {
-    auto* elem = ui_->GetElement(_elemIndex);
-    if (!elem) return nullptr;
-    return FindSkillByName(elem->GetName());
+    return nullptr;
 }
 
 const SkillTree::SkillDef* SkillTree::FindSkillByName(const std::string& _name) const {

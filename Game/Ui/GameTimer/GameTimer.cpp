@@ -1,106 +1,96 @@
+#define NOMINMAX
 #include "GameTimer.hpp"
 
 #include <algorithm>
+#include <cmath>
+#include <format>
 
 #include "imgui.h"
-#include "Math/Easing.hpp"
+#include "Ui/HudLayout.hpp"
+#include "Ui/HudStyle.hpp"
 #include "src/Time/Time.hpp"
 
-#undef min
-#undef max
+namespace {
+    constexpr const char* CANVAS_PATH = "Assets/UI/Timer.json";
+}
+
+GameTimer::~GameTimer() {
+    ui_.Unload();
+}
 
 void GameTimer::Initialize() {
-    sprites_[0] = std::make_unique<Sprite>();
-    sprites_[0]->Initialize("numbers.png");
-    sprites_[0]->SetSize(size_);
-    sprites_[0]->SetPosition({position_.x - 32.f, position_.y});
-    sprites_[0]->SetAnchorPoint({ 0.5f, 0.5f });
-    sprites_[0]->SetColor({ 1.f, 1.f, 1.f, 1.f });
-    sprites_[0]->SetTextureLeftTop({ 0.f, 0.f });
-    sprites_[0]->SetTextureSize(TEXTURE_SIZE);
+    ui_ = GEUI::Canvas::Load(CANVAS_PATH);
+    ui_.SetVisible(false);
 
-    sprites_[1] = std::make_unique<Sprite>();
-    sprites_[1]->Initialize("numbers.png");
-    sprites_[1]->SetSize(size_);
-    sprites_[1]->SetPosition({position_.x + 32.f, position_.y});
-    sprites_[1]->SetAnchorPoint({ 0.5f, 0.5f });
-    sprites_[1]->SetColor({ 1.f, 1.f, 1.f, 1.f });
-    sprites_[1]->SetTextureLeftTop({ 0.f, 0.f });
-    sprites_[1]->SetTextureSize(TEXTURE_SIZE);
+    root_ = ui_.Find("Timer");
+    text_ = root_.Find("Text");
+    fill_ = root_.Find("Bar/Fill");
 }
 
 void GameTimer::Update() {
-    if (!active_) return;
-    done_ = false;
+    if (!ui_.IsVisible()) return;
 
-    float deltaTime = Time::GetDeltaTime();
+    const float deltaTime = Time().GetDeltaTime();
 
-    Vector2 drawPos = position_;
-    float alpha = 1.f;
-
-    if (introAnimating_) {
-        introElapsed_ += deltaTime;
-        const float t = std::min(introElapsed_ / INTRO_DURATION, 1.f);
-        drawPos = Ease::Out::Cubic(introStartPos_, position_, t);
-        alpha = t;
-        if (t >= 1.f) introAnimating_ = false;
-    } else {
-        time_ -= deltaTime;
-        if (time_ <= 0.f) {
-            time_ = 0.f;
-            done_ = true;
-        }
+    // フェードインが終わるまでは時間を進めない
+    if (fadeElapsed_ < HudStyle::FADE_DURATION) {
+        fadeElapsed_ = std::min(fadeElapsed_ + deltaTime, HudStyle::FADE_DURATION);
+        ui_.SetAlpha(fadeElapsed_ / HudStyle::FADE_DURATION);
+    } else if (!done_ && !paused_) {
+        time_ = std::max(0.f, time_ - deltaTime);
+        done_ = time_ <= 0.f;
     }
 
-    int i = std::clamp(static_cast<int>(time_), 0, 99);
-
-    for (int j = 1; j >= 0; --j) {
-        sprites_[j]->SetPosition({ drawPos.x + (j - 0.5f) * size_.x, drawPos.y });
-        sprites_[j]->SetSize(size_);
-        sprites_[j]->SetColor({ color_.x, color_.y, color_.z, color_.w * alpha });
-        int v = (i % 10);
-        sprites_[j]->SetTextureLeftTop({ v * TEXTURE_SIZE.x, 0.f });
-        sprites_[j]->Update();
-        i /= 10;
-    }
-}
-
-void GameTimer::PlayIntroAnim() {
-    introStartPos_ = { 640.f, 360.f };
-    introElapsed_  = 0.f;
-    introAnimating_ = true;
-}
-
-void GameTimer::Draw() const {
-    for (const auto& sprite : sprites_) {
-        sprite->Draw();
-    }
+    ApplyTime();
 }
 
 void GameTimer::Debug() {
 #ifdef _DEBUG
     ImGui::Begin("Game Timer Debug");
-
-    ImGui::Text("Active ");
+    // 残り時間を直接動かす。0 にするとそのままラウンド終了の判定が通る
+    if (ImGui::SliderFloat("Remaining", &time_, 0.f, duration_, "%.2f s")) {
+        done_ = time_ <= 0.f;
+        ApplyTime();
+    }
+    ImGui::Checkbox("Stop", &paused_);
+    ImGui::Text("Duration: %.2f", duration_);
+    ImGui::Text("Done: %s", done_ ? "Yes" : "No");
+    if (ImGui::Button("Reset")) SetDuration(duration_);
     ImGui::SameLine();
-    ImGui::Checkbox("##Active", &active_);
+    if (ImGui::Button("Play Intro")) PlayIntroAnim();
 
-    ImGui::Text("Time");
-    ImGui::SetNextItemWidth(150.f);
-    ImGui::DragFloat("##Time", &time_, 0.1f, 0.f, 100.f);
-
-    ImGui::Text("Position");
-    ImGui::SetNextItemWidth(150.f);
-    ImGui::DragFloat2("##Position", &position_.x, 1.f);
-
-    ImGui::Text("Size");
-    ImGui::SetNextItemWidth(150.f);
-    ImGui::DragFloat2("##Size", &size_.x, 1.f);
-
+    HudLayout::Group groups[] = {{"Timer", root_}};
+    for (HudLayout::Group& group : groups) {
+        HudLayout::DrawEditor(group);
+    }
+    HudLayout::DrawSaveButton(CANVAS_PATH, groups);
     ImGui::End();
 #endif
 }
 
 void GameTimer::SetDuration(const float _sec) {
+    duration_ = _sec;
     time_ = _sec;
+    done_ = false;
+    ApplyTime();
+}
+
+void GameTimer::SetActive(const bool _active) {
+    ui_.SetVisible(_active);
+}
+
+void GameTimer::PlayIntroAnim() {
+    fadeElapsed_ = 0.f;
+    ui_.SetAlpha(0.f);
+    ui_.SetVisible(true);
+}
+
+void GameTimer::ApplyTime() {
+    // 切り上げて表示し、開始時に設定値、終了時に 0 が見えるようにする
+    const int seconds = std::max(0, static_cast<int>(std::ceil(time_)));
+    text_.SetText(std::format("TIME: {}", seconds));
+
+    const float ratio = duration_ > 0.f ? time_ / duration_ : 0.f;
+    fill_.SetSize({ratio, 1.f});
+    fill_.SetColor(HudStyle::GaugeColor(ratio));
 }

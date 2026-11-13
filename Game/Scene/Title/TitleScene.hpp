@@ -3,20 +3,21 @@
 
 #include <memory>
 
+#include "GEUI.hpp"
 #include "IScene.hpp"
-#include "Sprite.hpp"
 #include "Stage/Stage.hpp"
 
 class TitleScene : public IScene{
     GameStatus status_{};
     std::unique_ptr<Stage> stage_;
-    std::unique_ptr<Sprite> titleLogo_;
-    std::unique_ptr<Sprite> pushtoStart_;
 
-    float alpha_ = 0.f;
-    bool increase_ = true;
+    GEUI::Canvas ui_;
+    GEUI::Widget start_;
+    GEUI::Widget quit_;
 
 public:
+    ~TitleScene() override;
+
     void Initialize() override;
     void Update() override;
     void Draw() override;
@@ -25,6 +26,7 @@ public:
 
 private:
     void OnEnable() override;
+    void HandleInput();
 }; // class TitleScene
 
 #endif // TitleScene_HPP_

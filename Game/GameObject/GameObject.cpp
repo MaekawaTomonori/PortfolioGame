@@ -24,13 +24,12 @@ void GameObject::UpdateTransform() {
 }
 
 void GameObject::ApplyVelocity() {
-    position_ += velocity_ * Time::GetDeltaTime();
+    position_ += velocity_ * Time().GetDeltaTime();
 }
 
 void GameObject::SetModel(const std::string& _name) {
     model_ = std::make_unique<Model>();
     model_->Initialize(_name);
-    model_->SetEnvironmentTexture("skybox.dds");
 }
 
 void GameObject::UpdateModel() {

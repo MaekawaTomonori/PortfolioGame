@@ -207,9 +207,10 @@ void FollowCamera::ApplyShake() {
         shaking_ = false;
         shakeTimer_ = 0.f;
         shake = {0.f, 0.f, 0.f};
+        return;
     }
 
-    shakeTimer_ -= Time::GetDeltaTime();
+    shakeTimer_ -= Time().GetDeltaTime();
     shake = Vector3::Random() * shakePower_;
     cameraController_->GetActive()->transform_.translate += shake;
     shakePower_ *= SHAKE_DECAY_RATE;

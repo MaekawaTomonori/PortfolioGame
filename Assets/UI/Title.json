@@ -1,0 +1,109 @@
+{
+    "referenceSize": [1280.0, 720.0],
+    "order": 10,
+    "visible": true,
+    "blockInput": true,
+    "children": [
+        {
+            "name": "Logo",
+            "type": "Text",
+            "anchor": [0.0, 0.0],
+            "pivot": [0.5, 0.5],
+            "offset": [0.5, 0.333333],
+            "size": [0.625, 0.222222],
+            "color": [1.0, 1.0, 1.0, 1.0],
+            "text": "DARKRUN",
+            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
+            "fontSize": 96.0,
+            "alignX": 1,
+            "alignY": 1,
+            "children": []
+        },
+        {
+            "name": "Start",
+            "type": "Button",
+            "anchor": [0.0, 0.0],
+            "pivot": [0.5, 0.5],
+            "offset": [0.5, 0.611111],
+            "size": [0.1875, 0.077778],
+            "color": [1.0, 1.0, 1.0, 1.0],
+            "selectable": true,
+            "selectedStyle": { "color": [1.0, 1.0, 1.0, 1.0], "shift": [0.0, 0.0], "scale": 1.08 },
+            "children": [
+                {
+                    "name": "Box",
+                    "type": "Image",
+                    "anchor": [0.5, 0.5],
+                    "pivot": [0.5, 0.5],
+                    "offset": [0.0, 0.0],
+                    "size": [1.0, 1.0],
+                    "color": [0.0, 0.0, 0.0, 0.5],
+                    "image": "UI/button.png",
+                    "followState": true,
+                    "selectedStyle": { "color": [1.0, 1.0, 1.0, 0.9], "shift": [0.0, 0.0], "scale": 1.0 },
+                    "children": []
+                },
+                {
+                    "name": "Label",
+                    "type": "Text",
+                    "anchor": [0.0, 0.0],
+                    "pivot": [0.0, 0.0],
+                    "offset": [0.0, 0.0],
+                    "size": [1.0, 1.0],
+                    "color": [1.0, 1.0, 1.0, 1.0],
+                    "text": "START",
+                    "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
+                    "fontSize": 22.0,
+                    "alignX": 1,
+                    "alignY": 1,
+                    "followState": true,
+                    "selectedStyle": { "color": [0.05, 0.05, 0.05, 1.0], "shift": [0.0, 0.0], "scale": 1.0 },
+                    "children": []
+                }
+            ]
+        },
+        {
+            "name": "Quit",
+            "type": "Button",
+            "anchor": [0.0, 0.0],
+            "pivot": [0.5, 0.5],
+            "offset": [0.5, 0.722222],
+            "size": [0.1875, 0.077778],
+            "color": [1.0, 1.0, 1.0, 1.0],
+            "selectable": true,
+            "selectedStyle": { "color": [1.0, 1.0, 1.0, 1.0], "shift": [0.0, 0.0], "scale": 1.08 },
+            "children": [
+                {
+                    "name": "Box",
+                    "type": "Image",
+                    "anchor": [0.5, 0.5],
+                    "pivot": [0.5, 0.5],
+                    "offset": [0.0, 0.0],
+                    "size": [1.0, 1.0],
+                    "color": [0.0, 0.0, 0.0, 0.5],
+                    "image": "UI/button.png",
+                    "followState": true,
+                    "selectedStyle": { "color": [1.0, 1.0, 1.0, 0.9], "shift": [0.0, 0.0], "scale": 1.0 },
+                    "children": []
+                },
+                {
+                    "name": "Label",
+                    "type": "Text",
+                    "anchor": [0.0, 0.0],
+                    "pivot": [0.0, 0.0],
+                    "offset": [0.0, 0.0],
+                    "size": [1.0, 1.0],
+                    "color": [1.0, 1.0, 1.0, 1.0],
+                    "text": "QUIT",
+                    "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
+                    "fontSize": 22.0,
+                    "alignX": 1,
+                    "alignY": 1,
+                    "followState": true,
+                    "selectedStyle": { "color": [0.05, 0.05, 0.05, 1.0], "shift": [0.0, 0.0], "scale": 1.0 },
+                    "children": []
+                }
+            ]
+        }
+    ]
+}

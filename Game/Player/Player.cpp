@@ -29,7 +29,7 @@ Player::Player(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
 
     SetModel("animatedCube");
     model_->SetTexture("white_x16.png");
-    model_->SetColor(BaseColor);
+    model_->SetColor(BASE_COLOR);
     model_->SetName("Player");
     SetScale({0.4f, 0.4f, 0.4f});
     UpdateModel();
@@ -117,7 +117,7 @@ void Player::Update() {
         }
     }
 
-    UpdateInvulnerability(Time::GetDeltaTime());
+    UpdateInvulnerability(Time().GetDeltaTime());
 
     ApplyVelocity();
     ClampToFieldBounds();
@@ -183,10 +183,10 @@ void Player::OnCollision(const Collision::Collider* _collider) {
             p.y += 1.5f;
             particle_->Emit("hit", p);
 
-            model_->SetColor(DamageFlashColor);
+            model_->SetColor(DAMAGE_FLASH_COLOR);
 
             invulnerability_ = true;
-            invulnerabilityTimer_ = InvulnerabilityDuration;
+            invulnerabilityTimer_ = INVULNERABILITY_DURATION;
 
             status_.hp -= 1.f;
         }
@@ -261,14 +261,14 @@ void Player::ClampToFieldBounds() {
     position_.z = std::clamp(position_.z, -fieldHalfExtent_, fieldHalfExtent_);
 
     float distanceToEdge = fieldHalfExtent_ - std::max(std::abs(position_.x), std::abs(position_.z));
-    bool nearEdge = distanceToEdge <= FieldEdgeWarningDistance;
+    bool nearEdge = distanceToEdge <= FIELD_EDGE_WARNING_DISTANCE;
     if (nearEdge == isNearFieldEdge_) return;
     isNearFieldEdge_ = nearEdge;
 
     if (!postEffect_) return;
 
     if (isNearFieldEdge_) {
-        postEffect_->ApplyPreset("FieldEdge", "maintain_state");
+        postEffect_->ApplyPreset("FieldEdge");
         return;
     }
     postEffect_->SetActive("FieldEdge", false);
@@ -280,20 +280,20 @@ void Player::UpdateInvulnerability(const float _deltaTime) {
     invulnerabilityTimer_ -= _deltaTime;
 
     // 進行度を計算 (1.0 → 0.0)
-    float progress = invulnerabilityTimer_ / InvulnerabilityDuration;
+    float progress = invulnerabilityTimer_ / INVULNERABILITY_DURATION;
 
     // 白(2.0, 2.0, 2.0) → 青(0.3, 0.3, 1.0) にグラデーション
     Vector4 currentColor;
-    currentColor.x = MathUtils::Lerp(BaseColor.x, DamageFlashColor.x, progress);
-    currentColor.y = MathUtils::Lerp(BaseColor.y, DamageFlashColor.y, progress);
-    currentColor.z = MathUtils::Lerp(BaseColor.z, DamageFlashColor.z, progress);
+    currentColor.x = MathUtils::Lerp(BASE_COLOR.x, DAMAGE_FLASH_COLOR.x, progress);
+    currentColor.y = MathUtils::Lerp(BASE_COLOR.y, DAMAGE_FLASH_COLOR.y, progress);
+    currentColor.z = MathUtils::Lerp(BASE_COLOR.z, DAMAGE_FLASH_COLOR.z, progress);
     currentColor.w = 1.f;
     model_->SetColor(currentColor);
 
     if (invulnerabilityTimer_ <= 0.f) {
         invulnerability_ = false;
-        invulnerabilityTimer_ = InvulnerabilityDuration;
-        model_->SetColor(BaseColor);
+        invulnerabilityTimer_ = INVULNERABILITY_DURATION;
+        model_->SetColor(BASE_COLOR);
     }
 }
 

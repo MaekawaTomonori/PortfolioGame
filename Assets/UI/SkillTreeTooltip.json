@@ -1,0 +1,232 @@
+{
+    "referenceSize": [
+        1280.0,
+        720.0
+    ],
+    "order": 51,
+    "visible": false,
+    "blockInput": false,
+    "children": [
+        {
+            "name": "Tooltip",
+            "type": "Image",
+            "anchor": [
+                0,
+                0
+            ],
+            "pivot": [
+                0,
+                0
+            ],
+            "offset": [
+                0,
+                0
+            ],
+            "size": [
+                0.234375,
+                0.238889
+            ],
+            "color": [
+                0.0,
+                0.0,
+                0.0,
+                0.85
+            ],
+            "image": "UI/tooltip.png",
+            "children": [
+                {
+                    "name": "Title",
+                    "type": "Text",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0,
+                        0
+                    ],
+                    "offset": [
+                        0.046667,
+                        0
+                    ],
+                    "size": [
+                        0.906667,
+                        0.139535
+                    ],
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "text": "Skill   Lv 0/1",
+                    "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
+                    "fontSize": 20.0,
+                    "alignX": 0,
+                    "alignY": 1,
+                    "children": []
+                },
+                {
+                    "name": "Description",
+                    "type": "Text",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0,
+                        0
+                    ],
+                    "offset": [
+                        0.046667,
+                        0
+                    ],
+                    "size": [
+                        0.906667,
+                        0.139535
+                    ],
+                    "color": [
+                        0.8,
+                        0.8,
+                        0.8,
+                        1.0
+                    ],
+                    "text": "Description",
+                    "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
+                    "fontSize": 16.0,
+                    "alignX": 0,
+                    "alignY": 1,
+                    "children": []
+                },
+                {
+                    "name": "Effect0",
+                    "type": "Text",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0,
+                        0
+                    ],
+                    "offset": [
+                        0.046667,
+                        0
+                    ],
+                    "size": [
+                        0.906667,
+                        0.139535
+                    ],
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "text": "Stat: 0.0 -> 0.0",
+                    "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
+                    "fontSize": 16.0,
+                    "alignX": 0,
+                    "alignY": 1,
+                    "children": []
+                },
+                {
+                    "name": "Effect1",
+                    "type": "Text",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0,
+                        0
+                    ],
+                    "offset": [
+                        0.046667,
+                        0
+                    ],
+                    "size": [
+                        0.906667,
+                        0.139535
+                    ],
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "text": "Stat: 0.0 -> 0.0",
+                    "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
+                    "fontSize": 16.0,
+                    "alignX": 0,
+                    "alignY": 1,
+                    "children": []
+                },
+                {
+                    "name": "Cost",
+                    "type": "Text",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0,
+                        0
+                    ],
+                    "offset": [
+                        0.046667,
+                        0
+                    ],
+                    "size": [
+                        0.906667,
+                        0.139535
+                    ],
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "text": "Cost: 0pt",
+                    "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
+                    "fontSize": 16.0,
+                    "alignX": 0,
+                    "alignY": 1,
+                    "children": []
+                },
+                {
+                    "name": "Need",
+                    "type": "Text",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0,
+                        0
+                    ],
+                    "offset": [
+                        0.046667,
+                        0
+                    ],
+                    "size": [
+                        0.906667,
+                        0.139535
+                    ],
+                    "color": [
+                        1.0,
+                        0.25,
+                        0.25,
+                        1.0
+                    ],
+                    "text": "(Need: Skill)",
+                    "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
+                    "fontSize": 16.0,
+                    "alignX": 0,
+                    "alignY": 1,
+                    "children": []
+                }
+            ]
+        }
+    ]
+}

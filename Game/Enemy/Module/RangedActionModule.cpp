@@ -11,7 +11,7 @@ void RangedActionModule::Update(Enemy* _enemy) {
     const auto* target = _enemy->GetTarget();
     if (!target) return;
 
-    triggerTimer_ += Time::GetDeltaTime();
+    triggerTimer_ += Time().GetDeltaTime();
     if (triggerTimer_ < params_->triggerInterval) return;
     triggerTimer_ = 0.f;
 

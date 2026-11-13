@@ -1,41 +1,32 @@
 #ifndef Pause_HPP_
 #define Pause_HPP_
-#include <memory>
 #include <functional>
-#include <vector>
 
+#include "GEUI.hpp"
 #include "Input.hpp"
-#include "Sprite.hpp"
-#include "Ui/UserInterface.hpp"
 
 class Pause {
-    std::unique_ptr<Ui::Canvas> ui_;
-    std::unique_ptr<Sprite> cursor_;
+    GEUI::Canvas ui_;
+    GEUI::Widget resume_;
+    GEUI::Widget retry_;
+    GEUI::Widget quit_;
 
     Input* input_ = nullptr;
-
-    std::vector<size_t> actionIndices_;
-    int32_t selectedIndex_ = 0;
+    float fadeTime_ = 0.f;
 
     std::function<void()> onResume_;
     std::function<void()> onRetry_;
     std::function<void()> onQuit_;
 
-    float interpolationTime_ = 0.4f;
-    Vector2 start_ {};
-    Vector2 destination_{};
-    float timer_ = 1.f;
-
 public:
+    ~Pause();
+
     void Initialize();
     void Update();
-    void Draw();
 
     void Open();
-    void Close() const;
+    void Close();
     bool IsOpen() const;
-
-    void Debug();
 
     void SetOnResume(std::function<void()> _callback);
     void SetOnRetry(std::function<void()> _callback);
@@ -44,8 +35,7 @@ public:
 private:
     void CheckActivateState();
     void HandleInput();
-    void UpdateCursor();
-    void Execute() const;
+    void UpdateFade(float _deltaTime);
 
 }; // class Pause
 

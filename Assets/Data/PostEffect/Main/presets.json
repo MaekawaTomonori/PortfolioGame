@@ -1,38 +1,26 @@
 {
     "DamageScreen": {
         "duration": 0.6000000238418579,
-        "ignoreList": [],
         "members": [
             {
-                "autoCreate": true,
-                "name": "Vignette",
                 "type": "Vignette"
             }
-        ],
-        "mode": "maintain_state"
+        ]
     },
     "DarkScene": {
         "duration": 2.0,
-        "ignoreList": [],
         "members": [
             {
-                "autoCreate": true,
-                "name": "v",
                 "type": "Vignette"
             }
-        ],
-        "mode": "maintain_state"
+        ]
     },
     "FieldEdge": {
         "duration": 0.4,
-        "ignoreList": [],
         "members": [
             {
-                "autoCreate": true,
-                "name": "FieldEdge",
                 "type": "Vignette"
             }
-        ],
-        "mode": "maintain_state"
+        ]
     }
 }

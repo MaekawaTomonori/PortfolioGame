@@ -11,9 +11,6 @@ struct GameStatus {
     uint16_t maxEnemyCount;
     float enemySpawnInterval;
     PlayerStatus playerStatus;
-
-    // TODO: スキルレベルテーブルを追加し、GameScene::SaveStatus / LoadStatus で
-    //       JSONに永続化できるようにする（例: std::map<std::string, int> skillLevels）
 };
 
 #endif // GameStatus_HPP_

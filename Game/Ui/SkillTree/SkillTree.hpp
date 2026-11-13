@@ -1,13 +1,13 @@
 #ifndef SkillTree_HPP_
 #define SkillTree_HPP_
-#include <memory>
+#include <array>
 #include <functional>
+#include <string>
 #include <unordered_map>
 #include <vector>
 
+#include "GEUI.hpp"
 #include "Input.hpp"
-#include "Sprite.hpp"
-#include "Ui/UserInterface.hpp"
 #include "Status/GameStatus.hpp"
 
 class SkillTree {
@@ -17,7 +17,6 @@ class SkillTree {
         std::string description;
         std::vector<std::string> required;
         std::string iconTexture;
-        int32_t displayValue = 0;
         uint32_t cost = 0;
         uint32_t maxLevel = 1;
         PlayerStatus effect{};
@@ -26,31 +25,72 @@ class SkillTree {
         float enemySpawnInterval = 0.f;
     };
 
-    std::unique_ptr<Ui::Canvas> ui_;
-    std::unique_ptr<Sprite> cursor_;
+    // t: 経過秒, pos: 動かす量(px), col: 色, scale: 倍率。終わったら true
+    using AnimFunc = bool (*)(float _t, Vector2& _pos, Vector4& _col, float& _scale);
+
+    struct Node {
+        GEUI::Widget button;
+        GEUI::Widget icon;
+        GEUI::Widget level;
+        GEUI::Widget line;
+        size_t skill = 0;
+    };
+
+    // 全体を薄くして出すため、ツールチップは別の Canvas にする
+    struct Tooltip {
+        GEUI::Canvas canvas;
+        GEUI::Widget root;
+        GEUI::Widget title;
+        GEUI::Widget description;
+        std::array<GEUI::Widget, 2> effects;
+        GEUI::Widget cost;
+        GEUI::Widget need;
+        const Node* target = nullptr;
+        Vector2 offset{};   // 出し終わった位置（画面に対する割合）
+        float slide = 0.f;  // 出始めのずれ(px)。ノードの側からずれて出てくる
+        float time = 0.f;
+    };
+
+    struct Effect {
+        GEUI::Widget colored;
+        GEUI::Widget moved;
+        AnimFunc func = nullptr;
+        Vector4 baseColor{};
+        Vector2 baseOffset{};
+        float baseScale = 1.f;
+        float time = 0.f;
+    };
+
+    GEUI::Canvas ui_;
+    GEUI::Widget continue_;
+    GEUI::Widget focused_;
+    GEUI::Widget hovered_;
+    GEUI::Widget points_;
+    GEUI::Widget badge_;
+    Tooltip tooltip_;
+    std::vector<Node> nodes_;
+    std::vector<Effect> effects_;
     Input* input_ = nullptr;
+    // 最後の操作がキーなら選択中のノード、マウスならカーソル下のノードの説明を出す
+    bool keyboardMode_ = false;
+    // 開いたときのカーソル位置。ここから動くまでは、カーソル下のノードとクリックを無視する
+    Vector2 openMousePosition_{};
+    bool mouseMoved_ = false;
 
     std::vector<SkillDef> skills_;
     std::unordered_map<std::string, uint32_t> acquiredLevels_;
     GameStatus* status_ = nullptr;
 
-    std::vector<size_t> selectableIndices_;
-    int32_t selectedIndex_ = 0;
-
     std::function<void()> onContinue_;
 
-    float interpolationTime_ = 0.2f;
-    Vector2 start_ {};
-    Vector2 destination_ {};
-    float timer_ = 1.f;
-
 public:
+    ~SkillTree();
+
     void Initialize(GameStatus* _status);
     void Update();
-    void Draw();
 
     void Open();
-    void Close() const;
+    void Close();
     bool IsOpen() const;
 
     void Debug();
@@ -59,23 +99,24 @@ public:
 
 private:
     void HandleInput();
-    void UpdateCursor();
-    void Execute() const;
     void Refresh();
-    void UpdateConnectionLines(const std::unordered_map<std::string, bool>& _reachableSkills) const;
     void LoadSkills(const std::string& _path);
     void ApplySkill(const std::string& _id);
-    void PositionCursorAtSelected();
-    void UpdatePreview();
+    void UpdateTooltip();
+    void UpdateTooltipFade(float _deltaTime);
     void UpdatePointDisplay();
-    void CollectNavigableIndices();
-    void PlayAcquireEffect(const std::string& _id, bool _isMaxed);
-    void PlayPanelEffect();
+    void PlayAcquireEffect(const Node& _node, bool _isMaxed);
+    void PlayEffect(GEUI::Widget _colored, GEUI::Widget _moved, AnimFunc _func);
+    void StopEffect(const GEUI::Widget& _colored);
+    void StopAllEffects();
+    void UpdateEffects(float _deltaTime);
+    void RestoreEffect(Effect& _effect);
+    const Node* GetTooltipTarget() const;
     uint32_t GetAcquiredLevel(const std::string& _id) const;
     bool IsRequirementSatisfied(const SkillDef& _skill) const;
     bool IsSkillAcquirable(const SkillDef& _skill) const;
     bool HasAcquirableMissingRequirement(const SkillDef& _skill) const;
-    const SkillDef* FindSkillByElementIndex(size_t _elemIndex) const;
+    const Node* FindNodeByWidget(const GEUI::Widget& _widget) const;
     const SkillDef* FindSkillByName(const std::string& _name) const;
 
 }; // class SkillTree

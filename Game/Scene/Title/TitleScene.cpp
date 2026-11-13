@@ -3,13 +3,13 @@
 #include "Camera/Director/CameraDirector.hpp"
 #include "Pattern/Singleton.hpp"
 
-namespace {
-    constexpr float FADE_SPEED = 0.02f;
+TitleScene::~TitleScene() {
+    ui_.Unload();
 }
 
 void TitleScene::Initialize() {
     exitTransition_ = Transition::Type::Fade;
-    
+
     status_ = {
         .point = 0,
         .time = 15,
@@ -29,44 +29,39 @@ void TitleScene::Initialize() {
     stage_->Initialize();
     stage_->SetActive(false);
 
-    titleLogo_ = std::make_unique<Sprite>();
-    titleLogo_->Initialize("title.png");
-    titleLogo_->SetPosition({ 640.f, 360.f });
-    titleLogo_->SetAnchorPoint({ .5f, .5f });
+    ui_ = GEUI::Canvas::Load("Assets/UI/Title.json");
+    start_ = ui_.Find("Start");
+    quit_ = ui_.Find("Quit");
+    start_.SetSelected(true);
 
-    pushtoStart_ = std::make_unique<Sprite>();
-    pushtoStart_->Initialize("space.png");
-    pushtoStart_->SetAnchorPoint({ .5f, 0.5f });
-    pushtoStart_->SetPosition({ 640.f, 500.f });
-
-    //PostProcessExecutor* postProcessor_ = game_->GetPostProcessor();
-    //postProcessor_->Add(std::make_unique<Grayscale>(),"Grayscale");
-    //postProcessor_->Add(std::make_unique<Vignette>(), "Vignette");
-    //postProcessor_->Add(std::make_unique<BoxBlur>(), "BoxBlur");
+    // ボタンはマウスでも選べるので、タイトルの間はカーソルを出す
+    Singleton<Input>::GetInstance()->SetCursorVisible(true);
 }
 
 void TitleScene::Update() {
-    if (Singleton<Input>::GetInstance()->IsTrigger(DIK_SPACE)) {
-        // Start the game
+    HandleInput();
+    stage_->Update();
+}
+
+void TitleScene::HandleInput() {
+    const auto input = Singleton<Input>::GetInstance();
+    if (input->IsTrigger(DIK_UP)   || input->IsTrigger(DIK_W)) ui_.Navigate(GEUI::Direction::Up);
+    if (input->IsTrigger(DIK_DOWN) || input->IsTrigger(DIK_S)) ui_.Navigate(GEUI::Direction::Down);
+    if (input->IsTrigger(DIK_RETURN) || input->IsTrigger(DIK_SPACE)) ui_.Submit();
+
+    if (start_.WasPressed()) {
+        // GEUI は暗転より手前に描かれるので、先に消してから暗転させる
+        ui_.SetVisible(false);
         next_ = "game";
         Change();
+    } else if (quit_.WasPressed()) {
+        // Engine のメインループは WM_QUIT を受け取ると終わる
+        PostQuitMessage(0);
     }
-
-    stage_->Update();
-
-    alpha_ += increase_ ? FADE_SPEED : -FADE_SPEED;
-    if (alpha_ >= 1.f) { alpha_ = 1.f; increase_ = false; }
-    else if (alpha_ <= 0.f) { alpha_ = 0.f; increase_ = true; }
-
-    Vector4 color = pushtoStart_->GetColor();
-    color.w = alpha_;
-    pushtoStart_->SetColor(color);
 }
 
 void TitleScene::Draw() {
     stage_->Draw();
-    titleLogo_->Draw();
-    pushtoStart_->Draw();
 }
 
 void TitleScene::Debug() {
@@ -74,6 +69,8 @@ void TitleScene::Debug() {
 }
 
 void TitleScene::Finalize() {
+    // ゲーム中はカーソルを消しておく（メニューを開いたときだけ GameScene が出す）
+    Singleton<Input>::GetInstance()->SetCursorVisible(false);
     IScene::Finalize();
 }
 

@@ -10,13 +10,6 @@ void GameOver::Initialize() {
     sprite_->Initialize("go.png");
     sprite_->SetPosition({ 640.f, 360.f });
     sprite_->SetActivePostEffect(true);
-
-    //bg_ = std::make_unique<Sprite>();
-    //bg_->Initialize("white_x16.png");
-    //bg_->SetColor({0.f,0.f,0.f,1.f});
-    //bg_->SetPosition({640.f, 360.f});
-    //bg_->SetSize({1280.f, 720.f});
-
 }
 
 void GameOver::Update() {
@@ -28,14 +21,11 @@ void GameOver::Update() {
         Change();
     }
 
-    sprite_->Update();
-    //bg_->Update();
-
     sprite_->SetColor({ 1.f, 1.f, 1.f, alpha_ });
+    sprite_->Update();
 }
 
 void GameOver::Draw() {
-    //bg_->Draw();
     sprite_->Draw();
 }
 

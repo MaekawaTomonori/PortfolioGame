@@ -31,9 +31,6 @@ class GameScene : public IScene {
 
     std::unique_ptr<SkillTree> skillTree_;
 
-    std::unique_ptr<Outro> outro_;
-    bool clear_ = false;
-    
     // Status --
     GameStatus status_ {};
 
@@ -42,21 +39,34 @@ class GameScene : public IScene {
     std::unique_ptr<Pause> pause_;
 
     std::unique_ptr<KeyGuide> keyGuide_;
-
     std::unique_ptr<KillCounter> killCounter_;
-
     std::unique_ptr<StageInfoUI> stageInfoUI_;
+
+    bool cursorShown_ = false;
 
 public:
     void Initialize() override;
     void Update() override;
     void Draw() override;
+    void Finalize() override;
     void Debug() override;
 
 private:
     void OnEnable() override;
 
+    /** @brief Pause か SkillTree が開いている間だけ、マウスカーソルを出す */
+    void UpdateCursorVisibility();
+
     void UpdatePlay();
+
+    /** @brief ステージを初期化し、次のラウンドをPLAY状態で開始する */
+    void StartNextRound();
+
+    /** @brief プレイ開始時のHUD（キー案内・タイマー）を表示し、登場演出を流す */
+    void ShowPlayHud();
+
+    /** @brief プレイ中のHUDを隠す */
+    void HidePlayHud();
 
     void LoadStatus();
     void SaveStatus();

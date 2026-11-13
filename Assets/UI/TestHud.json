@@ -1,0 +1,228 @@
+{
+    "referenceSize": [
+        1280.0,
+        720.0
+    ],
+    "order": 0,
+    "visible": true,
+    "blockInput": false,
+    "children": [
+        {
+            "name": "Panel",
+            "anchor": [
+                0.0,
+                0.0
+            ],
+            "pivot": [
+                0.0,
+                0.0
+            ],
+            "offset": [
+                0.03125,
+                0.055556
+            ],
+            "size": [
+                0.25,
+                0.222222
+            ],
+            "color": [
+                1.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "selectedColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "image": "",
+            "visible": true,
+            "selectable": false,
+            "raisable": false,
+            "children": [
+                {
+                    "name": "Image",
+                    "anchor": [
+                        0.0,
+                        0.5
+                    ],
+                    "pivot": [
+                        0.0,
+                        0.5
+                    ],
+                    "offset": [
+                        0.0625,
+                        0.0
+                    ],
+                    "size": [
+                        0.375,
+                        0.75
+                    ],
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "selectedColor": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "image": "uvChecker.png",
+                    "visible": true,
+                    "selectable": false,
+                    "raisable": false,
+                    "children": []
+                },
+                {
+                    "name": "Overlay",
+                    "anchor": [
+                        1.0,
+                        0.5
+                    ],
+                    "pivot": [
+                        1.0,
+                        0.0
+                    ],
+                    "offset": [
+                        -0.0625,
+                        -0.125
+                    ],
+                    "size": [
+                        0.625,
+                        0.5
+                    ],
+                    "color": [
+                        0.0,
+                        0.0,
+                        1.0,
+                        0.5
+                    ],
+                    "selectedColor": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "image": "",
+                    "visible": true,
+                    "selectable": false,
+                    "raisable": false,
+                    "children": []
+                }
+            ]
+        },
+        {
+            "name": "Widget_01",
+            "anchor": [
+                0.5,
+                0.0
+            ],
+            "pivot": [
+                0.5,
+                0.0
+            ],
+            "offset": [
+                0.0,
+                0.027778
+            ],
+            "size": [
+                0.15625,
+                0.055556
+            ],
+            "color": [
+                1.0,
+                1.0,
+                0.0,
+                1.0
+            ],
+            "selectedColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "image": "",
+            "visible": true,
+            "selectable": false,
+            "raisable": false,
+            "children": []
+        },
+        {
+            "name": "Widget_02",
+            "anchor": [
+                0.5,
+                0.5
+            ],
+            "pivot": [
+                0.5,
+                0.5
+            ],
+            "offset": [
+                0.0,
+                0.0
+            ],
+            "size": [
+                0.125,
+                0.166667
+            ],
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                0.800000011920929
+            ],
+            "selectedColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "image": "",
+            "visible": true,
+            "selectable": false,
+            "raisable": false,
+            "children": []
+        },
+        {
+            "name": "Corner",
+            "anchor": [
+                1.0,
+                1.0
+            ],
+            "pivot": [
+                1.0,
+                1.0
+            ],
+            "offset": [
+                -0.03125,
+                -0.055556
+            ],
+            "size": [
+                0.1875,
+                0.166667
+            ],
+            "color": [
+                0.0,
+                1.0,
+                0.0,
+                1.0
+            ],
+            "selectedColor": [
+                0.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "image": "",
+            "visible": true,
+            "selectable": true,
+            "raisable": false,
+            "children": []
+        }
+    ]
+}

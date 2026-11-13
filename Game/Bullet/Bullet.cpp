@@ -17,7 +17,7 @@ void Bullet::Initialize(GameObject* _owner, const Vector3& _direction, const Par
 }
 
 void Bullet::Update() {
-    const float dt = Time::GetDeltaTime();
+    const float dt = Time().GetDeltaTime();
 
     position_ += velocity_ * dt;
     lifetime_ -= dt;

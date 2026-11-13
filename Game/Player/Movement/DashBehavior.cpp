@@ -7,7 +7,7 @@ namespace {
 }
 
 Vector3 DashBehavior::Calculate(const MovementContext& context) {
-    float deltaTime = Time::GetDeltaTime();
+    float deltaTime = Time().GetDeltaTime();
 
     if (!isDashing_ && CanExecute(context)) {
         isDashing_ = true;
@@ -64,6 +64,6 @@ bool DashBehavior::IsCooldown() {
         return false;
     }
 
-    currentCooldown_ -= Time::GetDeltaTime();
+    currentCooldown_ -= Time().GetDeltaTime();
     return true;
 }

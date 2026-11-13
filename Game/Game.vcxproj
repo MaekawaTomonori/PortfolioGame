@@ -137,6 +137,7 @@ xcopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)d
   <ItemGroup>
     <ClInclude Include="Bullet\Bullet.hpp" />
     <ClInclude Include="ColliderType.hpp" />
+    <ClInclude Include="Effect\PerParticleUpdate.hpp" />
     <ClInclude Include="Enemy\Enemies.hpp" />
     <ClInclude Include="Enemy\Module\IEnemyActionModule.hpp" />
     <ClInclude Include="Enemy\Module\DashActionModule.hpp" />
@@ -159,7 +160,6 @@ xcopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)d
     <ClInclude Include="Player\Movement\MovementContext.hpp" />
     <ClInclude Include="Player\Movement\WalkBehavior.hpp" />
     <ClInclude Include="Player\Player.hpp" />
-    <ClInclude Include="Factory\PostEffectFactory.hpp" />
     <ClInclude Include="Player\InputHandler.hpp" />
     <ClInclude Include="Player\Status\PlayerStatus.hpp" />
     <ClInclude Include="Scene\Game\GameScene.hpp" />
@@ -170,6 +170,8 @@ xcopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)d
     <ClInclude Include="Showcase\ItemShowcase.hpp" />
     <ClInclude Include="Stage\Stage.hpp" />
     <ClInclude Include="Status\GameStatus.hpp" />
+    <ClInclude Include="Ui\HudLayout.hpp" />
+    <ClInclude Include="Ui\HudStyle.hpp" />
     <ClInclude Include="Ui\GameTimer\GameTimer.hpp" />
     <ClInclude Include="Ui\KeyGuide\KeyGuide.hpp" />
     <ClInclude Include="Ui\KillCount\KillCounter.hpp" />
@@ -201,7 +203,6 @@ xcopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)d
     <ClCompile Include="Player\Movement\WalkBehavior.cpp" />
     <ClCompile Include="Player\Player.cpp" />
     <ClCompile Include="Player\InputHandler.cpp" />
-    <ClCompile Include="PostEffectFactory.cpp" />
     <ClCompile Include="Scene\Game\GameScene.cpp" />
     <ClCompile Include="Scene\Particle\ParticleScene.cpp" />
     <ClCompile Include="Scene\Result\GameClear.cpp" />
@@ -210,6 +211,7 @@ xcopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)d
     <ClCompile Include="Scene\Title\TitleScene.cpp" />
     <ClCompile Include="Showcase\ItemShowcase.cpp" />
     <ClCompile Include="Stage\Stage.cpp" />
+    <ClCompile Include="Ui\HudLayout.cpp" />
     <ClCompile Include="Ui\GameTimer\GameTimer.cpp" />
     <ClCompile Include="Ui\KeyGuide\KeyGuide.cpp" />
     <ClCompile Include="Ui\KillCount\KillCounter.cpp" />
@@ -228,6 +230,9 @@ xcopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)d
     </ProjectReference>
     <ProjectReference Include="..\Engine\Lib\GESTD\GESTD.vcxproj">
       <Project>{a1b2c3d4-e5f6-7890-abcd-ef1234567890}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Engine\Lib\GEUI\GEUI.vcxproj">
+      <Project>{e3aa4de1-7698-4618-82d0-6f8ab76995c6}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

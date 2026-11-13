@@ -15,7 +15,7 @@ std::unique_ptr<IEnemyState> EnemyStateDeath::Update() {
         return nullptr;
     }
 
-    float deltaTime = Time::GetDeltaTime();
+    float deltaTime = Time().GetDeltaTime();
     elapsedTime_ += deltaTime;
 
     if (elapsedTime_ >= params->deathDuration) {

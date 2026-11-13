@@ -15,7 +15,7 @@ void SkillManager::Initialize() {
 }
 
 void SkillManager::Update() {
-    float deltaTime = Time::GetDeltaTime();
+    float deltaTime = Time().GetDeltaTime();
 
     std::erase_if(entities_, [](const auto& _entity) { return !_entity->IsActive(); });
 

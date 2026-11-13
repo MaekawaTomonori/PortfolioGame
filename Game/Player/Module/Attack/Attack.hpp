@@ -22,6 +22,8 @@ class Attack {
 
     float attackRate_ = 1.f;
     float baseAttackRate_ = 1.f;
+    // 最小攻撃間隔
+    float minAttackInterval_ = 0.1f;
     Bullet::Params bulletParams_;
     float timer_ = 0.f;
 

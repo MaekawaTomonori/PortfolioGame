@@ -1,5 +1,6 @@
 #include "Stage.hpp"
 
+#include "Effect/PerParticleUpdate.hpp"
 #include "Math/MathUtils.hpp"
 #include "Pattern/Singleton.hpp"
 #include "Light/LightManager.hpp"
@@ -53,7 +54,6 @@ void Stage::Setup(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
     terrain_->SetScale({ TERRAIN_SIZE, TERRAIN_SIZE, 1.f });
     terrain_->SetTilingMultiply({ 10.f, 10.f });
     terrain_->SetRotate({ -(MathUtils::F_PI / 2.f), 0.f, 0.f });
-    terrain_->SetEnvironmentTexture("rostock.dds");
     terrain_->SetTexture("tile.png");
     terrain_->SetName("Field");
 
@@ -91,7 +91,7 @@ void Stage::Setup(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
 
     // フィールド霧エフェクトの更新関数（上昇しながらフェードアウト）
     particle_->RegisterUpdateFunc("field_fog_update",
-        [](float t, const Vector3&, Vector3&, Vector3& vel, Vector4& color) {
+        PerParticleUpdate([](float t, const Vector3&, Vector3&, Vector3& vel, Vector4& color) {
             vel.y *= FOG_VERTICAL_DRAG;
             vel.x *= FOG_HORIZONTAL_DRAG;
             vel.z *= FOG_HORIZONTAL_DRAG;
@@ -99,11 +99,11 @@ void Stage::Setup(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
                 ? (t / FOG_FADE_IN_DURATION) * FOG_MAX_ALPHA
                 : FOG_MAX_ALPHA * (1.f - (t - FOG_FADE_IN_DURATION) / (1.f - FOG_FADE_IN_DURATION));
             color = { FOG_COLOR.x, FOG_COLOR.y, FOG_COLOR.z, std::max(0.f, alpha)};
-        }
+        })
     );
 
     // プレイヤー被弾時のヒットエフェクトの更新関数（弾け飛んで減衰しながらフェードアウト）
-    particle_->RegisterUpdateFunc("hit_explosion", [](float t, const Vector3&, Vector3& pos, Vector3& velocity, Vector4& color) {
+    particle_->RegisterUpdateFunc("hit_explosion", PerParticleUpdate([](float t, const Vector3&, Vector3& pos, Vector3& velocity, Vector4& color) {
         (void)pos;
         if (t < HIT_EXPLOSION_INITIAL_BURST_THRESHOLD) {
             velocity = Vector3::Random() * HIT_EXPLOSION_BURST_SPEED;
@@ -111,7 +111,7 @@ void Stage::Setup(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
         velocity = velocity * HIT_EXPLOSION_DRAG;
         velocity.y -= HIT_EXPLOSION_GRAVITY;
         color.w = HIT_EXPLOSION_ALPHA_SCALE * (HIT_EXPLOSION_LIFETIME - t);
-    });
+    }));
 
     particle_->Register("hit");
 }
@@ -157,7 +157,7 @@ void Stage::Update() {
     Singleton<LightManager>::GetInstance()->SetPosition(player_->GetLightAnchor());
 
     // フィールド霧エフェクトをプレイヤー位置を中心に継続発生
-    fogTimer_ -= Time::GetDeltaTime();
+    fogTimer_ -= Time().GetDeltaTime();
     if (fogTimer_ <= 0.f) {
         particle_->Emit("field", player_->GetPosition());
         fogTimer_ = FOG_INTERVAL;

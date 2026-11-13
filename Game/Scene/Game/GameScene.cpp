@@ -1,6 +1,9 @@
 #include "GameScene.hpp"
 
 #include "imgui.h"
+#include "HpBar/HpBar.hpp"
+#include "Input.hpp"
+#include "Log.hpp"
 #include "Json/JsonParams.hpp"
 #include "Pattern/Singleton.hpp"
 #include "PostProcess/Executor/PostProcessExecutor.hpp"
@@ -23,6 +26,7 @@ void GameScene::Initialize() {
         }
     };
     LoadStatus();
+    HpBar::LoadSettings();
 
     stage_ = std::make_unique<Stage>(status_);
     stage_->Setup(Particle(), PostEffect());
@@ -40,40 +44,35 @@ void GameScene::Initialize() {
 
     intro_ = std::make_unique<Intro>();
 
-    outro_ = std::make_unique<Outro>();
-
     gameTimer_ = std::make_unique<GameTimer>();
     gameTimer_->Initialize();
     gameTimer_->SetDuration(status_.time);
-    gameTimer_->SetPosition({640.f, 69.f});
-    
+
     pause_ = std::make_unique<Pause>();
     pause_->Initialize();
     pause_->SetOnRetry([this]{ next_ = "game"; Change(); });
     pause_->SetOnQuit([this]{ next_ = "title"; Change(); });
-    
+
     keyGuide_ = std::make_unique<KeyGuide>();
     keyGuide_->Initialize();
-    keyGuide_->SetActive(false);
-    
+
     killCounter_ = std::make_unique<KillCounter>();
+    killCounter_->Initialize();
 
     stageInfoUI_ = std::make_unique<StageInfoUI>();
     stageInfoUI_->Initialize();
+    // Objective が左上へ動き始めたら、その下のキルカウンターをその場でフェードインさせる
+    stageInfoUI_->SetOnMoveStart([this] {
+        killCounter_->Setup(stage_->GetEnemies(), status_.requirementKill);
+        killCounter_->PlayIntroAnim();
+    });
 
     skillTree_ = std::make_unique<SkillTree>();
     skillTree_->Initialize(&status_);
     skillTree_->SetOnContinue([this] {
         PlayTransition(Transition::Type::Fade, [this] {
-            gameTimer_->SetDuration(status_.time);
-            stage_->Initialize();
-            killCounter_->Initialize(stage_->GetEnemies(), status_.requirementKill);
-            killCounter_->Update();
-            keyGuide_->SetActive(true);
-            state_ = PLAY;
+            StartNextRound();
             skillTree_->Close();
-            killCounter_->PlayIntroAnim();
-            gameTimer_->PlayIntroAnim();
         });
     });
 #ifdef _DEBUG
@@ -94,6 +93,7 @@ void GameScene::Initialize() {
 
 void GameScene::Update() {
     pause_->Update();
+    UpdateCursorVisibility();
 
     if (pause_->IsOpen())return;
 
@@ -103,6 +103,7 @@ void GameScene::Update() {
         intro_->Update();
         stage_->Update();
         stageInfoUI_->Update();
+        killCounter_->Update();
         followCamera_->Update();
 
         if (intro_->IsCameraDone()) {
@@ -111,11 +112,7 @@ void GameScene::Update() {
         if (intro_->IsFinish() && stageInfoUI_->IsFinish()) {
             state_ = PLAY;
             stage_->SetActive(true);
-            killCounter_->Initialize(stage_->GetEnemies(), status_.requirementKill);
-            killCounter_->Update();
-            keyGuide_->SetActive(true);
-            killCounter_->PlayIntroAnim();
-            gameTimer_->PlayIntroAnim();
+            ShowPlayHud();
             UpdatePlay();
         }
         break;
@@ -129,38 +126,49 @@ void GameScene::Update() {
     }
 }
 
+void GameScene::Finalize() {
+    // 次のシーンにはカーソルを出したまま渡さない
+    if (cursorShown_) {
+        Singleton<Input>::GetInstance()->SetCursorVisible(false);
+        cursorShown_ = false;
+    }
+}
+
+void GameScene::UpdateCursorVisibility() {
+    // メニューはマウスでも操作するので、どちらかが開いている間だけカーソルを出す
+    const bool menuOpen = pause_->IsOpen() || skillTree_->IsOpen();
+    if (menuOpen == cursorShown_) return;
+
+    Singleton<Input>::GetInstance()->SetCursorVisible(menuOpen);
+    cursorShown_ = menuOpen;
+}
+
 void GameScene::Draw() {
     switch (state_) {
     case INTRO:
         stage_->Draw();
         break;
     case PLAY:
-        gameTimer_->Draw();
         stage_->Draw();
-        keyGuide_->Draw();
-        killCounter_->Draw();
         break;
     case UPGRADE:
-        skillTree_->Draw();
         break;
     case OUTRO:
         stage_->Draw();
         break;
     default: ;
     }
-    pause_->Draw();
 }
 
 void GameScene::Debug() {
     followCamera_->Debug();
     gameTimer_->Debug();
     stage_->Debug();
-    pause_->Debug();
-    keyGuide_->Debug();
     skillTree_->Debug();
+    keyGuide_->Debug();
     killCounter_->Debug();
+    HpBar::DebugSettings();
 
-    
     ImGui::Begin("Status");
     if (ImGui::Button("Save to JSON")) {
         SaveStatus();
@@ -199,12 +207,14 @@ void GameScene::SaveStatus() {
 
 void GameScene::OnEnable() {
     intro_->Initialize();
-    stageInfoUI_->Setup(status_.time, status_.requirementKill);
+    stageInfoUI_->Setup(status_.requirementKill);
 }
 
 void GameScene::UpdatePlay() {
     gameTimer_->Update();
     stage_->Update();
+    // 左上に着いた直後は、まだ小さい文字のフェードインが続いている
+    stageInfoUI_->Update();
     killCounter_->Update();
     followCamera_->Update();
     keyGuide_->Update();
@@ -223,7 +233,8 @@ void GameScene::UpdatePlay() {
 #endif
     if (isClear) {
         state_ = OUTRO;
-        PostEffect()->ApplyPreset("DarkScene", "replace", {}, [&] {
+        HidePlayHud();
+        PostEffect()->ApplyPreset("DarkScene", [&] {
             next_ = "gameclear";
             Change();
         });
@@ -231,8 +242,7 @@ void GameScene::UpdatePlay() {
         status_.point += stage_->GetEnemies()->GetDeathCount();
         PlayTransition(Transition::Type::Fade, [this] {
             state_ = UPGRADE;
-            keyGuide_->SetActive(false);
-            killCounter_->SetActive(false);
+            HidePlayHud();
             skillTree_->Open();
             skillTree_->Update();
         });
@@ -240,9 +250,35 @@ void GameScene::UpdatePlay() {
 
     if (stage_->IsGameOver()) {
         state_ = OUTRO;
-        PostEffect()->ApplyPreset("DarkScene", "replace", {}, [&] {
+        HidePlayHud();
+        PostEffect()->ApplyPreset("DarkScene", [&] {
             next_ = "gameover";
             Change();
         });
     }
+}
+
+void GameScene::StartNextRound() {
+    gameTimer_->SetDuration(status_.time);
+    stage_->Initialize();
+    state_ = PLAY;
+
+    // 2回目以降は中央の演出をせず、Objective とキルカウンターを最初から左上に出す
+    stageInfoUI_->ShowAtCorner(status_.requirementKill);
+    killCounter_->Setup(stage_->GetEnemies(), status_.requirementKill);
+    killCounter_->SetActive(true);
+    ShowPlayHud();
+}
+
+void GameScene::ShowPlayHud() {
+    keyGuide_->SetActive(true);
+    // タイマーはフェードインが終わってから時間が進み始める
+    gameTimer_->PlayIntroAnim();
+}
+
+void GameScene::HidePlayHud() {
+    stageInfoUI_->SetActive(false);
+    gameTimer_->SetActive(false);
+    keyGuide_->SetActive(false);
+    killCounter_->SetActive(false);
 }

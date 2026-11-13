@@ -13,7 +13,7 @@ void Attack::Initialize() {
 }
 
 void Attack::Update() {
-    float deltaTime = Time::GetDeltaTime();
+    float deltaTime = Time().GetDeltaTime();
 
     std::erase_if(bullets_, [](const auto& bullet) { return !bullet->IsActive(); });
     for (auto& bullet : bullets_) {
@@ -74,19 +74,21 @@ void Attack::LoadParams() {
 
     baseAttackRate_       = std::get<float>(json->GetValue("PlayerParams", "Attack",  "Rate"));
     attackRate_           = baseAttackRate_;
+    minAttackInterval_    = std::get<float>(json->GetValue("PlayerParams", "Attack",  "MinInterval"));
     bulletParams_.speed   = std::get<float>(json->GetValue("PlayerParams", "Bullet",  "Speed"));
     bulletParams_.lifetime= std::get<float>(json->GetValue("PlayerParams", "Bullet",  "Lifetime"));
 }
 
 void Attack::ApplyAttackSpeed(const float _as) {
     if (_as > 0.f) {
-        attackRate_ = std::max(1.0f, baseAttackRate_ / _as);
+        attackRate_ = std::max(minAttackInterval_, baseAttackRate_ / _as);
     }
 }
 
 void Attack::SaveParams() {
     const auto& json = Singleton<JsonParams>::GetInstance();
-    json->SetValue("PlayerParams", "Attack", "Rate",             attackRate_);
+    json->SetValue("PlayerParams", "Attack", "Rate",             baseAttackRate_);
+    json->SetValue("PlayerParams", "Attack", "MinInterval",      minAttackInterval_);
     json->SetValue("PlayerParams", "Bullet", "Speed",            bulletParams_.speed);
     json->SetValue("PlayerParams", "Bullet", "Lifetime",         bulletParams_.lifetime);
     json->Save("PlayerParams");

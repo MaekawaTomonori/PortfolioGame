@@ -26,8 +26,8 @@ class Player : public GameObject {
     FollowCamera* camera_ = nullptr;
     PostProcessExecutor* postEffect_ = nullptr;
     // プレイヤーの基本色
-    const Vector4 BaseColor = {0.3f, 0.3f, 1.f, 1.f};
-    const Vector4 DamageFlashColor = {2.f, 2.f, 2.f, 1.f};
+    static constexpr Vector4 BASE_COLOR = {0.3f, 0.3f, 1.f, 1.f};
+    static constexpr Vector4 DAMAGE_FLASH_COLOR = {2.f, 2.f, 2.f, 1.f};
 
     std::unique_ptr<Movement> movement_;
     std::unique_ptr<Attack> attack_;
@@ -55,7 +55,7 @@ class Player : public GameObject {
 
     bool invulnerability_ = false;
     float invulnerabilityTimer_ = 1.f;
-    const float InvulnerabilityDuration = 1.f;
+    static constexpr float INVULNERABILITY_DURATION = 1.f;
 
 # ifdef _DEBUG  
     bool no_atk = false;
@@ -110,7 +110,7 @@ private:
 
     float fieldHalfExtent_ = 0.f;
     bool isNearFieldEdge_ = false;
-    static constexpr float FieldEdgeWarningDistance = 8.f;
+    static constexpr float FIELD_EDGE_WARNING_DISTANCE = 8.f;
 
     void LoadParams();
     void SaveParams() const;

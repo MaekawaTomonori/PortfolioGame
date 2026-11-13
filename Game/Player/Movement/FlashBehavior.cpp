@@ -10,7 +10,7 @@ namespace {
 }
 
 Vector3 FlashBehavior::Calculate(const MovementContext& context) {
-    float deltaTime = Time::GetDeltaTime();
+    float deltaTime = Time().GetDeltaTime();
     if (deltaTime <= MIN_DELTA_TIME) return {};
 
     Vector3 direction = context.targetPosition - context.position;
@@ -29,7 +29,7 @@ Vector3 FlashBehavior::Calculate(const MovementContext& context) {
 
 bool FlashBehavior::CanExecute(const MovementContext& context) {
     if (currentCooldown_ > 0.0f) {
-        currentCooldown_ -= Time::GetDeltaTime();
+        currentCooldown_ -= Time().GetDeltaTime();
         currentCooldown_ = std::max(currentCooldown_, 0.0f);
     }
 

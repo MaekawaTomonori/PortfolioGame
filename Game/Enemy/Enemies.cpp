@@ -3,20 +3,32 @@
 
 #include <algorithm>
 
+#include "Utils.hpp"
+#include "Effect/PerParticleUpdate.hpp"
 #include "imgui.h"
 #include "Json/JsonParams.hpp"
 #include "Pattern/Singleton.hpp"
 #include "src/Time/Time.hpp"
 
 Enemies::Enemies(ParticleSystem* _particle, const GameStatus& _status) :status_(_status) {
-    if (!_particle){Utils::Alert("ParticleSystem is null");}
-
     particle_ = _particle;
 
     // パラメータの読み込み
     LoadParams();
 
-    particle_->RegisterUpdateFunc("enemy_hit_explosion", [](float t, const Vector3&, Vector3& pos, Vector3& velocity, Vector4& color) {
+#ifdef _DEBUG
+    line_.Initialize();
+    line_.SetName("Enemies");
+    line_.SetColor({0.3f, 1.f, 0.3f, 1.f});
+#endif
+
+    // Alert は止まらないので、パーティクルの登録だけ飛ばす（Enemy 側は particle_ が null でも動く）
+    if (!particle_) {
+        Utils::Alert("ParticleSystem is null");
+        return;
+    }
+
+    particle_->RegisterUpdateFunc("enemy_hit_explosion", PerParticleUpdate([](float t, const Vector3&, Vector3& pos, Vector3& velocity, Vector4& color) {
         (void)pos;
         if (t < 0.01f) {
             velocity = Vector3::Random() * 6.0f;
@@ -24,13 +36,7 @@ Enemies::Enemies(ParticleSystem* _particle, const GameStatus& _status) :status_(
         velocity = velocity * 0.92f;
         velocity.y -= 0.05f;
         color.w = 0.9f * (.7f - t);
-    });
-
-#ifdef _DEBUG
-    line_.Initialize();
-    line_.SetName("Enemies");
-    line_.SetColor({0.3f, 1.f, 0.3f, 1.f});
-#endif
+    }));
 }
 
 void Enemies::Initialize() {
@@ -62,12 +68,12 @@ void Enemies::Update() {
     line_.Clear();
     Vector3 p = target_->GetPosition();
 
-    constexpr int segments = 32;
-    constexpr float angleStep = 2.f * MathUtils::F_PI / static_cast<float>(segments);
+    constexpr int CIRCLE_SEGMENTS = 32;
+    constexpr float ANGLE_STEP = 2.f * MathUtils::F_PI / static_cast<float>(CIRCLE_SEGMENTS);
 
-    for (int i = 0; i < segments; ++i) {
-        float ang1 = angleStep * i;
-        float ang2 = angleStep * ((i + 1) % segments);
+    for (int i = 0; i < CIRCLE_SEGMENTS; ++i) {
+        float ang1 = ANGLE_STEP * i;
+        float ang2 = ANGLE_STEP * ((i + 1) % CIRCLE_SEGMENTS);
 
         Vector3 point1 = p + Vector3{
             cosf(ang1) * distance_.x,
@@ -82,9 +88,9 @@ void Enemies::Update() {
         line_.AddLine(point1, point2);
     }
 
-    for (int i = 0; i < segments; ++i) {
-        float ang1 = angleStep * i;
-        float ang2 = angleStep * ((i + 1) % segments);
+    for (int i = 0; i < CIRCLE_SEGMENTS; ++i) {
+        float ang1 = ANGLE_STEP * i;
+        float ang2 = ANGLE_STEP * ((i + 1) % CIRCLE_SEGMENTS);
 
         Vector3 point1 = p + Vector3{
             cosf(ang1) * distance_.y,
@@ -108,7 +114,7 @@ void Enemies::Update() {
             timer_ = 0.f;
             Spawn();
         } else {
-            timer_ += Time::GetDeltaTime();
+            timer_ += Time().GetDeltaTime();
         }
 
 #ifdef _DEBUG
@@ -176,15 +182,15 @@ void Enemies::Debug() {
     ImGui::Separator();
 
     if (ImGui::CollapsingHeader("Enemy Parameters", ImGuiTreeNodeFlags_DefaultOpen)) {
-        constexpr float inputWidth = 150.0f;
+        constexpr float INPUT_WIDTH = 150.0f;
 
         // Spawn
         ImGui::TextColored(ImVec4(0.4f, 0.8f, 1.0f, 1.0f), "Spawn");
         ImGui::Text("Distance Range");
-        ImGui::SetNextItemWidth(inputWidth * 0.5f);
+        ImGui::SetNextItemWidth(INPUT_WIDTH * 0.5f);
         bool minChanged = ImGui::DragFloat("##Min", &distance_.x, 0.1f, 0.0f, 24.9f, "Min: %.1f");
         ImGui::SameLine();
-        ImGui::SetNextItemWidth(inputWidth * 0.5f);
+        ImGui::SetNextItemWidth(INPUT_WIDTH * 0.5f);
         bool maxChanged = ImGui::DragFloat("##Max", &distance_.y, 0.1f, 0.1f, 25.0f, "Max: %.1f");
 
         if (minChanged && !maxChanged) {
@@ -200,37 +206,37 @@ void Enemies::Debug() {
 
         // Stats
         ImGui::TextColored(ImVec4(0.4f, 0.8f, 1.0f, 1.0f), "Stats");
-        ImGui::SetNextItemWidth(inputWidth);
+        ImGui::SetNextItemWidth(INPUT_WIDTH);
         ImGui::DragFloat("Max HP",       &enemyParams_.maxHp,       0.1f, 1.0f,  10.0f, "%.1f");
-        ImGui::SetNextItemWidth(inputWidth);
+        ImGui::SetNextItemWidth(INPUT_WIDTH);
         ImGui::DragFloat("Move Speed",   &enemyParams_.moveSpeed,   0.1f, 0.5f,  20.0f, "%.1f");
-        ImGui::SetNextItemWidth(inputWidth);
+        ImGui::SetNextItemWidth(INPUT_WIDTH);
         ImGui::DragFloat("Min Distance", &enemyParams_.minDistance, 0.1f, 0.0f,   5.0f, "%.2f");
 
         ImGui::Separator();
 
         // Combat
         ImGui::TextColored(ImVec4(0.4f, 0.8f, 1.0f, 1.0f), "Combat");
-        ImGui::SetNextItemWidth(inputWidth);
+        ImGui::SetNextItemWidth(INPUT_WIDTH);
         ImGui::DragFloat("Invincible Duration", &enemyParams_.invincibleDuration, 0.05f, 0.1f, 2.0f, "%.2fs");
-        ImGui::SetNextItemWidth(inputWidth);
+        ImGui::SetNextItemWidth(INPUT_WIDTH);
         ImGui::DragFloat("Knockback Decay", &enemyParams_.knockbackDecay, 0.05f, 0.1f, 1.0f, "%.2f");
-        ImGui::SetNextItemWidth(inputWidth);
+        ImGui::SetNextItemWidth(INPUT_WIDTH);
         ImGui::DragFloat("Death Duration", &enemyParams_.deathDuration, 0.05f, 0.1f, 3.0f, "%.2fs");
 
         ImGui::Separator();
 
         // Dash
         ImGui::TextColored(ImVec4(0.4f, 0.8f, 1.0f, 1.0f), "Dash");
-        ImGui::SetNextItemWidth(inputWidth);
+        ImGui::SetNextItemWidth(INPUT_WIDTH);
         ImGui::DragFloat("Charge Time", &dashParams_.chargeMaxTime, 0.1f, 0.1f, 5.0f, "%.2fs");
-        ImGui::SetNextItemWidth(inputWidth);
+        ImGui::SetNextItemWidth(INPUT_WIDTH);
         ImGui::DragFloat("Dash Duration", &dashParams_.duration, 0.05f, 0.1f, 2.0f, "%.2fs");
-        ImGui::SetNextItemWidth(inputWidth);
+        ImGui::SetNextItemWidth(INPUT_WIDTH);
         ImGui::DragFloat("Dash Speed", &dashParams_.speed, 0.5f, 5.0f, 50.0f, "%.1f");
-        ImGui::SetNextItemWidth(inputWidth);
+        ImGui::SetNextItemWidth(INPUT_WIDTH);
         ImGui::DragFloat("Trigger Interval", &dashParams_.triggerInterval, 0.1f, 0.5f, 10.0f, "%.2fs");
-        ImGui::SetNextItemWidth(inputWidth);
+        ImGui::SetNextItemWidth(INPUT_WIDTH);
         float chancePercent = dashParams_.triggerChance * 100.0f;
         if (ImGui::SliderFloat("Trigger Chance", &chancePercent, 0.0f, 100.0f, "%.0f%%")) {
             dashParams_.triggerChance = chancePercent / 100.0f;
@@ -239,13 +245,13 @@ void Enemies::Debug() {
         ImGui::Spacing();
         ImGui::Text("Prediction Line");
         ImGui::Indent();
-        ImGui::SetNextItemWidth(inputWidth);
+        ImGui::SetNextItemWidth(INPUT_WIDTH);
         ImGui::DragFloat("Enemy Offset", &dashParams_.enemyOffset, 0.1f, 0.0f, 5.0f, "%.2f");
-        ImGui::SetNextItemWidth(inputWidth);
+        ImGui::SetNextItemWidth(INPUT_WIDTH);
         ImGui::DragFloat("Line Length", &dashParams_.lineLength, 0.05f, 0.1f, 2.0f, "%.2f");
-        ImGui::SetNextItemWidth(inputWidth);
+        ImGui::SetNextItemWidth(INPUT_WIDTH);
         ImGui::DragFloat("Line Width", &dashParams_.lineWidth, 0.1f, 0.5f, 5.0f, "%.2f");
-        ImGui::SetNextItemWidth(inputWidth);
+        ImGui::SetNextItemWidth(INPUT_WIDTH);
         ImGui::DragFloat("Center Offset", &dashParams_.lineCenterOffset, 0.05f, 0.0f, 1.0f, "%.2f");
         ImGui::Unindent();
 
@@ -307,18 +313,19 @@ void Enemies::Spawn() {
     position.y = .5f;
 
     std::unique_ptr<Enemy> enemy = std::make_unique<Enemy>();
-    enemy->Initialize();
-    enemy->SetPosition(position);
-    enemy->SetScale({SIZE, SIZE, SIZE});
+
+    // Initialize で HP を決めるのに使うので、先に渡しておく（すべてのEnemyが同じパラメータを参照）
+    enemy->SetParams(&enemyParams_);
     enemy->SetParticleSystem(particle_);
     enemy->SetTarget(target_);
-
-    // 共通パラメータへのポインタを設定（すべてのEnemyが同じパラメータを参照）
-    enemy->SetParams(&enemyParams_);
 
     auto dash = std::make_unique<DashActionModule>();
     dash->SetParams(&dashParams_);
     enemy->SetActionModule(std::move(dash));
+
+    enemy->Initialize();
+    enemy->SetPosition(position);
+    enemy->SetScale({SIZE, SIZE, SIZE});
 
     enemies_.push_back(std::move(enemy));
 }

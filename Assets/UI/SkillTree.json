@@ -1,0 +1,3551 @@
+{
+    "referenceSize": [
+        1280.0,
+        720.0
+    ],
+    "order": 50,
+    "visible": false,
+    "blockInput": true,
+    "children": [
+        {
+            "name": "Background",
+            "type": "Quad",
+            "anchor": [
+                0,
+                0
+            ],
+            "pivot": [
+                0,
+                0
+            ],
+            "offset": [
+                0,
+                0
+            ],
+            "size": [
+                1,
+                1
+            ],
+            "color": [
+                0.0,
+                0.0,
+                0.0,
+                0.75
+            ],
+            "children": []
+        },
+        {
+            "name": "Tree",
+            "type": "Quad",
+            "anchor": [
+                0,
+                0
+            ],
+            "pivot": [
+                0,
+                0
+            ],
+            "offset": [
+                0,
+                0
+            ],
+            "size": [
+                1,
+                1
+            ],
+            "color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "children": [
+                {
+                    "name": "RootLink",
+                    "type": "Quad",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0.5,
+                        0.5
+                    ],
+                    "offset": [
+                        0.150781,
+                        0.513889
+                    ],
+                    "size": [
+                        0.042188,
+                        0.004167
+                    ],
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "children": []
+                },
+                {
+                    "name": "Trunk",
+                    "type": "Quad",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0.5,
+                        0.5
+                    ],
+                    "offset": [
+                        0.171875,
+                        0.513889
+                    ],
+                    "size": [
+                        0.002344,
+                        0.698611
+                    ],
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "children": []
+                },
+                {
+                    "name": "line_atk_up",
+                    "type": "Quad",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0.5,
+                        0.5
+                    ],
+                    "offset": [
+                        0.192969,
+                        0.166667
+                    ],
+                    "size": [
+                        0.042188,
+                        0.004167
+                    ],
+                    "color": [
+                        0.35,
+                        0.35,
+                        0.35,
+                        1.0
+                    ],
+                    "children": []
+                },
+                {
+                    "name": "line_atk_up_2",
+                    "type": "Quad",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0.5,
+                        0.5
+                    ],
+                    "offset": [
+                        0.304688,
+                        0.166667
+                    ],
+                    "size": [
+                        0.06875,
+                        0.004167
+                    ],
+                    "color": [
+                        0.35,
+                        0.35,
+                        0.35,
+                        1.0
+                    ],
+                    "children": []
+                },
+                {
+                    "name": "line_atk_up_3",
+                    "type": "Quad",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0.5,
+                        0.5
+                    ],
+                    "offset": [
+                        0.429688,
+                        0.166667
+                    ],
+                    "size": [
+                        0.06875,
+                        0.004167
+                    ],
+                    "color": [
+                        0.35,
+                        0.35,
+                        0.35,
+                        1.0
+                    ],
+                    "children": []
+                },
+                {
+                    "name": "line_atk_max",
+                    "type": "Quad",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0.5,
+                        0.5
+                    ],
+                    "offset": [
+                        0.554688,
+                        0.166667
+                    ],
+                    "size": [
+                        0.06875,
+                        0.004167
+                    ],
+                    "color": [
+                        0.35,
+                        0.35,
+                        0.35,
+                        1.0
+                    ],
+                    "children": []
+                },
+                {
+                    "name": "line_hp_up",
+                    "type": "Quad",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0.5,
+                        0.5
+                    ],
+                    "offset": [
+                        0.192969,
+                        0.305556
+                    ],
+                    "size": [
+                        0.042188,
+                        0.004167
+                    ],
+                    "color": [
+                        0.35,
+                        0.35,
+                        0.35,
+                        1.0
+                    ],
+                    "children": []
+                },
+                {
+                    "name": "line_hp_up_2",
+                    "type": "Quad",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0.5,
+                        0.5
+                    ],
+                    "offset": [
+                        0.304688,
+                        0.305556
+                    ],
+                    "size": [
+                        0.06875,
+                        0.004167
+                    ],
+                    "color": [
+                        0.35,
+                        0.35,
+                        0.35,
+                        1.0
+                    ],
+                    "children": []
+                },
+                {
+                    "name": "line_hp_up_3",
+                    "type": "Quad",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0.5,
+                        0.5
+                    ],
+                    "offset": [
+                        0.429688,
+                        0.305556
+                    ],
+                    "size": [
+                        0.06875,
+                        0.004167
+                    ],
+                    "color": [
+                        0.35,
+                        0.35,
+                        0.35,
+                        1.0
+                    ],
+                    "children": []
+                },
+                {
+                    "name": "line_hp_max",
+                    "type": "Quad",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0.5,
+                        0.5
+                    ],
+                    "offset": [
+                        0.554688,
+                        0.305556
+                    ],
+                    "size": [
+                        0.06875,
+                        0.004167
+                    ],
+                    "color": [
+                        0.35,
+                        0.35,
+                        0.35,
+                        1.0
+                    ],
+                    "children": []
+                },
+                {
+                    "name": "line_spd_up",
+                    "type": "Quad",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0.5,
+                        0.5
+                    ],
+                    "offset": [
+                        0.192969,
+                        0.444444
+                    ],
+                    "size": [
+                        0.042188,
+                        0.004167
+                    ],
+                    "color": [
+                        0.35,
+                        0.35,
+                        0.35,
+                        1.0
+                    ],
+                    "children": []
+                },
+                {
+                    "name": "line_spd_up_2",
+                    "type": "Quad",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0.5,
+                        0.5
+                    ],
+                    "offset": [
+                        0.304688,
+                        0.444444
+                    ],
+                    "size": [
+                        0.06875,
+                        0.004167
+                    ],
+                    "color": [
+                        0.35,
+                        0.35,
+                        0.35,
+                        1.0
+                    ],
+                    "children": []
+                },
+                {
+                    "name": "line_spd_up_3",
+                    "type": "Quad",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0.5,
+                        0.5
+                    ],
+                    "offset": [
+                        0.429688,
+                        0.444444
+                    ],
+                    "size": [
+                        0.06875,
+                        0.004167
+                    ],
+                    "color": [
+                        0.35,
+                        0.35,
+                        0.35,
+                        1.0
+                    ],
+                    "children": []
+                },
+                {
+                    "name": "line_as_up",
+                    "type": "Quad",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0.5,
+                        0.5
+                    ],
+                    "offset": [
+                        0.192969,
+                        0.583333
+                    ],
+                    "size": [
+                        0.042188,
+                        0.004167
+                    ],
+                    "color": [
+                        0.35,
+                        0.35,
+                        0.35,
+                        1.0
+                    ],
+                    "children": []
+                },
+                {
+                    "name": "line_as_up_2",
+                    "type": "Quad",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0.5,
+                        0.5
+                    ],
+                    "offset": [
+                        0.304688,
+                        0.583333
+                    ],
+                    "size": [
+                        0.06875,
+                        0.004167
+                    ],
+                    "color": [
+                        0.35,
+                        0.35,
+                        0.35,
+                        1.0
+                    ],
+                    "children": []
+                },
+                {
+                    "name": "line_as_up_3",
+                    "type": "Quad",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0.5,
+                        0.5
+                    ],
+                    "offset": [
+                        0.429688,
+                        0.583333
+                    ],
+                    "size": [
+                        0.06875,
+                        0.004167
+                    ],
+                    "color": [
+                        0.35,
+                        0.35,
+                        0.35,
+                        1.0
+                    ],
+                    "children": []
+                },
+                {
+                    "name": "line_time_up",
+                    "type": "Quad",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0.5,
+                        0.5
+                    ],
+                    "offset": [
+                        0.192969,
+                        0.722222
+                    ],
+                    "size": [
+                        0.042188,
+                        0.004167
+                    ],
+                    "color": [
+                        0.35,
+                        0.35,
+                        0.35,
+                        1.0
+                    ],
+                    "children": []
+                },
+                {
+                    "name": "line_time_up_2",
+                    "type": "Quad",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0.5,
+                        0.5
+                    ],
+                    "offset": [
+                        0.304688,
+                        0.722222
+                    ],
+                    "size": [
+                        0.06875,
+                        0.004167
+                    ],
+                    "color": [
+                        0.35,
+                        0.35,
+                        0.35,
+                        1.0
+                    ],
+                    "children": []
+                },
+                {
+                    "name": "line_enemy_up",
+                    "type": "Quad",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0.5,
+                        0.5
+                    ],
+                    "offset": [
+                        0.192969,
+                        0.861111
+                    ],
+                    "size": [
+                        0.042188,
+                        0.004167
+                    ],
+                    "color": [
+                        0.35,
+                        0.35,
+                        0.35,
+                        1.0
+                    ],
+                    "children": []
+                },
+                {
+                    "name": "line_spawn_down",
+                    "type": "Quad",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0.5,
+                        0.5
+                    ],
+                    "offset": [
+                        0.304688,
+                        0.861111
+                    ],
+                    "size": [
+                        0.06875,
+                        0.004167
+                    ],
+                    "color": [
+                        0.35,
+                        0.35,
+                        0.35,
+                        1.0
+                    ],
+                    "children": []
+                },
+                {
+                    "name": "root",
+                    "type": "Button",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0.5,
+                        0.5
+                    ],
+                    "offset": [
+                        0.101562,
+                        0.513889
+                    ],
+                    "size": [
+                        0.05625,
+                        0.1
+                    ],
+                    "color": [
+                        1,
+                        1,
+                        1,
+                        1
+                    ],
+                    "selectable": true,
+                    "selectedStyle": {
+                        "color": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "shift": [
+                            0.0,
+                            0.0
+                        ],
+                        "scale": 1.1
+                    },
+                    "children": [
+                        {
+                            "name": "Box",
+                            "type": "Image",
+                            "anchor": [
+                                0.5,
+                                0.5
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.5
+                            ],
+                            "offset": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                1,
+                                1
+                            ],
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.5
+                            ],
+                            "image": "UI/key.png",
+                            "followState": true,
+                            "selectedStyle": {
+                                "color": [
+                                    1.0,
+                                    1.0,
+                                    1.0,
+                                    0.3
+                                ],
+                                "shift": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "scale": 1.0
+                            },
+                            "children": []
+                        },
+                        {
+                            "name": "Icon",
+                            "type": "Image",
+                            "anchor": [
+                                0.5,
+                                0.5
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.5
+                            ],
+                            "offset": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                0.6,
+                                0.6
+                            ],
+                            "color": [
+                                0.35,
+                                0.35,
+                                0.35,
+                                1.0
+                            ],
+                            "image": "heart.png",
+                            "children": []
+                        },
+                        {
+                            "name": "Level",
+                            "type": "Text",
+                            "anchor": [
+                                0.5,
+                                1.0
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.0
+                            ],
+                            "offset": [
+                                0,
+                                0.02
+                            ],
+                            "size": [
+                                1.6,
+                                0.25
+                            ],
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "text": "0/1",
+                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
+                            "fontSize": 14.0,
+                            "alignX": 1,
+                            "alignY": 0,
+                            "children": []
+                        }
+                    ]
+                },
+                {
+                    "name": "atk_up",
+                    "type": "Button",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0.5,
+                        0.5
+                    ],
+                    "offset": [
+                        0.242188,
+                        0.166667
+                    ],
+                    "size": [
+                        0.05625,
+                        0.1
+                    ],
+                    "color": [
+                        1,
+                        1,
+                        1,
+                        1
+                    ],
+                    "selectable": true,
+                    "selectedStyle": {
+                        "color": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "shift": [
+                            0.0,
+                            0.0
+                        ],
+                        "scale": 1.1
+                    },
+                    "children": [
+                        {
+                            "name": "Box",
+                            "type": "Image",
+                            "anchor": [
+                                0.5,
+                                0.5
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.5
+                            ],
+                            "offset": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                1,
+                                1
+                            ],
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.5
+                            ],
+                            "image": "UI/key.png",
+                            "followState": true,
+                            "selectedStyle": {
+                                "color": [
+                                    1.0,
+                                    1.0,
+                                    1.0,
+                                    0.3
+                                ],
+                                "shift": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "scale": 1.0
+                            },
+                            "children": []
+                        },
+                        {
+                            "name": "Icon",
+                            "type": "Image",
+                            "anchor": [
+                                0.5,
+                                0.5
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.5
+                            ],
+                            "offset": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                0.6,
+                                0.6
+                            ],
+                            "color": [
+                                0.35,
+                                0.35,
+                                0.35,
+                                1.0
+                            ],
+                            "image": "sword.png",
+                            "children": []
+                        },
+                        {
+                            "name": "Level",
+                            "type": "Text",
+                            "anchor": [
+                                0.5,
+                                1.0
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.0
+                            ],
+                            "offset": [
+                                0,
+                                0.02
+                            ],
+                            "size": [
+                                1.6,
+                                0.25
+                            ],
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "text": "0/1",
+                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
+                            "fontSize": 14.0,
+                            "alignX": 1,
+                            "alignY": 0,
+                            "children": []
+                        }
+                    ]
+                },
+                {
+                    "name": "atk_up_2",
+                    "type": "Button",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0.5,
+                        0.5
+                    ],
+                    "offset": [
+                        0.367188,
+                        0.166667
+                    ],
+                    "size": [
+                        0.05625,
+                        0.1
+                    ],
+                    "color": [
+                        1,
+                        1,
+                        1,
+                        1
+                    ],
+                    "selectable": true,
+                    "selectedStyle": {
+                        "color": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "shift": [
+                            0.0,
+                            0.0
+                        ],
+                        "scale": 1.1
+                    },
+                    "children": [
+                        {
+                            "name": "Box",
+                            "type": "Image",
+                            "anchor": [
+                                0.5,
+                                0.5
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.5
+                            ],
+                            "offset": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                1,
+                                1
+                            ],
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.5
+                            ],
+                            "image": "UI/key.png",
+                            "followState": true,
+                            "selectedStyle": {
+                                "color": [
+                                    1.0,
+                                    1.0,
+                                    1.0,
+                                    0.3
+                                ],
+                                "shift": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "scale": 1.0
+                            },
+                            "children": []
+                        },
+                        {
+                            "name": "Icon",
+                            "type": "Image",
+                            "anchor": [
+                                0.5,
+                                0.5
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.5
+                            ],
+                            "offset": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                0.6,
+                                0.6
+                            ],
+                            "color": [
+                                0.35,
+                                0.35,
+                                0.35,
+                                1.0
+                            ],
+                            "image": "sword.png",
+                            "children": []
+                        },
+                        {
+                            "name": "Level",
+                            "type": "Text",
+                            "anchor": [
+                                0.5,
+                                1.0
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.0
+                            ],
+                            "offset": [
+                                0,
+                                0.02
+                            ],
+                            "size": [
+                                1.6,
+                                0.25
+                            ],
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "text": "0/1",
+                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
+                            "fontSize": 14.0,
+                            "alignX": 1,
+                            "alignY": 0,
+                            "children": []
+                        }
+                    ]
+                },
+                {
+                    "name": "atk_up_3",
+                    "type": "Button",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0.5,
+                        0.5
+                    ],
+                    "offset": [
+                        0.492188,
+                        0.166667
+                    ],
+                    "size": [
+                        0.05625,
+                        0.1
+                    ],
+                    "color": [
+                        1,
+                        1,
+                        1,
+                        1
+                    ],
+                    "selectable": true,
+                    "selectedStyle": {
+                        "color": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "shift": [
+                            0.0,
+                            0.0
+                        ],
+                        "scale": 1.1
+                    },
+                    "children": [
+                        {
+                            "name": "Box",
+                            "type": "Image",
+                            "anchor": [
+                                0.5,
+                                0.5
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.5
+                            ],
+                            "offset": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                1,
+                                1
+                            ],
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.5
+                            ],
+                            "image": "UI/key.png",
+                            "followState": true,
+                            "selectedStyle": {
+                                "color": [
+                                    1.0,
+                                    1.0,
+                                    1.0,
+                                    0.3
+                                ],
+                                "shift": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "scale": 1.0
+                            },
+                            "children": []
+                        },
+                        {
+                            "name": "Icon",
+                            "type": "Image",
+                            "anchor": [
+                                0.5,
+                                0.5
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.5
+                            ],
+                            "offset": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                0.6,
+                                0.6
+                            ],
+                            "color": [
+                                0.35,
+                                0.35,
+                                0.35,
+                                1.0
+                            ],
+                            "image": "sword.png",
+                            "children": []
+                        },
+                        {
+                            "name": "Level",
+                            "type": "Text",
+                            "anchor": [
+                                0.5,
+                                1.0
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.0
+                            ],
+                            "offset": [
+                                0,
+                                0.02
+                            ],
+                            "size": [
+                                1.6,
+                                0.25
+                            ],
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "text": "0/1",
+                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
+                            "fontSize": 14.0,
+                            "alignX": 1,
+                            "alignY": 0,
+                            "children": []
+                        }
+                    ]
+                },
+                {
+                    "name": "atk_max",
+                    "type": "Button",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0.5,
+                        0.5
+                    ],
+                    "offset": [
+                        0.617188,
+                        0.166667
+                    ],
+                    "size": [
+                        0.05625,
+                        0.1
+                    ],
+                    "color": [
+                        1,
+                        1,
+                        1,
+                        1
+                    ],
+                    "selectable": true,
+                    "selectedStyle": {
+                        "color": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "shift": [
+                            0.0,
+                            0.0
+                        ],
+                        "scale": 1.1
+                    },
+                    "children": [
+                        {
+                            "name": "Box",
+                            "type": "Image",
+                            "anchor": [
+                                0.5,
+                                0.5
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.5
+                            ],
+                            "offset": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                1,
+                                1
+                            ],
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.5
+                            ],
+                            "image": "UI/key.png",
+                            "followState": true,
+                            "selectedStyle": {
+                                "color": [
+                                    1.0,
+                                    1.0,
+                                    1.0,
+                                    0.3
+                                ],
+                                "shift": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "scale": 1.0
+                            },
+                            "children": []
+                        },
+                        {
+                            "name": "Icon",
+                            "type": "Image",
+                            "anchor": [
+                                0.5,
+                                0.5
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.5
+                            ],
+                            "offset": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                0.6,
+                                0.6
+                            ],
+                            "color": [
+                                0.35,
+                                0.35,
+                                0.35,
+                                1.0
+                            ],
+                            "image": "sword.png",
+                            "children": []
+                        },
+                        {
+                            "name": "Level",
+                            "type": "Text",
+                            "anchor": [
+                                0.5,
+                                1.0
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.0
+                            ],
+                            "offset": [
+                                0,
+                                0.02
+                            ],
+                            "size": [
+                                1.6,
+                                0.25
+                            ],
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "text": "0/1",
+                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
+                            "fontSize": 14.0,
+                            "alignX": 1,
+                            "alignY": 0,
+                            "children": []
+                        }
+                    ]
+                },
+                {
+                    "name": "hp_up",
+                    "type": "Button",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0.5,
+                        0.5
+                    ],
+                    "offset": [
+                        0.242188,
+                        0.305556
+                    ],
+                    "size": [
+                        0.05625,
+                        0.1
+                    ],
+                    "color": [
+                        1,
+                        1,
+                        1,
+                        1
+                    ],
+                    "selectable": true,
+                    "selectedStyle": {
+                        "color": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "shift": [
+                            0.0,
+                            0.0
+                        ],
+                        "scale": 1.1
+                    },
+                    "children": [
+                        {
+                            "name": "Box",
+                            "type": "Image",
+                            "anchor": [
+                                0.5,
+                                0.5
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.5
+                            ],
+                            "offset": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                1,
+                                1
+                            ],
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.5
+                            ],
+                            "image": "UI/key.png",
+                            "followState": true,
+                            "selectedStyle": {
+                                "color": [
+                                    1.0,
+                                    1.0,
+                                    1.0,
+                                    0.3
+                                ],
+                                "shift": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "scale": 1.0
+                            },
+                            "children": []
+                        },
+                        {
+                            "name": "Icon",
+                            "type": "Image",
+                            "anchor": [
+                                0.5,
+                                0.5
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.5
+                            ],
+                            "offset": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                0.6,
+                                0.6
+                            ],
+                            "color": [
+                                0.35,
+                                0.35,
+                                0.35,
+                                1.0
+                            ],
+                            "image": "heart.png",
+                            "children": []
+                        },
+                        {
+                            "name": "Level",
+                            "type": "Text",
+                            "anchor": [
+                                0.5,
+                                1.0
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.0
+                            ],
+                            "offset": [
+                                0,
+                                0.02
+                            ],
+                            "size": [
+                                1.6,
+                                0.25
+                            ],
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "text": "0/1",
+                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
+                            "fontSize": 14.0,
+                            "alignX": 1,
+                            "alignY": 0,
+                            "children": []
+                        }
+                    ]
+                },
+                {
+                    "name": "hp_up_2",
+                    "type": "Button",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0.5,
+                        0.5
+                    ],
+                    "offset": [
+                        0.367188,
+                        0.305556
+                    ],
+                    "size": [
+                        0.05625,
+                        0.1
+                    ],
+                    "color": [
+                        1,
+                        1,
+                        1,
+                        1
+                    ],
+                    "selectable": true,
+                    "selectedStyle": {
+                        "color": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "shift": [
+                            0.0,
+                            0.0
+                        ],
+                        "scale": 1.1
+                    },
+                    "children": [
+                        {
+                            "name": "Box",
+                            "type": "Image",
+                            "anchor": [
+                                0.5,
+                                0.5
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.5
+                            ],
+                            "offset": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                1,
+                                1
+                            ],
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.5
+                            ],
+                            "image": "UI/key.png",
+                            "followState": true,
+                            "selectedStyle": {
+                                "color": [
+                                    1.0,
+                                    1.0,
+                                    1.0,
+                                    0.3
+                                ],
+                                "shift": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "scale": 1.0
+                            },
+                            "children": []
+                        },
+                        {
+                            "name": "Icon",
+                            "type": "Image",
+                            "anchor": [
+                                0.5,
+                                0.5
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.5
+                            ],
+                            "offset": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                0.6,
+                                0.6
+                            ],
+                            "color": [
+                                0.35,
+                                0.35,
+                                0.35,
+                                1.0
+                            ],
+                            "image": "heart.png",
+                            "children": []
+                        },
+                        {
+                            "name": "Level",
+                            "type": "Text",
+                            "anchor": [
+                                0.5,
+                                1.0
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.0
+                            ],
+                            "offset": [
+                                0,
+                                0.02
+                            ],
+                            "size": [
+                                1.6,
+                                0.25
+                            ],
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "text": "0/1",
+                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
+                            "fontSize": 14.0,
+                            "alignX": 1,
+                            "alignY": 0,
+                            "children": []
+                        }
+                    ]
+                },
+                {
+                    "name": "hp_up_3",
+                    "type": "Button",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0.5,
+                        0.5
+                    ],
+                    "offset": [
+                        0.492188,
+                        0.305556
+                    ],
+                    "size": [
+                        0.05625,
+                        0.1
+                    ],
+                    "color": [
+                        1,
+                        1,
+                        1,
+                        1
+                    ],
+                    "selectable": true,
+                    "selectedStyle": {
+                        "color": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "shift": [
+                            0.0,
+                            0.0
+                        ],
+                        "scale": 1.1
+                    },
+                    "children": [
+                        {
+                            "name": "Box",
+                            "type": "Image",
+                            "anchor": [
+                                0.5,
+                                0.5
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.5
+                            ],
+                            "offset": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                1,
+                                1
+                            ],
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.5
+                            ],
+                            "image": "UI/key.png",
+                            "followState": true,
+                            "selectedStyle": {
+                                "color": [
+                                    1.0,
+                                    1.0,
+                                    1.0,
+                                    0.3
+                                ],
+                                "shift": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "scale": 1.0
+                            },
+                            "children": []
+                        },
+                        {
+                            "name": "Icon",
+                            "type": "Image",
+                            "anchor": [
+                                0.5,
+                                0.5
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.5
+                            ],
+                            "offset": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                0.6,
+                                0.6
+                            ],
+                            "color": [
+                                0.35,
+                                0.35,
+                                0.35,
+                                1.0
+                            ],
+                            "image": "heart.png",
+                            "children": []
+                        },
+                        {
+                            "name": "Level",
+                            "type": "Text",
+                            "anchor": [
+                                0.5,
+                                1.0
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.0
+                            ],
+                            "offset": [
+                                0,
+                                0.02
+                            ],
+                            "size": [
+                                1.6,
+                                0.25
+                            ],
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "text": "0/1",
+                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
+                            "fontSize": 14.0,
+                            "alignX": 1,
+                            "alignY": 0,
+                            "children": []
+                        }
+                    ]
+                },
+                {
+                    "name": "hp_max",
+                    "type": "Button",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0.5,
+                        0.5
+                    ],
+                    "offset": [
+                        0.617188,
+                        0.305556
+                    ],
+                    "size": [
+                        0.05625,
+                        0.1
+                    ],
+                    "color": [
+                        1,
+                        1,
+                        1,
+                        1
+                    ],
+                    "selectable": true,
+                    "selectedStyle": {
+                        "color": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "shift": [
+                            0.0,
+                            0.0
+                        ],
+                        "scale": 1.1
+                    },
+                    "children": [
+                        {
+                            "name": "Box",
+                            "type": "Image",
+                            "anchor": [
+                                0.5,
+                                0.5
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.5
+                            ],
+                            "offset": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                1,
+                                1
+                            ],
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.5
+                            ],
+                            "image": "UI/key.png",
+                            "followState": true,
+                            "selectedStyle": {
+                                "color": [
+                                    1.0,
+                                    1.0,
+                                    1.0,
+                                    0.3
+                                ],
+                                "shift": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "scale": 1.0
+                            },
+                            "children": []
+                        },
+                        {
+                            "name": "Icon",
+                            "type": "Image",
+                            "anchor": [
+                                0.5,
+                                0.5
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.5
+                            ],
+                            "offset": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                0.6,
+                                0.6
+                            ],
+                            "color": [
+                                0.35,
+                                0.35,
+                                0.35,
+                                1.0
+                            ],
+                            "image": "heart.png",
+                            "children": []
+                        },
+                        {
+                            "name": "Level",
+                            "type": "Text",
+                            "anchor": [
+                                0.5,
+                                1.0
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.0
+                            ],
+                            "offset": [
+                                0,
+                                0.02
+                            ],
+                            "size": [
+                                1.6,
+                                0.25
+                            ],
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "text": "0/1",
+                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
+                            "fontSize": 14.0,
+                            "alignX": 1,
+                            "alignY": 0,
+                            "children": []
+                        }
+                    ]
+                },
+                {
+                    "name": "spd_up",
+                    "type": "Button",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0.5,
+                        0.5
+                    ],
+                    "offset": [
+                        0.242188,
+                        0.444444
+                    ],
+                    "size": [
+                        0.05625,
+                        0.1
+                    ],
+                    "color": [
+                        1,
+                        1,
+                        1,
+                        1
+                    ],
+                    "selectable": true,
+                    "selectedStyle": {
+                        "color": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "shift": [
+                            0.0,
+                            0.0
+                        ],
+                        "scale": 1.1
+                    },
+                    "children": [
+                        {
+                            "name": "Box",
+                            "type": "Image",
+                            "anchor": [
+                                0.5,
+                                0.5
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.5
+                            ],
+                            "offset": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                1,
+                                1
+                            ],
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.5
+                            ],
+                            "image": "UI/key.png",
+                            "followState": true,
+                            "selectedStyle": {
+                                "color": [
+                                    1.0,
+                                    1.0,
+                                    1.0,
+                                    0.3
+                                ],
+                                "shift": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "scale": 1.0
+                            },
+                            "children": []
+                        },
+                        {
+                            "name": "Icon",
+                            "type": "Image",
+                            "anchor": [
+                                0.5,
+                                0.5
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.5
+                            ],
+                            "offset": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                0.6,
+                                0.6
+                            ],
+                            "color": [
+                                0.35,
+                                0.35,
+                                0.35,
+                                1.0
+                            ],
+                            "image": "ms.png",
+                            "children": []
+                        },
+                        {
+                            "name": "Level",
+                            "type": "Text",
+                            "anchor": [
+                                0.5,
+                                1.0
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.0
+                            ],
+                            "offset": [
+                                0,
+                                0.02
+                            ],
+                            "size": [
+                                1.6,
+                                0.25
+                            ],
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "text": "0/1",
+                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
+                            "fontSize": 14.0,
+                            "alignX": 1,
+                            "alignY": 0,
+                            "children": []
+                        }
+                    ]
+                },
+                {
+                    "name": "spd_up_2",
+                    "type": "Button",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0.5,
+                        0.5
+                    ],
+                    "offset": [
+                        0.367188,
+                        0.444444
+                    ],
+                    "size": [
+                        0.05625,
+                        0.1
+                    ],
+                    "color": [
+                        1,
+                        1,
+                        1,
+                        1
+                    ],
+                    "selectable": true,
+                    "selectedStyle": {
+                        "color": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "shift": [
+                            0.0,
+                            0.0
+                        ],
+                        "scale": 1.1
+                    },
+                    "children": [
+                        {
+                            "name": "Box",
+                            "type": "Image",
+                            "anchor": [
+                                0.5,
+                                0.5
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.5
+                            ],
+                            "offset": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                1,
+                                1
+                            ],
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.5
+                            ],
+                            "image": "UI/key.png",
+                            "followState": true,
+                            "selectedStyle": {
+                                "color": [
+                                    1.0,
+                                    1.0,
+                                    1.0,
+                                    0.3
+                                ],
+                                "shift": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "scale": 1.0
+                            },
+                            "children": []
+                        },
+                        {
+                            "name": "Icon",
+                            "type": "Image",
+                            "anchor": [
+                                0.5,
+                                0.5
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.5
+                            ],
+                            "offset": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                0.6,
+                                0.6
+                            ],
+                            "color": [
+                                0.35,
+                                0.35,
+                                0.35,
+                                1.0
+                            ],
+                            "image": "ms.png",
+                            "children": []
+                        },
+                        {
+                            "name": "Level",
+                            "type": "Text",
+                            "anchor": [
+                                0.5,
+                                1.0
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.0
+                            ],
+                            "offset": [
+                                0,
+                                0.02
+                            ],
+                            "size": [
+                                1.6,
+                                0.25
+                            ],
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "text": "0/1",
+                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
+                            "fontSize": 14.0,
+                            "alignX": 1,
+                            "alignY": 0,
+                            "children": []
+                        }
+                    ]
+                },
+                {
+                    "name": "spd_up_3",
+                    "type": "Button",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0.5,
+                        0.5
+                    ],
+                    "offset": [
+                        0.492188,
+                        0.444444
+                    ],
+                    "size": [
+                        0.05625,
+                        0.1
+                    ],
+                    "color": [
+                        1,
+                        1,
+                        1,
+                        1
+                    ],
+                    "selectable": true,
+                    "selectedStyle": {
+                        "color": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "shift": [
+                            0.0,
+                            0.0
+                        ],
+                        "scale": 1.1
+                    },
+                    "children": [
+                        {
+                            "name": "Box",
+                            "type": "Image",
+                            "anchor": [
+                                0.5,
+                                0.5
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.5
+                            ],
+                            "offset": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                1,
+                                1
+                            ],
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.5
+                            ],
+                            "image": "UI/key.png",
+                            "followState": true,
+                            "selectedStyle": {
+                                "color": [
+                                    1.0,
+                                    1.0,
+                                    1.0,
+                                    0.3
+                                ],
+                                "shift": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "scale": 1.0
+                            },
+                            "children": []
+                        },
+                        {
+                            "name": "Icon",
+                            "type": "Image",
+                            "anchor": [
+                                0.5,
+                                0.5
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.5
+                            ],
+                            "offset": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                0.6,
+                                0.6
+                            ],
+                            "color": [
+                                0.35,
+                                0.35,
+                                0.35,
+                                1.0
+                            ],
+                            "image": "ms.png",
+                            "children": []
+                        },
+                        {
+                            "name": "Level",
+                            "type": "Text",
+                            "anchor": [
+                                0.5,
+                                1.0
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.0
+                            ],
+                            "offset": [
+                                0,
+                                0.02
+                            ],
+                            "size": [
+                                1.6,
+                                0.25
+                            ],
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "text": "0/1",
+                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
+                            "fontSize": 14.0,
+                            "alignX": 1,
+                            "alignY": 0,
+                            "children": []
+                        }
+                    ]
+                },
+                {
+                    "name": "as_up",
+                    "type": "Button",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0.5,
+                        0.5
+                    ],
+                    "offset": [
+                        0.242188,
+                        0.583333
+                    ],
+                    "size": [
+                        0.05625,
+                        0.1
+                    ],
+                    "color": [
+                        1,
+                        1,
+                        1,
+                        1
+                    ],
+                    "selectable": true,
+                    "selectedStyle": {
+                        "color": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "shift": [
+                            0.0,
+                            0.0
+                        ],
+                        "scale": 1.1
+                    },
+                    "children": [
+                        {
+                            "name": "Box",
+                            "type": "Image",
+                            "anchor": [
+                                0.5,
+                                0.5
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.5
+                            ],
+                            "offset": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                1,
+                                1
+                            ],
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.5
+                            ],
+                            "image": "UI/key.png",
+                            "followState": true,
+                            "selectedStyle": {
+                                "color": [
+                                    1.0,
+                                    1.0,
+                                    1.0,
+                                    0.3
+                                ],
+                                "shift": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "scale": 1.0
+                            },
+                            "children": []
+                        },
+                        {
+                            "name": "Icon",
+                            "type": "Image",
+                            "anchor": [
+                                0.5,
+                                0.5
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.5
+                            ],
+                            "offset": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                0.6,
+                                0.6
+                            ],
+                            "color": [
+                                0.35,
+                                0.35,
+                                0.35,
+                                1.0
+                            ],
+                            "image": "as.png",
+                            "children": []
+                        },
+                        {
+                            "name": "Level",
+                            "type": "Text",
+                            "anchor": [
+                                0.5,
+                                1.0
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.0
+                            ],
+                            "offset": [
+                                0,
+                                0.02
+                            ],
+                            "size": [
+                                1.6,
+                                0.25
+                            ],
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "text": "0/1",
+                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
+                            "fontSize": 14.0,
+                            "alignX": 1,
+                            "alignY": 0,
+                            "children": []
+                        }
+                    ]
+                },
+                {
+                    "name": "as_up_2",
+                    "type": "Button",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0.5,
+                        0.5
+                    ],
+                    "offset": [
+                        0.367188,
+                        0.583333
+                    ],
+                    "size": [
+                        0.05625,
+                        0.1
+                    ],
+                    "color": [
+                        1,
+                        1,
+                        1,
+                        1
+                    ],
+                    "selectable": true,
+                    "selectedStyle": {
+                        "color": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "shift": [
+                            0.0,
+                            0.0
+                        ],
+                        "scale": 1.1
+                    },
+                    "children": [
+                        {
+                            "name": "Box",
+                            "type": "Image",
+                            "anchor": [
+                                0.5,
+                                0.5
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.5
+                            ],
+                            "offset": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                1,
+                                1
+                            ],
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.5
+                            ],
+                            "image": "UI/key.png",
+                            "followState": true,
+                            "selectedStyle": {
+                                "color": [
+                                    1.0,
+                                    1.0,
+                                    1.0,
+                                    0.3
+                                ],
+                                "shift": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "scale": 1.0
+                            },
+                            "children": []
+                        },
+                        {
+                            "name": "Icon",
+                            "type": "Image",
+                            "anchor": [
+                                0.5,
+                                0.5
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.5
+                            ],
+                            "offset": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                0.6,
+                                0.6
+                            ],
+                            "color": [
+                                0.35,
+                                0.35,
+                                0.35,
+                                1.0
+                            ],
+                            "image": "as.png",
+                            "children": []
+                        },
+                        {
+                            "name": "Level",
+                            "type": "Text",
+                            "anchor": [
+                                0.5,
+                                1.0
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.0
+                            ],
+                            "offset": [
+                                0,
+                                0.02
+                            ],
+                            "size": [
+                                1.6,
+                                0.25
+                            ],
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "text": "0/1",
+                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
+                            "fontSize": 14.0,
+                            "alignX": 1,
+                            "alignY": 0,
+                            "children": []
+                        }
+                    ]
+                },
+                {
+                    "name": "as_up_3",
+                    "type": "Button",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0.5,
+                        0.5
+                    ],
+                    "offset": [
+                        0.492188,
+                        0.583333
+                    ],
+                    "size": [
+                        0.05625,
+                        0.1
+                    ],
+                    "color": [
+                        1,
+                        1,
+                        1,
+                        1
+                    ],
+                    "selectable": true,
+                    "selectedStyle": {
+                        "color": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "shift": [
+                            0.0,
+                            0.0
+                        ],
+                        "scale": 1.1
+                    },
+                    "children": [
+                        {
+                            "name": "Box",
+                            "type": "Image",
+                            "anchor": [
+                                0.5,
+                                0.5
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.5
+                            ],
+                            "offset": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                1,
+                                1
+                            ],
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.5
+                            ],
+                            "image": "UI/key.png",
+                            "followState": true,
+                            "selectedStyle": {
+                                "color": [
+                                    1.0,
+                                    1.0,
+                                    1.0,
+                                    0.3
+                                ],
+                                "shift": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "scale": 1.0
+                            },
+                            "children": []
+                        },
+                        {
+                            "name": "Icon",
+                            "type": "Image",
+                            "anchor": [
+                                0.5,
+                                0.5
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.5
+                            ],
+                            "offset": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                0.6,
+                                0.6
+                            ],
+                            "color": [
+                                0.35,
+                                0.35,
+                                0.35,
+                                1.0
+                            ],
+                            "image": "as.png",
+                            "children": []
+                        },
+                        {
+                            "name": "Level",
+                            "type": "Text",
+                            "anchor": [
+                                0.5,
+                                1.0
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.0
+                            ],
+                            "offset": [
+                                0,
+                                0.02
+                            ],
+                            "size": [
+                                1.6,
+                                0.25
+                            ],
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "text": "0/1",
+                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
+                            "fontSize": 14.0,
+                            "alignX": 1,
+                            "alignY": 0,
+                            "children": []
+                        }
+                    ]
+                },
+                {
+                    "name": "time_up",
+                    "type": "Button",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0.5,
+                        0.5
+                    ],
+                    "offset": [
+                        0.242188,
+                        0.722222
+                    ],
+                    "size": [
+                        0.05625,
+                        0.1
+                    ],
+                    "color": [
+                        1,
+                        1,
+                        1,
+                        1
+                    ],
+                    "selectable": true,
+                    "selectedStyle": {
+                        "color": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "shift": [
+                            0.0,
+                            0.0
+                        ],
+                        "scale": 1.1
+                    },
+                    "children": [
+                        {
+                            "name": "Box",
+                            "type": "Image",
+                            "anchor": [
+                                0.5,
+                                0.5
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.5
+                            ],
+                            "offset": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                1,
+                                1
+                            ],
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.5
+                            ],
+                            "image": "UI/key.png",
+                            "followState": true,
+                            "selectedStyle": {
+                                "color": [
+                                    1.0,
+                                    1.0,
+                                    1.0,
+                                    0.3
+                                ],
+                                "shift": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "scale": 1.0
+                            },
+                            "children": []
+                        },
+                        {
+                            "name": "Icon",
+                            "type": "Image",
+                            "anchor": [
+                                0.5,
+                                0.5
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.5
+                            ],
+                            "offset": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                0.6,
+                                0.6
+                            ],
+                            "color": [
+                                0.35,
+                                0.35,
+                                0.35,
+                                1.0
+                            ],
+                            "image": "clock.png",
+                            "children": []
+                        },
+                        {
+                            "name": "Level",
+                            "type": "Text",
+                            "anchor": [
+                                0.5,
+                                1.0
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.0
+                            ],
+                            "offset": [
+                                0,
+                                0.02
+                            ],
+                            "size": [
+                                1.6,
+                                0.25
+                            ],
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "text": "0/1",
+                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
+                            "fontSize": 14.0,
+                            "alignX": 1,
+                            "alignY": 0,
+                            "children": []
+                        }
+                    ]
+                },
+                {
+                    "name": "time_up_2",
+                    "type": "Button",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0.5,
+                        0.5
+                    ],
+                    "offset": [
+                        0.367188,
+                        0.722222
+                    ],
+                    "size": [
+                        0.05625,
+                        0.1
+                    ],
+                    "color": [
+                        1,
+                        1,
+                        1,
+                        1
+                    ],
+                    "selectable": true,
+                    "selectedStyle": {
+                        "color": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "shift": [
+                            0.0,
+                            0.0
+                        ],
+                        "scale": 1.1
+                    },
+                    "children": [
+                        {
+                            "name": "Box",
+                            "type": "Image",
+                            "anchor": [
+                                0.5,
+                                0.5
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.5
+                            ],
+                            "offset": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                1,
+                                1
+                            ],
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.5
+                            ],
+                            "image": "UI/key.png",
+                            "followState": true,
+                            "selectedStyle": {
+                                "color": [
+                                    1.0,
+                                    1.0,
+                                    1.0,
+                                    0.3
+                                ],
+                                "shift": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "scale": 1.0
+                            },
+                            "children": []
+                        },
+                        {
+                            "name": "Icon",
+                            "type": "Image",
+                            "anchor": [
+                                0.5,
+                                0.5
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.5
+                            ],
+                            "offset": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                0.6,
+                                0.6
+                            ],
+                            "color": [
+                                0.35,
+                                0.35,
+                                0.35,
+                                1.0
+                            ],
+                            "image": "clock.png",
+                            "children": []
+                        },
+                        {
+                            "name": "Level",
+                            "type": "Text",
+                            "anchor": [
+                                0.5,
+                                1.0
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.0
+                            ],
+                            "offset": [
+                                0,
+                                0.02
+                            ],
+                            "size": [
+                                1.6,
+                                0.25
+                            ],
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "text": "0/1",
+                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
+                            "fontSize": 14.0,
+                            "alignX": 1,
+                            "alignY": 0,
+                            "children": []
+                        }
+                    ]
+                },
+                {
+                    "name": "enemy_up",
+                    "type": "Button",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0.5,
+                        0.5
+                    ],
+                    "offset": [
+                        0.242188,
+                        0.861111
+                    ],
+                    "size": [
+                        0.05625,
+                        0.1
+                    ],
+                    "color": [
+                        1,
+                        1,
+                        1,
+                        1
+                    ],
+                    "selectable": true,
+                    "selectedStyle": {
+                        "color": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "shift": [
+                            0.0,
+                            0.0
+                        ],
+                        "scale": 1.1
+                    },
+                    "children": [
+                        {
+                            "name": "Box",
+                            "type": "Image",
+                            "anchor": [
+                                0.5,
+                                0.5
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.5
+                            ],
+                            "offset": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                1,
+                                1
+                            ],
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.5
+                            ],
+                            "image": "UI/key.png",
+                            "followState": true,
+                            "selectedStyle": {
+                                "color": [
+                                    1.0,
+                                    1.0,
+                                    1.0,
+                                    0.3
+                                ],
+                                "shift": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "scale": 1.0
+                            },
+                            "children": []
+                        },
+                        {
+                            "name": "Icon",
+                            "type": "Image",
+                            "anchor": [
+                                0.5,
+                                0.5
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.5
+                            ],
+                            "offset": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                0.6,
+                                0.6
+                            ],
+                            "color": [
+                                0.35,
+                                0.35,
+                                0.35,
+                                1.0
+                            ],
+                            "image": "enemy.png",
+                            "children": []
+                        },
+                        {
+                            "name": "Level",
+                            "type": "Text",
+                            "anchor": [
+                                0.5,
+                                1.0
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.0
+                            ],
+                            "offset": [
+                                0,
+                                0.02
+                            ],
+                            "size": [
+                                1.6,
+                                0.25
+                            ],
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "text": "0/1",
+                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
+                            "fontSize": 14.0,
+                            "alignX": 1,
+                            "alignY": 0,
+                            "children": []
+                        }
+                    ]
+                },
+                {
+                    "name": "spawn_down",
+                    "type": "Button",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0.5,
+                        0.5
+                    ],
+                    "offset": [
+                        0.367188,
+                        0.861111
+                    ],
+                    "size": [
+                        0.05625,
+                        0.1
+                    ],
+                    "color": [
+                        1,
+                        1,
+                        1,
+                        1
+                    ],
+                    "selectable": true,
+                    "selectedStyle": {
+                        "color": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "shift": [
+                            0.0,
+                            0.0
+                        ],
+                        "scale": 1.1
+                    },
+                    "children": [
+                        {
+                            "name": "Box",
+                            "type": "Image",
+                            "anchor": [
+                                0.5,
+                                0.5
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.5
+                            ],
+                            "offset": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                1,
+                                1
+                            ],
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.5
+                            ],
+                            "image": "UI/key.png",
+                            "followState": true,
+                            "selectedStyle": {
+                                "color": [
+                                    1.0,
+                                    1.0,
+                                    1.0,
+                                    0.3
+                                ],
+                                "shift": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "scale": 1.0
+                            },
+                            "children": []
+                        },
+                        {
+                            "name": "Icon",
+                            "type": "Image",
+                            "anchor": [
+                                0.5,
+                                0.5
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.5
+                            ],
+                            "offset": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                0.6,
+                                0.6
+                            ],
+                            "color": [
+                                0.35,
+                                0.35,
+                                0.35,
+                                1.0
+                            ],
+                            "image": "enemy.png",
+                            "children": []
+                        },
+                        {
+                            "name": "Level",
+                            "type": "Text",
+                            "anchor": [
+                                0.5,
+                                1.0
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.0
+                            ],
+                            "offset": [
+                                0,
+                                0.02
+                            ],
+                            "size": [
+                                1.6,
+                                0.25
+                            ],
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "text": "0/1",
+                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
+                            "fontSize": 14.0,
+                            "alignX": 1,
+                            "alignY": 0,
+                            "children": []
+                        }
+                    ]
+                },
+                {
+                    "name": "Continue",
+                    "type": "Button",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0.5,
+                        0.5
+                    ],
+                    "offset": [
+                        0.101562,
+                        0.916667
+                    ],
+                    "size": [
+                        0.10625,
+                        0.072222
+                    ],
+                    "color": [
+                        1,
+                        1,
+                        1,
+                        1
+                    ],
+                    "selectable": true,
+                    "selectedStyle": {
+                        "color": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "shift": [
+                            0.0,
+                            0.0
+                        ],
+                        "scale": 1.1
+                    },
+                    "children": [
+                        {
+                            "name": "Box",
+                            "type": "Image",
+                            "anchor": [
+                                0.5,
+                                0.5
+                            ],
+                            "pivot": [
+                                0.5,
+                                0.5
+                            ],
+                            "offset": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                1,
+                                1
+                            ],
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.5
+                            ],
+                            "image": "UI/key_wide.png",
+                            "followState": true,
+                            "selectedStyle": {
+                                "color": [
+                                    1.0,
+                                    1.0,
+                                    1.0,
+                                    0.3
+                                ],
+                                "shift": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "scale": 1.0
+                            },
+                            "children": []
+                        },
+                        {
+                            "name": "Label",
+                            "type": "Text",
+                            "anchor": [
+                                0,
+                                0
+                            ],
+                            "pivot": [
+                                0,
+                                0
+                            ],
+                            "offset": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                1,
+                                1
+                            ],
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "text": "CONTINUE",
+                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
+                            "fontSize": 18.0,
+                            "alignX": 1,
+                            "alignY": 1,
+                            "children": []
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Points",
+            "type": "Image",
+            "anchor": [
+                1,
+                0
+            ],
+            "pivot": [
+                1,
+                0
+            ],
+            "offset": [
+                -0.03125,
+                0.033333
+            ],
+            "size": [
+                0.10625,
+                0.072222
+            ],
+            "color": [
+                0.0,
+                0.0,
+                0.0,
+                0.5
+            ],
+            "image": "UI/key_wide.png",
+            "children": [
+                {
+                    "name": "Label",
+                    "type": "Text",
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "pivot": [
+                        0,
+                        0
+                    ],
+                    "offset": [
+                        0,
+                        0
+                    ],
+                    "size": [
+                        1,
+                        1
+                    ],
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "text": "PT 0",
+                    "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
+                    "fontSize": 22.0,
+                    "alignX": 1,
+                    "alignY": 1,
+                    "children": []
+                }
+            ]
+        },
+        {
+            "name": "Badge",
+            "type": "Text",
+            "anchor": [
+                0,
+                0
+            ],
+            "pivot": [
+                0.5,
+                1.0
+            ],
+            "offset": [
+                0,
+                0
+            ],
+            "size": [
+                0.15625,
+                0.041667
+            ],
+            "color": [
+                1.0,
+                0.9,
+                0.1,
+                0.0
+            ],
+            "text": "LEVEL UP!",
+            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
+            "fontSize": 22.0,
+            "alignX": 1,
+            "alignY": 1,
+            "children": []
+        }
+    ]
+}

@@ -1,0 +1,156 @@
+{
+    "referenceSize": [
+        1280.0,
+        720.0
+    ],
+    "order": 10,
+    "visible": false,
+    "blockInput": false,
+    "children": [
+        {
+            "name": "Timer",
+            "type": "Quad",
+            "anchor": [
+                0.5,
+                0.0
+            ],
+            "pivot": [
+                0.5,
+                0.0
+            ],
+            "offset": [
+                0.0,
+                0.022222
+            ],
+            "size": [
+                0.117188,
+                0.1
+            ],
+            "color": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "children": [
+                {
+                    "name": "Box",
+                    "type": "Image",
+                    "anchor": [
+                        0.0,
+                        0.0
+                    ],
+                    "pivot": [
+                        0.0,
+                        0.0
+                    ],
+                    "offset": [
+                        0.0,
+                        0.0
+                    ],
+                    "size": [
+                        1.0,
+                        0.777778
+                    ],
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.5
+                    ],
+                    "image": "UI/plate.png",
+                    "children": []
+                },
+                {
+                    "name": "Text",
+                    "type": "Text",
+                    "anchor": [
+                        0.0,
+                        0.0
+                    ],
+                    "pivot": [
+                        0.0,
+                        0.0
+                    ],
+                    "offset": [
+                        0.0,
+                        0.055556
+                    ],
+                    "size": [
+                        1.0,
+                        0.666667
+                    ],
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "text": "TIME: 00",
+                    "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
+                    "fontSize": 34.0,
+                    "alignX": 1,
+                    "alignY": 1,
+                    "children": []
+                },
+                {
+                    "name": "Bar",
+                    "type": "Image",
+                    "anchor": [
+                        0.0,
+                        0.0
+                    ],
+                    "pivot": [
+                        0.0,
+                        0.0
+                    ],
+                    "offset": [
+                        0.033333,
+                        0.833333
+                    ],
+                    "size": [
+                        0.933333,
+                        0.138889
+                    ],
+                    "color": [
+                        0.2,
+                        0.2,
+                        0.2,
+                        0.8
+                    ],
+                    "image": "UI/track.png",
+                    "children": [
+                        {
+                            "name": "Fill",
+                            "type": "Image",
+                            "anchor": [
+                                0.0,
+                                0.0
+                            ],
+                            "pivot": [
+                                0.0,
+                                0.0
+                            ],
+                            "offset": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                1.0,
+                                1.0
+                            ],
+                            "color": [
+                                0.3,
+                                1.0,
+                                0.3,
+                                1.0
+                            ],
+                            "image": "UI/track.png",
+                            "children": []
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

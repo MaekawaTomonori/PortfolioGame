@@ -2,67 +2,81 @@
 #include "KillCounter.hpp"
 
 #include <algorithm>
+#include <format>
 
+#include "imgui.h"
 #include "Enemy/Enemies.hpp"
-#include "Math/Easing.hpp"
+#include "Ui/HudLayout.hpp"
+#include "Ui/HudStyle.hpp"
+#include "src/Time/Time.hpp"
 
 namespace {
-    constexpr float DURATION = 0.8f;
+    constexpr const char* CANVAS_PATH = "Assets/UI/KillCounter.json";
 }
 
-void KillCounter::Initialize(Enemies* _enemies, const uint16_t _max) {
-    enemies_ = _enemies;
-    max_ = _max;
+KillCounter::~KillCounter() {
+    ui_.Unload();
+}
 
-    ui_ = std::make_unique<Ui::Canvas>();
-    ui_->Setup("killcounter");
+void KillCounter::Initialize() {
+    ui_ = GEUI::Canvas::Load(CANVAS_PATH);
+    ui_.SetVisible(false);
+
+    root_ = ui_.Find("Counter");
+    text_ = root_.Find("Text");
+    fill_ = root_.Find("Bar/Fill");
 }
 
 void KillCounter::Update() {
-    if (!ui_ || !enemies_) return;
+    if (!enemies_ || !ui_.IsVisible()) return;
 
-    uint16_t current = std::min(max_, enemies_->GetDeathCount());
+    fadeElapsed_ = std::min(fadeElapsed_ + Time().GetDeltaTime(), HudStyle::FADE_DURATION);
+    ui_.SetAlpha(fadeElapsed_ / HudStyle::FADE_DURATION);
 
-    auto setDigit = [this](const std::string& _name, int _digit) {
-        auto* elem = ui_->FindElementByName(_name);
-        if (!elem) return;
-        elem->SetTextureRegion({static_cast<float>(_digit % 10) * TEXTURE_SIZE.x, 0.f}, TEXTURE_SIZE);
-    };
-
-    setDigit("current_d0", current / 10);
-    setDigit("current_d1", current % 10);
-    setDigit("max_d0", max_ / 10);
-    setDigit("max_d1", max_ % 10);
-}
-
-void KillCounter::Draw() const {
-}
-
-void KillCounter::Debug() {
-}
-
-void KillCounter::SetActive(bool _active) {
-    if (ui_) ui_->SetActive(_active);
-}
-
-void KillCounter::PlayIntroAnim() {
-    if (!ui_) return;
-
-    const float    duration = DURATION;
-    const Vector2  center   = { 640.f, 360.f };
-
-    for (size_t i = 0; i < ui_->GetElementCount(); ++i) {
-        auto* elem = ui_->GetElement(i);
-        if (!elem) continue;
-
-        const Vector2 startOffset = center - elem->GetPosition();
-        elem->SetShowFunc([startOffset, duration](float elapsed, Vector2& posOffset, Vector4& color) -> bool {
-            const float t = std::min(elapsed / duration, 1.f);
-            posOffset = Ease::Out::Cubic(startOffset, { 0.f, 0.f }, t);
-            color.w  *= t;
-            return t >= 1.f;
-        });
-        elem->PlayShow();
+    const uint16_t count = std::min(max_, enemies_->GetDeathCount());
+    if (count != shown_) {
+        shown_ = count;
+        ApplyCount(count);
     }
 }
 
+void KillCounter::Debug() {
+#ifdef _DEBUG
+    ImGui::Begin("KillCounter");
+    ImGui::Text("Count: %u / %u", static_cast<unsigned>(shown_), static_cast<unsigned>(max_));
+    if (ImGui::Button("Play Intro")) PlayIntroAnim();
+
+    HudLayout::Group groups[] = {{"Counter", root_}};
+    for (HudLayout::Group& group : groups) {
+        HudLayout::DrawEditor(group);
+    }
+    HudLayout::DrawSaveButton(CANVAS_PATH, groups);
+    ImGui::End();
+#endif
+}
+
+void KillCounter::Setup(Enemies* _enemies, const uint16_t _max) {
+    enemies_ = _enemies;
+    max_ = _max;
+    shown_ = 0;
+    ApplyCount(0);
+}
+
+void KillCounter::SetActive(const bool _active) {
+    ui_.SetVisible(_active);
+}
+
+void KillCounter::PlayIntroAnim() {
+    fadeElapsed_ = 0.f;
+    ui_.SetAlpha(0.f);
+    ui_.SetVisible(true);
+}
+
+void KillCounter::ApplyCount(const uint16_t _count) {
+    const bool reached = max_ > 0 && _count >= max_;
+    text_.SetText(std::format("KILL: {}/{}{}", _count, max_, reached ? " OK!" : ""));
+    text_.SetColor(reached ? HudStyle::YELLOW : HudStyle::WHITE);
+
+    const float ratio = max_ > 0 ? static_cast<float>(_count) / static_cast<float>(max_) : 0.f;
+    fill_.SetSize({ratio, 1.f});
+}

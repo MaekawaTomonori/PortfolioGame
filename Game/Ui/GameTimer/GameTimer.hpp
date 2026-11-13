@@ -1,53 +1,37 @@
 #ifndef GameTimer_HPP_
 #define GameTimer_HPP_
-#include <array>
-#include <memory>
-
-#include "Sprite.hpp"
+#include "GEUI.hpp"
 
 class GameTimer {
-    enum CountStyle {
-        UP,
-        DOWN
-    };
+    GEUI::Canvas ui_;
+    GEUI::Widget root_;
+    GEUI::Widget text_;
+    GEUI::Widget fill_;
 
-    const Vector2 TEXTURE_SIZE = { 64.f, 96.f };
-
-
-    CountStyle style_ = DOWN;
+    float duration_ = 0.f;
     float time_ = 0.f;
-    std::array<std::unique_ptr<Sprite>, 2> sprites_;
-
-    Vector2 position_ = { 50.f, 50.f };
-    Vector2 size_ = TEXTURE_SIZE;
-    Vector4 color_ = { 1.f, 1.f, 1.f, 1.f };
-
     bool done_ = false;
+    // デバッグ用。残り時間の進みだけを止める
+    bool paused_ = false;
 
-    bool active_ = true;
-
-    // Intro slide-in animation
-    const float INTRO_DURATION = 0.8f;
-    bool    introAnimating_ = false;
-    float   introElapsed_   = 0.f;
-    Vector2 introStartPos_  = {};
+    float fadeElapsed_ = 0.f;
 
 public:
+    ~GameTimer();
+
     void Initialize();
     void Update();
-    void Draw() const;
-
     void Debug();
 
     bool IsDone() const { return done_; }
 
-    void SetPosition(const Vector2& _position) { position_ = _position; }
-    void SetColor(const Vector4& _color) { color_ = _color; }
     void SetDuration(float _sec);
+    void SetActive(bool _active);
 
     void PlayIntroAnim();
 
 private:
+    void ApplyTime();
 
 }; // class GameTimer
 

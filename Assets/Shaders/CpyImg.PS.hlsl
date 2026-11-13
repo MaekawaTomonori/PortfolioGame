@@ -9,6 +9,7 @@ struct PixelOutput{
 
 PixelOutput main(VertexShaderOutput input) {
     PixelOutput output;
+    // Canvas の RT は ALPHA ブレンドで描かれており、すでに事前乗算の状態になっている
     output.color = gTexture.Sample(gSampler, input.texCoord);
     return output;
 };

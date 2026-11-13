@@ -1,6 +1,8 @@
 #include "MyGame.hpp"
 
-#include "Factory/PostEffectFactory.hpp"
+#include "PostProcess/BoxBlur/BoxBlur.hpp"
+#include "PostProcess/Grayscale/Grayscale.hpp"
+#include "PostProcess/Vignette/Vignette.hpp"
 #include "Scene/Particle/ParticleScene.hpp"
 #include "Scene/Title/TitleScene.hpp"
 #include "Scene/Game/GameScene.hpp"
@@ -15,9 +17,6 @@ void MyGame::Initialize(GameEngine::Config& _config) {
     // 例: _config.fps = 120;
 
     Register();
-
-    // PostEffectFactoryを登録
-    SetPostEffectFactory(std::make_unique<PostEffectFactory>());
 }
 
 void MyGame::Register(){
@@ -26,4 +25,9 @@ void MyGame::Register(){
     RegisterScene<GameOver>("gameover");
     RegisterScene<GameClear>("gameclear");
     RegisterScene<ParticleScene>("particle");
+
+    // presets.json等から型名で参照されるため、GetTypeName()と同じ名前で登録する
+    RegisterPostEffect<Vignette>("Vignette");
+    RegisterPostEffect<Grayscale>("Grayscale");
+    RegisterPostEffect<BoxBlur>("BoxBlur");
 }

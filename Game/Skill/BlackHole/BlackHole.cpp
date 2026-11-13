@@ -1,6 +1,7 @@
 #include "BlackHole.hpp"
 
 #include "ColliderType.hpp"
+#include "Effect/PerParticleUpdate.hpp"
 #include "Enemy/Enemies.hpp"
 #include "Math/MathUtils.hpp"
 #include "ParticleSystem/ParticleSystem.hpp"
@@ -52,7 +53,7 @@ void BlackHole::Initialize(const Vector3& _position, const Vector3& _direction) 
         });
 
         // 中心に向かって加速しながらスパイラル
-        particle_->RegisterUpdateFunc("bh_suction", [](float t, const Vector3& origin, Vector3& pos, Vector3& vel, Vector4& color) {
+        particle_->RegisterUpdateFunc("bh_suction", PerParticleUpdate([](float t, const Vector3& origin, Vector3& pos, Vector3& vel, Vector4& color) {
             Vector3 toCenter = origin - pos;
             toCenter.y = 0.f;
             float dist = toCenter.Length();
@@ -75,7 +76,7 @@ void BlackHole::Initialize(const Vector3& _position, const Vector3& _direction) 
             color.y = 0.f;
             color.z = 0.9f * (1.f - t * 0.6f);
             color.w = std::max(0.f, 0.85f * (1.f - t * 1.1f));
-        });
+        }));
 
         particle_->Register(particleGroupName_);
     }
@@ -84,7 +85,7 @@ void BlackHole::Initialize(const Vector3& _position, const Vector3& _direction) 
 void BlackHole::Update() {
     if (!active_) return;
 
-    float deltaTime = Time::GetDeltaTime();
+    float deltaTime = Time().GetDeltaTime();
 
     switch (state_) {
     case State::Flying:

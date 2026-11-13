@@ -1,65 +1,46 @@
 #ifndef KeyGuide_HPP_
 #define KeyGuide_HPP_
-#include <memory>
-#include <string>
+#include <array>
+#include <vector>
 
+#include "GEUI.hpp"
 #include "Input.hpp"
-#include "Sprite.hpp"
-#include "Ui/UserInterface.hpp"
 
 class KeyGuide {
-    struct Key {
-        Vector2 position;
-        std::string texture;
-
-        Vector4 defaultColor{};
-        Vector4 pressColor{};
-
-        std::unique_ptr<Sprite> key;
-        std::unique_ptr<Sprite> frame;
-
-        // CTオーバーレイ用（Canvasエレメント名で指定）
-        std::string cooldownElementName;
-        float cooldownRatio = 0.f;
-        float cooldownFullHeight = 0.f;
-        Vector2 cooldownBasePos = {};
-        float failFlashTimer = 0.f;
+    /** @brief 押している間だけ色が変わるキー */
+    struct MoveKey {
+        BYTE code = 0;
+        GEUI::Widget box;
+        GEUI::Widget label;
     };
 
-    const std::string JsonPath = "Assets/Data/KeyGuide/data.json";
+    /** @brief クールダウンを持つスキルのキー */
+    struct SkillKey {
+        BYTE code = 0;
+        const char* name = "";
+        GEUI::Widget box;
+        GEUI::Widget label;
+        GEUI::Widget cooldown;
+        float cooldownRatio = 0.f;
+        float flashTimer = 0.f;
+        Vector4 flashColor{};
+    };
+
+    GEUI::Canvas ui_;
+    GEUI::Widget move_;
+    GEUI::Widget skills_;
+    std::vector<MoveKey> moveKeys_;
+    std::array<SkillKey, 2> skillKeys_;
 
     Input* input_ = nullptr;
 
-    Vector2 position_ {};
-
-    std::unique_ptr<Sprite> frame_;
-
-    std::unordered_map<BYTE, Key> keys_;
-
-    std::unique_ptr<Ui::Canvas> ui_;
-
-    // Debug用の入力バッファ
-    int selectedKeyIndex_ = 0;
-    char newKeyTexture_[256] = "white_x16.png";
-
-    bool reload_ = false;
-    bool active_ = true;
-
-    // コピー用バッファ
-    bool hasClipboard_ = false;
-    struct ClipboardData {
-        Vector2 position;
-        std::string texture;
-        Vector4 defaultColor;
-        Vector4 pressColor;
-        Vector2 frameSize;
-        Vector2 labelSize;
-    } clipboardKey_{};
+    float fadeElapsed_ = 0.f;
 
 public:
+    ~KeyGuide();
+
     void Initialize();
     void Update();
-    void Draw() const;
     void Debug();
     void SetActive(bool _active);
 
@@ -67,9 +48,10 @@ public:
     void SetCooldown(BYTE _key, float _ratio);
 
 private:
-    void Load();
-    void Save();
-    void Register(const BYTE& _code, Key _key);
+    static MoveKey FindMoveKey(const GEUI::Widget& _parent, BYTE _code, const char* _name);
+    static SkillKey FindSkillKey(const GEUI::Widget& _parent, BYTE _code, const char* _name);
+    void UpdateSkillKey(SkillKey& _key, float _deltaTime) const;
+    static void Flash(SkillKey& _key, const Vector4& _color);
 
 }; // class KeyGuide
 

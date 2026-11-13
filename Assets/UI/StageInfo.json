@@ -1,0 +1,224 @@
+{
+    "referenceSize": [
+        1280.0,
+        720.0
+    ],
+    "order": 20,
+    "visible": false,
+    "blockInput": false,
+    "children": [
+        {
+            "name": "Panel",
+            "type": "Image",
+            "anchor": [
+                0.0,
+                0.0
+            ],
+            "pivot": [
+                0.5,
+                0.5
+            ],
+            "offset": [
+                0.5,
+                0.5
+            ],
+            "size": [
+                0.46875,
+                0.236111
+            ],
+            "color": [
+                0.05,
+                0.05,
+                0.1,
+                0.85
+            ],
+            "image": "UI/card.png",
+            "children": [
+                {
+                    "name": "Large",
+                    "type": "Quad",
+                    "anchor": [
+                        0.0,
+                        0.0
+                    ],
+                    "pivot": [
+                        0.0,
+                        0.0
+                    ],
+                    "offset": [
+                        0,
+                        0
+                    ],
+                    "size": [
+                        1.0,
+                        1.0
+                    ],
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "children": [
+                        {
+                            "name": "Label",
+                            "type": "Text",
+                            "anchor": [
+                                0.0,
+                                0.0
+                            ],
+                            "pivot": [
+                                0.0,
+                                0.0
+                            ],
+                            "offset": [
+                                0.05,
+                                0.164706
+                            ],
+                            "size": [
+                                0.9,
+                                0.188235
+                            ],
+                            "color": [
+                                0.8,
+                                0.8,
+                                0.8,
+                                1.0
+                            ],
+                            "text": "Objective",
+                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
+                            "fontSize": 24.0,
+                            "alignX": 0,
+                            "alignY": 1,
+                            "children": []
+                        },
+                        {
+                            "name": "Goal",
+                            "type": "Text",
+                            "anchor": [
+                                0.0,
+                                0.0
+                            ],
+                            "pivot": [
+                                0.0,
+                                0.0
+                            ],
+                            "offset": [
+                                0.05,
+                                0.411765
+                            ],
+                            "size": [
+                                0.9,
+                                0.376471
+                            ],
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "text": "Defeat -- enemies",
+                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
+                            "fontSize": 42.0,
+                            "alignX": 0,
+                            "alignY": 1,
+                            "children": []
+                        }
+                    ]
+                },
+                {
+                    "name": "Small",
+                    "type": "Quad",
+                    "anchor": [
+                        0.0,
+                        0.0
+                    ],
+                    "pivot": [
+                        0.0,
+                        0.0
+                    ],
+                    "offset": [
+                        0,
+                        0
+                    ],
+                    "size": [
+                        1.0,
+                        1.0
+                    ],
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "children": [
+                        {
+                            "name": "Label",
+                            "type": "Text",
+                            "anchor": [
+                                0.0,
+                                0.0
+                            ],
+                            "pivot": [
+                                0.0,
+                                0.0
+                            ],
+                            "offset": [
+                                0.06087,
+                                0.111111
+                            ],
+                            "size": [
+                                0.878261,
+                                0.277778
+                            ],
+                            "color": [
+                                0.8,
+                                0.8,
+                                0.8,
+                                0.0
+                            ],
+                            "text": "Objective",
+                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
+                            "fontSize": 14.0,
+                            "alignX": 0,
+                            "alignY": 1,
+                            "children": []
+                        },
+                        {
+                            "name": "Goal",
+                            "type": "Text",
+                            "anchor": [
+                                0.0,
+                                0.0
+                            ],
+                            "pivot": [
+                                0.0,
+                                0.0
+                            ],
+                            "offset": [
+                                0.06087,
+                                0.416667
+                            ],
+                            "size": [
+                                0.878261,
+                                0.472222
+                            ],
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "text": "Defeat -- enemies",
+                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
+                            "fontSize": 24.0,
+                            "alignX": 0,
+                            "alignY": 1,
+                            "children": []
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

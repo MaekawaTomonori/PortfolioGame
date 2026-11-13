@@ -7,6 +7,7 @@
 #include "ColliderType.hpp"
 #include "Math/MathUtils.hpp"
 #include "Time/Time.hpp"
+#include "Utils.hpp"
 #include "imgui.h"
 #include "Skill/ISkillEntity.hpp"
 
@@ -17,10 +18,6 @@ namespace {
 
     // コライダー
     constexpr Vector3 COLLIDER_SIZE    = {1.f, 1.f, 1.f};
-
-    // HPバーの色
-    constexpr Vector4 HPBAR_FRONT_COLOR = {1.f, 0.f, 0.f, 1.f};
-    constexpr Vector4 HPBAR_BACK_COLOR  = {0.f, 0.f, 0.f, 0.6f};
 
     // 被弾時エフェクト
     constexpr float    HIT_KNOCKBACK_FORCE    = 40.f;
@@ -49,14 +46,27 @@ namespace {
     constexpr float DEBUG_KNOCKBACK_DURATION = HIT_KNOCKBACK_DURATION;
 }
 
+Enemy::~Enemy() = default;
+
+void Enemy::SetActionModule(std::unique_ptr<IEnemyActionModule> _module) {
+    actionModule_ = std::move(_module);
+}
+
 void Enemy::Initialize() {
+    // パラメータが無いと HP も動きも決まらないので、生成せずに消える扱いにする
+    if (!params_) {
+        Utils::Alert("Enemy: Params is not set before Initialize");
+        active_ = false;
+        return;
+    }
+
     SetModel("animatedcube");
     model_->SetName("Enemy");
     model_->SetTexture("white_x16.png");
     model_->SetColor(BASE_COLOR);
 
     status_ = {
-        .hp = params_ ? params_->maxHp : 10.0f,
+        .hp = params_->maxHp,
         .damage = 0.f
     };
 
@@ -71,9 +81,7 @@ void Enemy::Initialize() {
         ->Enable();
 
     hpBar_ = std::make_unique<HpBar>();
-    hpBar_->Initialize("white_x16.png", &position_);
-    hpBar_->SetFrontColor(HPBAR_FRONT_COLOR);
-    hpBar_->SetBackColor(HPBAR_BACK_COLOR);
+    hpBar_->Initialize(&position_);
 
     state_ = std::make_unique<EnemyStateIdle>(this);
     state_->Enter();
@@ -82,7 +90,7 @@ void Enemy::Initialize() {
 void Enemy::Update() {
     if (!active_) return;
 
-    float deltaTime = Time::GetDeltaTime();
+    float deltaTime = Time().GetDeltaTime();
 
     if (knockback_) UpdateKnockback(deltaTime);
 
@@ -119,7 +127,7 @@ void Enemy::Debug() {
         // ステータス
         if (ImGui::CollapsingHeader("Status", ImGuiTreeNodeFlags_DefaultOpen)) {
             ImGui::Text("HP: %.1f", status_.hp);
-            ImGui::ProgressBar(status_.hp / (params_ ? params_->maxHp : 3.0f), ImVec2(-1, 0), "");
+            ImGui::ProgressBar(status_.hp / params_->maxHp, ImVec2(-1, 0), "");
             ImGui::Text("Damage: %.1f", status_.damage);
         }
 
@@ -136,7 +144,7 @@ void Enemy::Debug() {
         if (ImGui::CollapsingHeader("Collider")) {
             if (collider_) {
                 auto pos = collider_->GetTranslate();
-                auto size = get<Vector3>(collider_->GetSize());
+                auto size = get<Collision::AabbShape>(collider_->GetSize()).size;
                 ImGui::Text("Position: (%.2f, %.2f, %.2f)", pos.x, pos.y, pos.z);
                 ImGui::Text("Size: (%.2f, %.2f, %.2f)", size.x, size.y, size.z);
                 ImGui::Text("Enabled: %s", collider_->IsEnabled() ? "Yes" : "No");
@@ -253,6 +261,7 @@ void Enemy::ApplyDamage(const float _damage, const Vector3& _fromPosition) {
     status_.hp -= _damage;
 
     invincible_ = true;
+    invincibleTimer_ = params_->invincibleDuration;
 
     model_->SetColor(HIT_FLASH_COLOR);
 
@@ -368,7 +377,7 @@ void Enemy::UpdateInvincible(float _deltaTime) {
 
     if (invincibleTimer_ <= 0.f) {
         invincible_ = false;
-        invincibleTimer_ = params_->invincibleDuration;
+        invincibleTimer_ = 0.f;
         model_->SetColor(BASE_COLOR);
     }
 }

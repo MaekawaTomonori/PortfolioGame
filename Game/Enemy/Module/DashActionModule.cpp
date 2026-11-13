@@ -40,7 +40,7 @@ void DashActionModule::UpdateWaiting(Enemy* _enemy) {
     const auto* target = _enemy->GetTarget();
     if (!target) return;
 
-    triggerTimer_ += Time::GetDeltaTime();
+    triggerTimer_ += Time().GetDeltaTime();
     if (triggerTimer_ < params_->triggerInterval) return;
     triggerTimer_ = 0.f;
 
@@ -78,7 +78,7 @@ void DashActionModule::EnterCharging(Enemy* _enemy) {
 }
 
 void DashActionModule::UpdateCharging(Enemy* _enemy) {
-    elapsedTime_ += Time::GetDeltaTime();
+    elapsedTime_ += Time().GetDeltaTime();
     _enemy->SetVelocity({0.f, 0.f, 0.f});
 
     float progress = elapsedTime_ / params_->chargeMaxTime;
@@ -126,7 +126,7 @@ void DashActionModule::EnterDashing(Enemy* _enemy) {
 }
 
 void DashActionModule::UpdateDashing(Enemy* _enemy) {
-    elapsedTime_ += Time::GetDeltaTime();
+    elapsedTime_ += Time().GetDeltaTime();
     _enemy->SetVelocity(dashDirection_ * params_->speed);
 
     if (elapsedTime_ >= params_->duration) {

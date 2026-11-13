@@ -1,629 +1,156 @@
+#define NOMINMAX
 #include "KeyGuide.hpp"
 
 #include <algorithm>
-#include <fstream>
+#include <cmath>
+#include <format>
+#include <string>
 
 #include "imgui.h"
-#include "Log.hpp"
-#include "Utils.hpp"
-#include "Input.hpp"
-#include "externals/json/json.hpp"
 #include "Pattern/Singleton.hpp"
+#include "Ui/HudLayout.hpp"
+#include "Ui/HudStyle.hpp"
 #include "src/Time/Time.hpp"
+
+namespace {
+    constexpr const char* CANVAS_PATH = "Assets/UI/KeyGuide.json";
+
+    constexpr float FLASH_DURATION = 0.3f;
+
+    // 押している間は黄色くする
+    constexpr Vector4 PRESSED_BOX   = {1.f, 0.9f, 0.1f, 0.9f};
+    constexpr Vector4 PRESSED_LABEL = {0.f, 0.f, 0.f, 1.f};
+
+    constexpr float COOLDOWN_EPSILON = 0.001f;
+}
+
+KeyGuide::~KeyGuide() {
+    ui_.Unload();
+}
 
 void KeyGuide::Initialize() {
     input_ = Singleton<Input>::GetInstance();
 
-    frame_ = std::make_unique<Sprite>();
-    frame_->Initialize("white_x16.png");
-    frame_->SetPosition(position_);
-    frame_->SetColor({0.3f, 0.3f, 0.3f, 0.8f});
-    Load();
+    ui_ = GEUI::Canvas::Load(CANVAS_PATH);
+    ui_.SetVisible(false);
 
-    ui_ = std::make_unique<Ui::Canvas>();
-    ui_->Setup("Guide");
+    move_ = ui_.Find("Move");
+    moveKeys_ = {
+        FindMoveKey(move_, DIK_W, "W"),
+        FindMoveKey(move_, DIK_A, "A"),
+        FindMoveKey(move_, DIK_S, "S"),
+        FindMoveKey(move_, DIK_D, "D"),
+        FindMoveKey(move_, DIK_SPACE, "Space"),
+    };
 
-    // CTオーバーレイ用Elementのフルサイズ・ベース位置をキャッシュ
-    for (auto& [code, key] : keys_) {
-        if (key.cooldownElementName.empty()) continue;
-        if (auto* elem = ui_->FindElementByName(key.cooldownElementName)) {
-            key.cooldownFullHeight = elem->GetSize().y;
-            key.cooldownBasePos   = elem->GetPosition();
-            elem->SetVisible(false);
-        }
+    skills_ = ui_.Find("Skills");
+    skillKeys_ = {
+        FindSkillKey(skills_, DIK_Q, "Q"),
+        FindSkillKey(skills_, DIK_F, "F"),
+    };
+    for (SkillKey& key : skillKeys_) {
+        SetCooldown(key.code, 0.f);
     }
-
-    ui_->SetActive(true);
-    ui_->SetCustomDebug([this]{ Debug(); });
 }
 
 void KeyGuide::Update() {
-    if (reload_) {
-        keys_.clear();
-        Load();
-        reload_ = false;
+    if (!ui_.IsVisible()) return;
+
+    const float deltaTime = Time().GetDeltaTime();
+
+    fadeElapsed_ = std::min(fadeElapsed_ + deltaTime, HudStyle::FADE_DURATION);
+    ui_.SetAlpha(fadeElapsed_ / HudStyle::FADE_DURATION);
+
+    for (MoveKey& key : moveKeys_) {
+        const bool pressed = input_->IsPress(key.code);
+        key.box.SetColor(pressed ? PRESSED_BOX : HudStyle::BOX);
+        key.label.SetColor(pressed ? PRESSED_LABEL : HudStyle::WHITE);
     }
 
-    frame_->SetPosition(position_);
-    frame_->Update();
-
-    for (auto& [key, value]: keys_) {
-        const bool isOnCooldown = value.cooldownRatio > 0.001f;
-
-        if (value.failFlashTimer > 0.f) {
-            value.failFlashTimer -= Time::GetDeltaTime();
-            if (value.failFlashTimer < 0.f) value.failFlashTimer = 0.f;
+    for (SkillKey& key : skillKeys_) {
+        if (key.cooldownRatio > COOLDOWN_EPSILON && input_->IsTrigger(key.code)) {
+            Flash(key, HudStyle::RED);
         }
-
-        if (isOnCooldown && input_->IsTrigger(key)) {
-            value.failFlashTimer = 0.3f;
-        }
-
-        if (value.failFlashTimer > 0.f) {
-            const float t = value.failFlashTimer / 0.3f;
-            const Vector4& d = value.defaultColor;
-            value.frame->SetColor({
-                d.x + (1.f - d.x) * t,
-                d.y + (0.1f - d.y) * t,
-                d.z + (0.1f - d.z) * t,
-                d.w + (0.9f - d.w) * t
-            });
-        } else if (!isOnCooldown && input_->IsPress(key)) {
-            value.frame->SetColor(value.pressColor);
-        } else {
-            value.frame->SetColor(value.defaultColor);
-        }
-
-        if (value.frame) {
-            value.frame->SetPosition(position_ + value.position);
-            value.frame->Update();
-        }
-        if (value.key) {
-            value.key->SetPosition(position_ + value.position);
-            value.key->Update();
-        }
+        UpdateSkillKey(key, deltaTime);
     }
-}
-
-void KeyGuide::Draw() const {
-    if (!active_) return;
-
-    if (frame_) {
-        frame_->Draw();
-    }
-
-    for (const auto& key : keys_ | std::views::values) {
-        if (key.frame) {
-            key.frame->Draw();
-        }
-        if (key.key) {
-            key.key->Draw();
-        }
-    }
-}
-
-void KeyGuide::SetActive(bool _active) {
-    active_ = _active;
-    if (ui_) ui_->SetActive(_active);
 }
 
 void KeyGuide::Debug() {
-    ImGui::Text("Global Settings");
-    ImGui::Separator();
-
-    // 全体位置の編集
-    ImGui::Text("Position");
-    if (ImGui::DragFloat2("##Position", &position_.x, 1.0f, 0.0f, 1920.0f)) {
-        if (frame_) {
-            frame_->SetPosition(position_);
+#ifdef _DEBUG
+    ImGui::Begin("KeyGuide");
+    for (SkillKey& key : skillKeys_) {
+        const std::string label = "Cooldown##" + std::to_string(key.code);
+        float ratio = key.cooldownRatio;
+        if (ImGui::SliderFloat(label.c_str(), &ratio, 0.f, 1.f)) {
+            SetCooldown(key.code, ratio);
         }
     }
 
-    // フレームサイズの編集
-    if (frame_) {
-        ImGui::Text("Frame Size");
-        Vector2 frameSize = frame_->GetSize();
-        if (ImGui::DragFloat2("##FrameSize", &frameSize.x, 1.0f, 10.0f, 500.0f)) {
-            frame_->SetSize(frameSize);
-        }
-
-        // フレーム色の編集
-        ImGui::Text("Frame Color");
-        Vector4 frameColor = frame_->GetColor();
-        if (ImGui::ColorEdit4("##FrameColor", &frameColor.x)) {
-            frame_->SetColor(frameColor);
-        }
+    HudLayout::Group groups[] = {{"Move", move_}, {"Skills", skills_}};
+    for (HudLayout::Group& group : groups) {
+        HudLayout::DrawEditor(group);
     }
-
-    ImGui::Separator();
-
-    // キー追加UI
-    ImGui::Text("Add New Key");
-
-    // キーコード選択（ComboBox）
-    const char* previewKey = KeyCodeMap[selectedKeyIndex_].name;
-    if (ImGui::BeginCombo("Key Code", previewKey)) {
-        for (int i = 0; i < std::size(KeyCodeMap); i++) {
-            const bool isSelected = (selectedKeyIndex_ == i);
-            if (ImGui::Selectable(KeyCodeMap[i].name, isSelected)) {
-                selectedKeyIndex_ = i;
-            }
-            if (isSelected) {
-                ImGui::SetItemDefaultFocus();
-            }
-        }
-        ImGui::EndCombo();
-    }
-
-    // 選択されたキーコードを表示
-    ImGui::SameLine();
-    ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), "(0x%02X)", KeyCodeMap[selectedKeyIndex_].code);
-
-    // テクスチャ選択
-    ImGui::Text("Texture");
-    ImGui::InputText("##Texture", newKeyTexture_, sizeof(newKeyTexture_));
-    ImGui::SameLine();
-    if (ImGui::Button("...##BrowseTexture")) {
-        std::string selectedFile = Utils::OpenFileDialog("PNG");
-        if (!selectedFile.empty()) {
-            // Assets/Resources/からの相対パスに変換
-            std::filesystem::path fullPath(selectedFile);
-            std::string filename = fullPath.filename().string();
-            strcpy_s(newKeyTexture_, sizeof(newKeyTexture_), filename.c_str());
-        }
-    }
-
-    // 現在のテクスチャ名を表示
-    if (strlen(newKeyTexture_) > 0) {
-        ImGui::SameLine();
-        ImGui::TextColored(ImVec4(0.5f, 0.8f, 0.5f, 1.0f), "[%s]", newKeyTexture_);
-    }
-
-    // クリップボードから貼り付けボタン
-    if (hasClipboard_) {
-        if (ImGui::Button("Paste from Clipboard")) {
-            strcpy_s(newKeyTexture_, sizeof(newKeyTexture_), clipboardKey_.texture.c_str());
-        }
-        ImGui::SameLine();
-        ImGui::TextColored(ImVec4(0.8f, 0.8f, 0.5f, 1.0f), "(Clipboard available)");
-    }
-
-    if (ImGui::Button("Add Key")) {
-        BYTE keyCode = KeyCodeMap[selectedKeyIndex_].code;
-        if (!keys_.contains(keyCode)) {
-            Key newKey;
-            newKey.texture = newKeyTexture_;
-
-            // クリップボードからデータを適用
-            if (hasClipboard_) {
-                newKey.position = clipboardKey_.position;
-                newKey.defaultColor = clipboardKey_.defaultColor;
-                newKey.pressColor = clipboardKey_.pressColor;
-            }
-
-            // キーを登録
-            newKey.frame = std::make_unique<Sprite>();
-            newKey.frame->Initialize("white_x16.png");
-            newKey.frame->SetPosition(position_ + newKey.position);
-            newKey.frame->SetSize(hasClipboard_ ? clipboardKey_.frameSize : Vector2{100.0f, 100.0f});
-            newKey.frame->SetColor(newKey.defaultColor);
-
-            newKey.key = std::make_unique<Sprite>();
-            newKey.key->Initialize(newKey.texture);
-            newKey.key->SetPosition(position_ + newKey.position);
-            newKey.key->SetSize(hasClipboard_ ? clipboardKey_.labelSize : Vector2{80.0f, 80.0f});
-
-            keys_[keyCode] = std::move(newKey);
-
-            Log::Send(Log::Level::INFO, "KeyGuide: Added key " + std::to_string(keyCode));
-        } else {
-            Log::Send(Log::Level::WARNING, "KeyGuide: Key code " + std::to_string(keyCode) + " already exists");
-        }
-    }
-
-    ImGui::Separator();
-
-    // キー情報の表示と編集
-    ImGui::Text("Keys: %zu", keys_.size());
-
-    if (ImGui::TreeNode("Key Details")) {
-        int index = 0;
-        BYTE keyToDelete = 255; // 削除するキーコード（255は無効値）
-
-        for (auto& [keyCode, key] : keys_) {
-            ImGui::PushID(index++);
-
-            // キーコードに対応する名前を検索
-            const char* keyName = nullptr;
-            for (int i = 0; i < std::size(KeyCodeMap); i++) {
-                if (KeyCodeMap[i].code == keyCode) {
-                    keyName = KeyCodeMap[i].name;
-                    break;
-                }
-            }
-
-            std::string label = keyName
-                ? std::string(keyName) + " (0x" + std::to_string(keyCode) + ")"
-                : "Unknown (0x" + std::to_string(keyCode) + ")";
-
-            if (ImGui::TreeNode(label.c_str())) {
-                ImGui::Text("Texture");
-
-                // 現在のテクスチャ名を編集可能なバッファにコピー
-                char textureBuffer[256];
-                strcpy_s(textureBuffer, sizeof(textureBuffer), key.texture.c_str());
-
-                bool textureChanged = false;
-                if (ImGui::InputText("##EditTexture", textureBuffer, sizeof(textureBuffer))) {
-                    textureChanged = true;
-                }
-
-                ImGui::SameLine();
-                if (ImGui::Button("...##BrowseEditTexture")) {
-                    std::string selectedFile = Utils::OpenFileDialog("PNG");
-                    if (!selectedFile.empty()) {
-                        std::filesystem::path fullPath(selectedFile);
-                        std::string filename = fullPath.filename().string();
-                        strcpy_s(textureBuffer, sizeof(textureBuffer), filename.c_str());
-                        textureChanged = true;
-                    }
-                }
-
-                // テクスチャが変更された場合、Spriteを再初期化
-                if (textureChanged) {
-                    key.texture = std::string(textureBuffer);
-                    if (key.key && !key.texture.empty()) {
-                        Vector2 currentSize = key.key->GetSize();
-                        Vector2 currentPos = key.key->GetPosition();
-                        key.key->SetTexture(key.texture);
-                        key.key->SetPosition(currentPos);
-                        key.key->SetSize(currentSize);
-                        key.key->Update();
-                    }
-                }
-
-                // 現在のテクスチャ名を表示
-                if (!key.texture.empty()) {
-                    ImGui::SameLine();
-                    ImGui::TextColored(ImVec4(0.5f, 0.8f, 0.5f, 1.0f), "[%s]", key.texture.c_str());
-                }
-
-                ImGui::Separator();
-                
-                // 相対位置（オフセット）の編集
-                Vector2 offset = key.position;
-                ImGui::Text("Frame Offset");
-                if (ImGui::DragFloat2("##Offset", &offset.x, 1.0f, -500.0f, 500.0f)) {
-                    key.position = offset;
-                }
-
-                // フレームサイズの編集
-                if (key.frame) {
-                    ImGui::Text("Frame Size");
-                    Vector2 keyFrameSize = key.frame->GetSize();
-                    if (ImGui::DragFloat2("##KeyFrameSize", &keyFrameSize.x, 1.0f, 10.0f, 500.0f)) {
-                        key.frame->SetSize(keyFrameSize);
-                    }
-                }
-
-                // ラベルサイズの編集
-                if (key.key) {
-                    ImGui::Text("Label Size");
-                    Vector2 labelSize = key.key->GetSize();
-                    if (ImGui::DragFloat2("##LabelSize", &labelSize.x, 1.0f, 10.0f, 500.0f)) {
-                        key.key->SetSize(labelSize);
-                    }
-                }
-
-                ImGui::Text("Key Color");
-                if (ImGui::ColorEdit4("##KeyColor", &key.defaultColor.x)) {
-                    key.frame->SetColor(key.defaultColor);
-                }
-
-                ImGui::Text("Press Color");
-                ImGui::ColorEdit4("##PressColor", &key.pressColor.x);
-
-                ImGui::Separator();
-                ImGui::Text("CT Overlay Element");
-                char cdBuf[256];
-                strcpy_s(cdBuf, sizeof(cdBuf), key.cooldownElementName.c_str());
-                if (ImGui::InputText("##CooldownElement", cdBuf, sizeof(cdBuf))) {
-                    key.cooldownElementName = cdBuf;
-                    // 新しいElementをキャッシュし直す
-                    if (!key.cooldownElementName.empty()) {
-                        if (auto* elem = ui_->FindElementByName(key.cooldownElementName)) {
-                            key.cooldownFullHeight = elem->GetSize().y;
-                            key.cooldownBasePos   = elem->GetPosition();
-                            elem->SetVisible(false);
-                        }
-                    }
-                }
-                ImGui::SameLine();
-                ImGui::TextDisabled("(Guide.json element name)");
-
-                ImGui::Separator();
-
-                // コピーボタン
-                if (ImGui::Button("Copy This Key")) {
-                    clipboardKey_.position = key.position;
-                    clipboardKey_.texture = key.texture;
-                    clipboardKey_.defaultColor = key.defaultColor;
-                    clipboardKey_.pressColor = key.pressColor;
-                    if (key.frame) {
-                        clipboardKey_.frameSize = key.frame->GetSize();
-                    }
-                    if (key.key) {
-                        clipboardKey_.labelSize = key.key->GetSize();
-                    }
-                    hasClipboard_ = true;
-                    Log::Send(Log::Level::INFO, "KeyGuide: Copied key " + std::to_string(keyCode));
-                }
-
-                ImGui::SameLine();
-
-                // 削除ボタン
-                if (ImGui::Button("Delete This Key")) {
-                    keyToDelete = keyCode;
-                }
-
-                ImGui::TreePop();
-            }
-
-            ImGui::PopID();
-        }
-
-        if (keyToDelete != 255) {
-            keys_.erase(keyToDelete);
-        }
-
-        ImGui::TreePop();
-    }
-
-    ImGui::Separator();
-
-    // Load/Saveボタン
-    if (ImGui::Button("Load")) {
-        reload_ = true;
-    }
-    ImGui::SameLine();
-    if (ImGui::Button("Save")) {
-        Save();
-    }
+    HudLayout::DrawSaveButton(CANVAS_PATH, groups);
+    ImGui::End();
+#endif
 }
 
-void KeyGuide::Load() {
-    std::ifstream file(JsonPath);
-    if (!file.is_open()) {
-        Log::Send(Log::Level::WARNING, "KeyGuide: JSON file not found - " + JsonPath);
+void KeyGuide::SetActive(const bool _active) {
+    if (_active && !ui_.IsVisible()) {
+        fadeElapsed_ = 0.f;
+        ui_.SetAlpha(0.f);
+    }
+    ui_.SetVisible(_active);
+}
+
+void KeyGuide::SetCooldown(const BYTE _key, const float _ratio) {
+    for (SkillKey& key : skillKeys_) {
+        if (key.code != _key) continue;
+
+        const float ratio = std::clamp(_ratio, 0.f, 1.f);
+        const bool ready = ratio <= COOLDOWN_EPSILON;
+        // 使えるようになったら緑に光らせる
+        if (key.cooldownRatio > COOLDOWN_EPSILON && ready) {
+            Flash(key, HudStyle::GREEN);
+        }
+        key.cooldownRatio = ratio;
+
+        // CT中は残りを % で出す
+        key.cooldown.SetSize({1.f, ratio});
+        key.label.SetText(ready ? key.name : std::format("{}%", static_cast<int>(std::ceil(ratio * 100.f))));
         return;
     }
-
-    nlohmann::json root;
-    try {
-        file >> root;
-        file.close();
-    } catch (const nlohmann::json::parse_error& e) {
-        Log::Send(Log::Level::ERR, "KeyGuide: JSON parse error - " + std::string(e.what()));
-        file.close();
-        return;
-    }
-
-    // Settingsから基本情報を読み込み
-    if (root.contains("Settings") && root["Settings"].is_object()) {
-        auto& settings = root["Settings"];
-
-        if (settings.contains("Position") && settings["Position"].is_array() && settings["Position"].size() >= 2) {
-            position_ = {settings["Position"][0].get<float>(), settings["Position"][1].get<float>()};
-        }
-
-        Vector2 frameSize = {100.0f, 100.0f};
-        if (settings.contains("Size") && settings["Size"].is_array() && settings["Size"].size() >= 2) {
-            frameSize = {settings["Size"][0].get<float>(), settings["Size"][1].get<float>()};
-        }
-
-        Vector4 frameColor = {0.3f, 0.3f, 0.3f, 0.8f};
-        if (settings.contains("Color") && settings["Color"].is_array() && settings["Color"].size() >= 4) {
-            frameColor = {
-                settings["Color"][0].get<float>(),
-                settings["Color"][1].get<float>(),
-                settings["Color"][2].get<float>(),
-                settings["Color"][3].get<float>()
-            };
-        }
-
-        // 全体フレームの設定を更新
-        if (frame_) {
-            frame_->SetPosition(position_);
-            frame_->SetSize(frameSize);
-            frame_->SetColor(frameColor);
-        }
-    }
-
-    // Keys配列を読み込み
-    if (root.contains("Keys") && root["Keys"].is_array()) {
-        keys_.clear(); // 既存のキーをクリア
-
-        for (const auto& keyData : root["Keys"]) {
-            Key newKey;
-
-            // キーコードを取得
-            BYTE keyCode = static_cast<BYTE>(keyData.value("Key", 0));
-
-            // フレームオフセットを取得
-            Vector2 frameOffset = {0.0f, 0.0f};
-            if (keyData.contains("FrameOffset") && keyData["FrameOffset"].is_array() && keyData["FrameOffset"].size() >= 2) {
-                frameOffset = {
-                    keyData["FrameOffset"][0].get<float>(),
-                    keyData["FrameOffset"][1].get<float>()
-                };
-            }
-
-            // フレームサイズを取得
-            Vector2 keyFrameSize = {100.0f, 100.0f};
-            if (keyData.contains("FrameSize") && keyData["FrameSize"].is_array() && keyData["FrameSize"].size() >= 2) {
-                keyFrameSize = {
-                    keyData["FrameSize"][0].get<float>(),
-                    keyData["FrameSize"][1].get<float>()
-                };
-            }
-
-            // ラベルサイズを取得
-            Vector2 labelSize = {80.0f, 80.0f};
-            if (keyData.contains("LabelSize") && keyData["LabelSize"].is_array() && keyData["LabelSize"].size() >= 2) {
-                labelSize = {
-                    keyData["LabelSize"][0].get<float>(),
-                    keyData["LabelSize"][1].get<float>()
-                };
-            }
-
-            // テクスチャパスを取得
-            std::string texturePath = keyData.value("Texture", "white_x16.png");
-
-            // Color
-            newKey.defaultColor = {};
-            newKey.pressColor = {};
-
-            if (keyData.contains("DefaultColor") && keyData["DefaultColor"].is_array() && keyData["DefaultColor"].size() >= 4) {
-                newKey.defaultColor = {
-                    keyData["DefaultColor"][0].get<float>(),
-                    keyData["DefaultColor"][1].get<float>(),
-                    keyData["DefaultColor"][2].get<float>(),
-                    keyData["DefaultColor"][3].get<float>()
-                };
-            }
-
-            if (keyData.contains("PressColor") && keyData["PressColor"].is_array() && keyData["PressColor"].size() >= 4) {
-                newKey.pressColor = {
-                    keyData["PressColor"][0].get<float>(),
-                    keyData["PressColor"][1].get<float>(),
-                    keyData["PressColor"][2].get<float>(),
-                    keyData["PressColor"][3].get<float>()
-                };
-            }
-
-            // CTオーバーレイ用Elementの名前
-            newKey.cooldownElementName = keyData.value("CooldownElement", "");
-
-            // 位置を保存（オフセット）
-            newKey.position = frameOffset;
-
-            // フレームスプライトを作成
-            newKey.frame = std::make_unique<Sprite>();
-            newKey.frame->Initialize("white_x16.png");
-            newKey.frame->SetPosition(position_ + newKey.position);
-            newKey.frame->SetSize(keyFrameSize);
-            if (frame_) {
-                newKey.frame->SetColor(frame_->GetColor());
-            }
-
-            // キースプライトを作成
-            if (!texturePath.empty()) {
-                newKey.texture = texturePath;
-                newKey.key = std::make_unique<Sprite>();
-                newKey.key->Initialize(texturePath);
-                newKey.key->SetPosition(position_ + newKey.position);
-                newKey.key->SetSize(labelSize);
-            }
-
-            // マップに追加
-            keys_[keyCode] = std::move(newKey);
-        }
-    }
-
-    Log::Send(Log::Level::INFO, "KeyGuide: Loaded " + JsonPath);
 }
 
-void KeyGuide::Save() {
-    nlohmann::json root;
-
-    // Settingsを保存
-    nlohmann::json settings;
-    settings["Position"] = {position_.x, position_.y};
-
-    if (frame_) {
-        auto size = frame_->GetSize();
-        auto color = frame_->GetColor();
-        settings["Size"] = {size.x, size.y};
-        settings["Color"] = {color.x, color.y, color.z, color.w};
-    }
-
-    root["Settings"] = settings;
-
-    // Keys配列を構築
-    nlohmann::json keysArray = nlohmann::json::array();
-    for (const auto& [keyCode, key] : keys_) {
-        nlohmann::json keyJson;
-        keyJson["Key"] = keyCode;
-
-        keyJson["Texture"] = key.texture;
-
-        keyJson["FrameOffset"] = {key.position.x, key.position.y};
-
-        if (key.frame) {
-            auto frameSize = key.frame->GetSize();
-            keyJson["FrameSize"] = {frameSize.x, frameSize.y};
-        }
-
-        if (key.key) {
-            auto labelSize = key.key->GetSize();
-            keyJson["LabelSize"] = {labelSize.x, labelSize.y};
-
-        }
-
-        keyJson["DefaultColor"] = { key.defaultColor.x, key.defaultColor.y, key.defaultColor.z, key.defaultColor.w };
-        keyJson["PressColor"] = { key.pressColor.x, key.pressColor.y, key.pressColor.z, key.pressColor.w };
-
-        if (!key.cooldownElementName.empty()) {
-            keyJson["CooldownElement"] = key.cooldownElementName;
-        }
-
-        keysArray.push_back(keyJson);
-    }
-    root["Keys"] = keysArray;
-
-    // ファイルに書き込み
-    std::ofstream file(JsonPath, std::ios::trunc);
-    if (!file.is_open()) {
-        Log::Send(Log::Level::ERR, "KeyGuide: Failed to open file for write - " + JsonPath);
-        return;
-    }
-
-    file << root.dump(4) << '\n';
-    file.close();
-
-    Log::Send(Log::Level::INFO, "KeyGuide: Saved " + JsonPath);
+KeyGuide::MoveKey KeyGuide::FindMoveKey(const GEUI::Widget& _parent, const BYTE _code, const char* _name) {
+    const GEUI::Widget box = _parent.Find(_name);
+    return {.code = _code, .box = box, .label = box.Find("Label")};
 }
 
-void KeyGuide::Register(const BYTE& _code, Key _key) {
-    _key.frame = std::make_unique<Sprite>();
-    _key.frame->Initialize("white_x16.png");
-    _key.frame->SetPosition(position_ + _key.position);
-    _key.frame->SetSize({100.0f, 100.0f});
-    _key.frame->SetColor(_key.defaultColor);
-
-    _key.key = std::make_unique<Sprite>();
-    _key.key->Initialize(_key.texture);
-    _key.key->SetPosition(position_ + _key.position);
-    _key.key->SetSize({80.f, 80.f});
-
-    keys_[_code] = std::move(_key);
+KeyGuide::SkillKey KeyGuide::FindSkillKey(const GEUI::Widget& _parent, const BYTE _code, const char* _name) {
+    const GEUI::Widget box = _parent.Find(_name);
+    return {
+        .code = _code,
+        .name = _name,
+        .box = box,
+        .label = box.Find("Label"),
+        .cooldown = box.Find("Cooldown"),
+    };
 }
 
-void KeyGuide::SetCooldown(const BYTE _key, float _ratio) {
-    auto it = keys_.find(_key);
-    if (it == keys_.end() || it->second.cooldownElementName.empty()) return;
+void KeyGuide::UpdateSkillKey(SkillKey& _key, const float _deltaTime) const {
+    const bool ready = _key.cooldownRatio <= COOLDOWN_EPSILON;
+    const bool pressed = ready && input_->IsPress(_key.code);
 
-    auto& key = it->second;
-    key.cooldownRatio = std::clamp(_ratio, 0.f, 1.f);
+    _key.label.SetColor(pressed ? PRESSED_LABEL : (ready ? HudStyle::WHITE : HudStyle::GRAY));
 
-    auto* elem = ui_->FindElementByName(key.cooldownElementName);
-    if (!elem) return;
+    _key.flashTimer = std::max(0.f, _key.flashTimer - _deltaTime);
+    const float t = _key.flashTimer / FLASH_DURATION;
+    const Vector4& box = pressed ? PRESSED_BOX : HudStyle::BOX;
+    _key.box.SetColor(HudStyle::Lerp(box, _key.flashColor, t));
+}
 
-    elem->SetVisible(key.cooldownRatio > 0.001f);
-    if (key.cooldownRatio <= 0.001f) return;
-
-    const float newH    = key.cooldownFullHeight * key.cooldownRatio;
-    const float topEdge = key.cooldownBasePos.y - key.cooldownFullHeight * 0.5f;
-    elem->SetSize({elem->GetSize().x, newH});
-    elem->SetPosition({key.cooldownBasePos.x, topEdge + newH * 0.5f});
+void KeyGuide::Flash(SkillKey& _key, const Vector4& _color) {
+    _key.flashTimer = FLASH_DURATION;
+    _key.flashColor = _color;
 }

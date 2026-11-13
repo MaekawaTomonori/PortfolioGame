@@ -12,7 +12,7 @@ void ItemShowcase::Update() {
     // sine wave motion
     // t_ : 0 -> 2PI
     // y : -1 -> 1
-    t_ += Time::GetDeltaTime();
+    t_ += Time().GetDeltaTime();
     t_ = fmod(t_, MathUtils::F_PI * 2.f);
     transform_.translate.y = originalP.y + std::sin(t_) * waveAmp_;
 

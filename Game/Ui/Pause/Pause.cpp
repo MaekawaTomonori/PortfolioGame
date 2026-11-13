@@ -1,134 +1,74 @@
 #include "Pause.hpp"
 
-#include "imgui.h"
-#include "Math/Easing.hpp"
+#include <algorithm>
+
 #include "Pattern/Singleton.hpp"
 #include "src/Time/Time.hpp"
+
+namespace {
+    constexpr float FADE_TIME = 0.2f;
+}
+
+Pause::~Pause() {
+    ui_.Unload();
+}
 
 void Pause::Initialize() {
     input_ = Singleton<Input>::GetInstance();
 
-    ui_ = std::make_unique<Ui::Canvas>();
-    ui_->Setup("pause");
-    ui_->SetActive(false);
+    ui_ = GEUI::Canvas::Load("Assets/UI/Pause.json");
+    ui_.SetVisible(false);
 
-    ui_->RegisterAction("Pause.Resume", [this]() { Close(); });
-    ui_->RegisterAction("Pause.Retry", [this]() { if (onRetry_) onRetry_(); });
-    ui_->RegisterAction("Pause.Quit", [this]() { if (onQuit_) onQuit_(); });
-
-    ui_->SetCustomDebug([this]{ Debug(); });
-
-    actionIndices_ = ui_->GetIndicesWithEvent(Ui::EventKey::Execute);
-
-    cursor_ = std::make_unique<Sprite>();
-    cursor_->Initialize("white_x16.png");
-    cursor_->SetSize({16.f, 16.f});
-
-    if (actionIndices_.empty()) return;
-
-    size_t elemIndex = actionIndices_[selectedIndex_];
-    auto rect = ui_->GetElementRect(elemIndex);
-
-    float cursorX = rect.position.x - rect.size.x / 2.f - 24.f;
-    float cursorY = rect.position.y;
-    cursor_->SetPosition({cursorX, cursorY});
+    resume_ = ui_.Find("Resume");
+    retry_ = ui_.Find("Retry");
+    quit_ = ui_.Find("Quit");
 }
 
 void Pause::Update() {
-    if (!ui_)return;
-
     CheckActivateState();
 
-    if (!ui_->IsActive()) return;
+    if (!IsOpen()) return;
 
     HandleInput();
-    UpdateCursor();
-
-    cursor_->Update();
+    UpdateFade(Time().GetDeltaTime());
 }
 
-void Pause::Draw() {
-    if (!ui_)return;
-    if (!ui_->IsActive()) return;
-
-    cursor_->Draw();
+void Pause::UpdateFade(const float _deltaTime) {
+    fadeTime_ = (std::min)(fadeTime_ + _deltaTime, FADE_TIME);
+    const float t = fadeTime_ / FADE_TIME;
+    ui_.SetAlpha(1.f - (1.f - t) * (1.f - t));
 }
 
 void Pause::HandleInput() {
-    if (actionIndices_.empty()) return;
+    if (input_->IsTrigger(DIK_UP)   || input_->IsTrigger(DIK_W)) ui_.Navigate(GEUI::Direction::Up);
+    if (input_->IsTrigger(DIK_DOWN) || input_->IsTrigger(DIK_S)) ui_.Navigate(GEUI::Direction::Down);
+    if (input_->IsTrigger(DIK_RETURN) || input_->IsTrigger(DIK_SPACE)) ui_.Submit();
 
-    int32_t count = static_cast<int32_t>(actionIndices_.size());
-    
-    bool up = input_->IsTrigger(DIK_UP) || input_->IsTrigger(DIK_W);
-    bool down = input_->IsTrigger(DIK_DOWN) || input_->IsTrigger(DIK_S);
-    if (up || down) {
-        selectedIndex_ = up ? (selectedIndex_ - 1 + count) % count : (selectedIndex_ + 1) % count;
-        timer_ = 0.f;
-        start_ = cursor_->GetPosition();
-
-        if (ui_->IsDirty()) {
-            actionIndices_.clear();
-            actionIndices_ = ui_->GetIndicesWithEvent(Ui::EventKey::Execute);
-        }
-
-        if (actionIndices_.empty()) return;
-
-        size_t elemIndex = actionIndices_[selectedIndex_];
-        auto rect = ui_->GetElementRect(elemIndex);
-
-        float cursorX = rect.position.x - rect.size.x / 2.f - 24.f;
-        float cursorY = rect.position.y;
-
-        destination_ = {cursorX, cursorY};
+    // Retry / Quit はシーンを切り替えるので、押されたものだけを呼ぶ
+    if (resume_.WasPressed()) {
+        Close();
+    } else if (retry_.WasPressed()) {
+        if (onRetry_) onRetry_();
+    } else if (quit_.WasPressed()) {
+        if (onQuit_) onQuit_();
     }
-    int canvasCursor = ui_->GetCursorIndex();
-    if (canvasCursor >= 0) {
-        for (int32_t i = 0; i < count; ++i) {
-            if (static_cast<int>(actionIndices_[i]) == canvasCursor && i != selectedIndex_) {
-                selectedIndex_ = i;
-                timer_ = 0.f;
-                start_ = cursor_->GetPosition();
-                auto rect = ui_->GetElementRect(actionIndices_[selectedIndex_]);
-                destination_ = {rect.position.x - rect.size.x / 2.f - 24.f, rect.position.y};
-                break;
-            }
-        }
-    }
-
-    if (input_->IsTrigger(DIK_RETURN) || input_->IsTrigger(DIK_SPACE)) {
-        Execute();
-    }
-}
-
-void Pause::UpdateCursor() {
-    if (interpolationTime_<timer_)return;
-    timer_ += Time::GetDeltaTime();
-
-    Vector2 pos = Ease::Out::Cubic(start_, destination_, timer_ / interpolationTime_);
-
-    cursor_->SetPosition(pos);
-}
-
-void Pause::Execute() const {
-    if (actionIndices_.empty()) return;
-
-    size_t elemIndex = actionIndices_[selectedIndex_];
-    ui_->ExecuteActionAt(elemIndex, Ui::EventKey::Execute);
 }
 
 void Pause::Open() {
-    ui_->SetActive(true);
-    selectedIndex_ = 0;
-    UpdateCursor();
+    // 薄い状態から出して、UpdateFade で濃くしていく
+    fadeTime_ = 0.f;
+    ui_.SetAlpha(0.f);
+    ui_.SetVisible(true);
+    resume_.SetSelected(true);
 }
 
-void Pause::Close() const {
-    ui_->SetActive(false);
+void Pause::Close() {
+    ui_.SetVisible(false);
     if (onResume_) onResume_();
 }
 
 bool Pause::IsOpen() const {
-    return ui_->IsActive();
+    return ui_.IsVisible();
 }
 
 void Pause::SetOnResume(std::function<void()> _callback) {
@@ -147,9 +87,4 @@ void Pause::CheckActivateState() {
     if (input_->IsTrigger(DIK_ESCAPE)) {
         IsOpen() ? Close() : Open();
     }
-}
-
-void Pause::Debug() {
-    ImGui::Text("Interpolation Time(sec)");
-    ImGui::DragFloat("##interpolationtime", &interpolationTime_, 0.01f, 0.0f, 10.0f);
 }
