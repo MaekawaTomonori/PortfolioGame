@@ -34,27 +34,14 @@ Player::Player(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
     SetScale({0.4f, 0.4f, 0.4f});
     UpdateModel();
 
-    // Modules
+    // Modules Initialization
+
+    // InputModule Initialize
     inputHandler_ = std::make_unique<InputHandler>();
-    movement_ = std::make_unique<Movement>();
-    attack_ = std::make_unique<Attack>();
-
-    reticle_ = std::make_unique<Sprite>();
-    reticle_->Initialize("crosshair.png");
-    reticle_->SetSize({32.f, 32.f});
-    reticle_->SetColor({0.f, 0.7f, 1.f, 0.9f});
-}
-
-void Player::Initialize() {
-    status_ = {
-        100.f,
-        1.f,
-        1.f,
-        1.f
-    };
-
     inputHandler_->Initialize();
 
+    // MovementModule Initialize
+    movement_ = std::make_unique<Movement>();
     movement_->Initialize(this);
 
     auto flash = std::make_unique<FlashBehavior>();
@@ -71,15 +58,41 @@ void Player::Initialize() {
         movement_->AddBehavior(behavior.get());
     }
 
+    // AttackModule Initialize
+    attack_ = std::make_unique<Attack>();
     attack_->Initialize();
     attack_->SetOwner(this);
     attack_->SetStatus(status_);
-
-    LoadParams();
-    attack_->LoadParams();
+    
+    reticle_ = std::make_unique<Sprite>();
+    reticle_->Initialize("crosshair.png");
+    reticle_->SetSize({32.f, 32.f});
+    reticle_->SetColor({0.f, 0.7f, 1.f, 0.9f});
 
     forLight_ = position_;
     forLight_.y += 3.f;
+}
+
+void Player::Initialize() {
+    status_ = {
+        100.f,
+        1.f,
+        1.f,
+        1.f
+    };
+
+    LoadParams();
+    attack_->LoadParams();
+    // 前のラウンドの弾を持ち越さない
+    attack_->Initialize();
+
+    // 振る舞いは1回しか作らないので、クールダウンや被弾後の無敵をラウンドごとに戻す
+    for (auto& behavior : behaviors_) {
+        behavior->Reset();
+    }
+    invulnerability_ = false;
+    invulnerabilityTimer_ = 0.f;
+    model_->SetColor(BASE_COLOR);
 }
 
 void Player::Update() {
@@ -298,13 +311,13 @@ void Player::UpdateInvulnerability(const float _deltaTime) {
 }
 
 void Player::UpdateAttack() {
-    if (!attack_) return; 
-    if (!targetExist_) {
-        attack_->Clear();
-        return;
-    }
+    if (!attack_) return;
+
+    // 飛んでいる弾は、狙う相手がいなくなっても動かし続ける
+    attack_->Update();
+    if (!targetExist_) return;
 
     attack_->SetDirection((targetPosition_ - position_).Normalize());
-    attack_->Update();
+    attack_->Fire();
     targetExist_ = false;
 }

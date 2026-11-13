@@ -41,14 +41,13 @@ public:
     void Update();
     void Draw() const;
 
-    [[nodiscard]] Vector3 GetNearest(const Vector3& _pos) const;
+    [[nodiscard]] std::optional<Vector3> GetNearest(const Vector3& _pos) const;
 
     void SetTarget(GameObject* _target);
 
     void Debug();
 
     bool IsDone() const;
-    bool Empty() const;
 
     // カメラ調整用の情報取得
     [[nodiscard]] float GetFarthestEnemyDistance(const Vector3& referencePos) const;

@@ -10,26 +10,24 @@
 
 void Attack::Initialize() {
     timer_ = 0.f;
+    bullets_.clear();
 }
 
 void Attack::Update() {
-    float deltaTime = Time().GetDeltaTime();
-
     std::erase_if(bullets_, [](const auto& bullet) { return !bullet->IsActive(); });
     for (auto& bullet : bullets_) {
         bullet->Update();
     }
 
-    if (timer_ < 0.f) {
-        timer_ = attackRate_;
+    // 狙う相手がいない間も進めておき、現れたらすぐ撃てるよう 0 で止める
+    timer_ = std::max(0.f, timer_ - Time().GetDeltaTime());
+}
 
-        // Attack
-        Execute();
+void Attack::Fire() {
+    if (timer_ > 0.f) return;
 
-        return;
-    }
-
-    timer_ -= deltaTime;
+    timer_ = attackRate_;
+    Execute();
 }
 
 void Attack::Draw() {
@@ -48,10 +46,6 @@ void Attack::SetDirection(const Vector3& _direction) {
 
 void Attack::SetStatus(PlayerStatus& _status) {
     status_ = std::ref(_status);
-}
-
-void Attack::Clear() {
-    bullets_.clear();
 }
 
 void Attack::Execute() {

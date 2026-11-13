@@ -32,9 +32,14 @@ class Attack {
     std::optional<std::reference_wrapper<PlayerStatus>> status_;
 
 public:
+    /** @brief 発射間隔をリセットし、飛んでいる弾を全て消す（ラウンド開始時） **/
     void Initialize();
+    /** @brief 弾の移動と発射間隔の更新。狙う相手の有無に関わらず毎フレーム呼ぶ **/
     void Update();
     void Draw();
+
+    /** @brief 発射間隔が空いていれば、SetDirection の向きへ1発撃つ **/
+    void Fire();
 
     void SetOwner(GameObject* _owner);
     void SetDirection(const Vector3& _direction);
@@ -43,8 +48,6 @@ public:
 
     /** @brief 攻撃速度倍率を適用する (as=1.0 で通常速度) **/
     void ApplyAttackSpeed(float _as);
-
-    void Clear();
 
     void LoadParams();
     void SaveParams();

@@ -24,6 +24,7 @@ public:
 
     Vector3 Calculate(const MovementContext& context) override;
     bool CanExecute(const MovementContext& context) override;
+    void Reset() override;
     void Debug() const override;
 
     int GetPriority() const override { return 10; }

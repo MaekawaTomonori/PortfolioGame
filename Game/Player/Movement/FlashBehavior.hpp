@@ -19,6 +19,7 @@ public:
     Vector3 Calculate(const MovementContext& context) override;
     bool CanExecute(const MovementContext& context) override;
     int GetPriority() const override { return 100; }
+    void Reset() override { currentCooldown_ = 0.f; }
     void Debug() const override;
 
     void SetDistance(float distance) { distance_ = distance; }

@@ -147,8 +147,8 @@ void Stage::Update() {
 
     enemies_->Update();
 
-    if (!enemies_->Empty()) {
-        player_->SetTargetPosition(enemies_->GetNearest(player_->GetPosition()));
+    if (auto nearest = enemies_->GetNearest(player_->GetPosition())) {
+        player_->SetTargetPosition(*nearest);
     }
 
     player_->Update();

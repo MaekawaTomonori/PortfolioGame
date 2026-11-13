@@ -47,6 +47,13 @@ bool DashBehavior::CanExecute(const MovementContext& context) {
     return hasDashInput && hasMovement;
 }
 
+void DashBehavior::Reset() {
+    currentDuration_ = 0.f;
+    currentCooldown_ = 0.f;
+    isDashing_ = false;
+    dashDirection_ = {};
+}
+
 void DashBehavior::Debug() const {
     ImGui::Begin("DashBehavior Debug");
     ImGui::Text("Speed: %f", speed_);

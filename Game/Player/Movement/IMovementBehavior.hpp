@@ -31,6 +31,9 @@ public:
      */
     virtual int GetPriority() const = 0;
 
+    /** @brief クールダウンなどの途中の状態を捨てる（ラウンド開始時） */
+    virtual void Reset() {}
+
     virtual void Debug() const {}
 };
 

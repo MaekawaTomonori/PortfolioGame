@@ -136,9 +136,11 @@ void Enemies::Draw() const {
 #endif
 }
 
-Vector3 Enemies::GetNearest(const Vector3& _pos) const {
+std::optional<Vector3> Enemies::GetNearest(const Vector3& _pos) const {
+    if (enemies_.empty()) return std::nullopt;
+
     float minDistance = FLT_MAX;
-    Vector3 nearest = {};
+    std::optional<Vector3> nearest = std::nullopt;
     for (const auto& enemy : enemies_) {
         if (enemy->IsDead()) continue;
         Vector3 toEnemy = enemy->GetPosition() - _pos;
@@ -297,10 +299,6 @@ void Enemies::Debug() {
 
 bool Enemies::IsDone() const {
     return done_ && enemies_.empty();
-}
-
-bool Enemies::Empty() const {
-    return enemies_.empty();
 }
 
 void Enemies::Spawn() {
