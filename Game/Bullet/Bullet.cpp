@@ -1,13 +1,13 @@
 #include "Bullet.hpp"
 
-#include "ColliderType.hpp"
+#include "CollisionAttribute.hpp"
 #include "Time/Time.hpp"
 
 void Bullet::Initialize(GameObject* _owner, const Vector3& _direction, const Params& _params,
-    CollisionType _attribute, CollisionType _ignoreAttribute, CollisionType _targetAttribute) {
+    CollisionAttribute _attribute, CollisionAttribute _ignoreAttribute, CollisionAttribute _targetAttribute) {
     speed_    = _params.speed;
     lifetime_ = _params.lifetime;
-    damage_   = _params.damage;
+    damageSource_.SetDamage(_params.damage);
     owner_    = _owner;
     velocity_  = _direction.Normalize() * speed_;
     attribute_ = _attribute;
@@ -46,7 +46,6 @@ void Bullet::Initialize() {
 
     collider_ = std::make_unique<Collision::Collider>();
     collider_->SetEvent(Collision::EventType::Trigger, [this](const Collision::Collider* _pCol) { this->OnCollision(_pCol); })
-        ->SetOwner(this)
         ->SetType(Collision::Type::Sphere)
         ->SetSize(0.3f)
         ->SetTranslate({ position_.x, position_.y, position_.z })
@@ -54,6 +53,8 @@ void Bullet::Initialize() {
         ->AddIgnore(static_cast<uint32_t>(ignoreAttribute_))
         ->AddIgnore(static_cast<uint32_t>(attribute_))
         ->Enable();
+
+    damageSource_.AttachTo(*collider_);
 }
 
 void Bullet::OnCollision(const Collision::Collider* _collider) {

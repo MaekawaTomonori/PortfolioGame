@@ -3,13 +3,12 @@
 #include "Enemy/State/EnemyStateIdle.hpp"
 #include "Enemy/State/EnemyStateDeath.hpp"
 
-#include "Bullet/Bullet.hpp"
-#include "ColliderType.hpp"
+#include "CollisionAttribute.hpp"
+#include "Combat/DamageSource.hpp"
 #include "Math/MathUtils.hpp"
 #include "Time/Time.hpp"
 #include "Utils.hpp"
 #include "imgui.h"
-#include "Skill/ISkillEntity.hpp"
 
 namespace {
     // 外観
@@ -76,8 +75,9 @@ void Enemy::Initialize() {
         ->SetType(Collision::Type::AABB)
         ->SetSize(COLLIDER_SIZE)
         ->SetTranslate({ position_.x, position_.y, position_.z })
-        ->AddAttribute(static_cast<uint32_t>(CollisionType::Enemy))
-        ->AddIgnore(static_cast<uint32_t>(CollisionType::Enemy))
+        ->AddAttribute(static_cast<uint32_t>(CollisionAttribute::Enemy))
+        ->AddIgnore(static_cast<uint32_t>(CollisionAttribute::Enemy))
+        ->AddIgnore(static_cast<uint32_t>(CollisionAttribute::EnemyBullet))
         ->Enable();
 
     hpBar_ = std::make_unique<HpBar>();
@@ -225,7 +225,7 @@ void Enemy::Debug() {
 
 void Enemy::OnCollision(const Collision::Collider* _collider) {
     if (invincible_) return;
-    if (_collider->GetAttribute() & static_cast<uint32_t>(CollisionType::Player)) {
+    if (_collider->GetAttribute() & static_cast<uint32_t>(CollisionAttribute::Player)) {
         active_ = false;
         collider_->Disable();
 
@@ -239,21 +239,8 @@ void Enemy::OnCollision(const Collision::Collider* _collider) {
         return;
     }
 
-    if (_collider->GetAttribute() & static_cast<uint32_t>(CollisionType::P_Bullet)) {
-        const float dmg = _collider->GetOwner()
-            ? static_cast<const Bullet*>(_collider->GetOwner())->GetDamage()
-            : 1.f;
-        ApplyDamage(dmg, _collider->GetTranslate());
-        return;
-    }
-
-    if (_collider->GetAttribute() & static_cast<uint32_t>(CollisionType::Skill)) {
-        const float dmg = _collider->GetOwner()
-            ? static_cast<const ISkillEntity*>(_collider->GetOwner())->GetDamage()
-            : 0.f;
-        if (dmg > 0.f) {
-            ApplyDamage(dmg, _collider->GetTranslate());
-        }
+    if (const float damage = DamageSource::GetDamage(*_collider); damage > 0.f) {
+        ApplyDamage(damage, _collider->GetTranslate());
     }
 }
 

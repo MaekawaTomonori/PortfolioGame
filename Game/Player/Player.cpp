@@ -3,7 +3,7 @@
 #include "Pattern/Singleton.hpp"
 #include "Math/MathUtils.hpp"
 #include "PostProcess/Executor/PostProcessExecutor.hpp"
-#include "ColliderType.hpp"
+#include "CollisionAttribute.hpp"
 #include "imgui.h"
 #include "Json/JsonParams.hpp"
 #include "Time/Time.hpp"
@@ -23,8 +23,8 @@ Player::Player(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
         ->SetType(Collision::Type::AABB)
         ->SetSize(Vector3{ .3f, .3f, .3f })
         ->SetOwner(this)
-        ->AddAttribute(static_cast<uint32_t>(CollisionType::Player))
-        ->AddIgnore(static_cast<uint32_t>(CollisionType::P_Bullet))
+        ->AddAttribute(static_cast<uint32_t>(CollisionAttribute::Player))
+        ->AddIgnore(static_cast<uint32_t>(CollisionAttribute::PlayerBullet))
         ->Enable();
 
     SetModel("animatedCube");
@@ -184,7 +184,7 @@ void Player::SetTargetPosition(const Vector3& _position) {
 }
 
 void Player::OnCollision(const Collision::Collider* _collider) {
-    if (_collider->GetAttribute() & (static_cast<uint32_t>(CollisionType::Enemy) | static_cast<uint32_t>(CollisionType::E_Bullet))) {
+    if (_collider->GetAttribute() & (static_cast<uint32_t>(CollisionAttribute::Enemy) | static_cast<uint32_t>(CollisionAttribute::EnemyBullet))) {
         if (invulnerability_)return;
         if (0.f < status_.hp) {
             //Damage Motion

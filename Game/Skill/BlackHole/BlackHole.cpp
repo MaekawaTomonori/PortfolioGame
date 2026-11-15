@@ -1,6 +1,6 @@
 #include "BlackHole.hpp"
 
-#include "ColliderType.hpp"
+#include "CollisionAttribute.hpp"
 #include "Effect/PerParticleUpdate.hpp"
 #include "Enemy/Enemies.hpp"
 #include "Math/MathUtils.hpp"
@@ -26,14 +26,13 @@ void BlackHole::Initialize(const Vector3& _position, const Vector3& _direction) 
 
     collider_ = std::make_unique<Collision::Collider>();
     collider_->SetEvent(Collision::EventType::Trigger, [this](const Collision::Collider* _col) { OnCollision(_col); })
-        ->SetOwner(this)
         ->SetType(Collision::Type::Sphere)
         ->SetSize(0.25f)
         ->SetTranslate({position_.x, position_.y, position_.z})
-        ->AddAttribute(static_cast<uint32_t>(CollisionType::Skill))
-        ->AddIgnore(static_cast<uint32_t>(CollisionType::Player))
-        ->AddIgnore(static_cast<uint32_t>(CollisionType::P_Bullet))
-        ->AddIgnore(static_cast<uint32_t>(CollisionType::Skill))
+        ->AddAttribute(static_cast<uint32_t>(CollisionAttribute::Skill))
+        ->AddIgnore(static_cast<uint32_t>(CollisionAttribute::Player))
+        ->AddIgnore(static_cast<uint32_t>(CollisionAttribute::PlayerBullet))
+        ->AddIgnore(static_cast<uint32_t>(CollisionAttribute::Skill))
         ->Enable();
 
     // 吸い込みパーティクル登録
@@ -188,7 +187,7 @@ void BlackHole::TransitionToSucking() {
 void BlackHole::OnCollision(const Collision::Collider* _collider) {
     if (state_ != State::Flying) return;
 
-    if (_collider->GetAttribute() & static_cast<uint32_t>(CollisionType::Enemy)) {
+    if (_collider->GetAttribute() & static_cast<uint32_t>(CollisionAttribute::Enemy)) {
         TransitionToSucking();
     }
 }

@@ -1,8 +1,9 @@
-#ifndef Bullet_HPP_
-#define Bullet_HPP_
+#ifndef BULLET_HPP_
+#define BULLET_HPP_
 #include "GameObject/GameObject.hpp"
 #include "Collision/Collider.h"
-#include "ColliderType.hpp"
+#include "CollisionAttribute.hpp"
+#include "Combat/DamageSource.hpp"
 
 class Bullet : public GameObject{
 public:
@@ -17,27 +18,26 @@ private:
 
     float speed_ = 0.f;
     float lifetime_ = 2.f;
-    float damage_ = 1.f;
     float piercing_ = 0.f;
 
-    CollisionType attribute_ = CollisionType::P_Bullet;
-    CollisionType ignoreAttribute_ = CollisionType::Player;
-    CollisionType targetAttribute_ = CollisionType::Enemy;
+    CollisionAttribute attribute_ = CollisionAttribute::PlayerBullet;
+    CollisionAttribute ignoreAttribute_ = CollisionAttribute::Player;
+    CollisionAttribute targetAttribute_ = CollisionAttribute::Enemy;
 
     std::unique_ptr<Collision::Collider> collider_;
 
+    DamageSource damageSource_;
+
 public:
     void Initialize(GameObject* _owner, const Vector3& _direction, const Params& _params = {},
-        CollisionType _attribute = CollisionType::P_Bullet, CollisionType _ignoreAttribute = CollisionType::Player,
-        CollisionType _targetAttribute = CollisionType::Enemy);
+        CollisionAttribute _attribute = CollisionAttribute::PlayerBullet, CollisionAttribute _ignoreAttribute = CollisionAttribute::Player,
+        CollisionAttribute _targetAttribute = CollisionAttribute::Enemy);
     void Update() override;
     void Draw() override;
-
-    float GetDamage() const { return damage_; }
 
 private:
     void Initialize() override;
     void OnCollision(const Collision::Collider* _collider);
 }; // class Bullet
 
-#endif // Bullet_HPP_
+#endif // BULLET_HPP_
