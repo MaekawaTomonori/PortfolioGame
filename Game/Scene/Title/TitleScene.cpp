@@ -47,10 +47,8 @@ void TitleScene::Update() {
 }
 
 void TitleScene::HandleInput() {
-    const auto input = Singleton<Input>::GetInstance();
-    if (input->IsTrigger(DIK_UP)   || input->IsTrigger(DIK_W)) ui_.Navigate(GEUI::Direction::Up);
-    if (input->IsTrigger(DIK_DOWN) || input->IsTrigger(DIK_S)) ui_.Navigate(GEUI::Direction::Down);
-    if (input->IsTrigger(DIK_RETURN) || input->IsTrigger(DIK_SPACE)) ui_.Submit();
+    if (const auto direction = menuInput_.GetDirection()) ui_.Navigate(*direction);
+    if (menuInput_.IsSubmit()) ui_.Submit();
 
     if (start_.WasPressed()) {
         // GEUI は暗転より手前に描かれるので、先に消してから暗転させる

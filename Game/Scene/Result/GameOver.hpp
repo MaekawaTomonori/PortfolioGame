@@ -4,11 +4,13 @@
 
 #include "IScene.hpp"
 #include "Sprite.hpp"
+#include "Ui/MenuInput.hpp"
 
 
 class GameOver : public IScene {
     std::unique_ptr<Sprite> sprite_;
     std::unique_ptr<Sprite> bg_;
+    MenuInput menuInput_;
 
     float alpha_ = 0.f;
 

@@ -225,11 +225,8 @@ void SkillTree::HandleInput() {
             tooltipChanged = true;
         }
     };
-    if (input_->IsTrigger(DIK_UP)    || input_->IsTrigger(DIK_W)) navigate(GEUI::Direction::Up);
-    if (input_->IsTrigger(DIK_DOWN)  || input_->IsTrigger(DIK_S)) navigate(GEUI::Direction::Down);
-    if (input_->IsTrigger(DIK_LEFT)  || input_->IsTrigger(DIK_A)) navigate(GEUI::Direction::Left);
-    if (input_->IsTrigger(DIK_RIGHT) || input_->IsTrigger(DIK_D)) navigate(GEUI::Direction::Right);
-    const bool submitted = input_->IsTrigger(DIK_RETURN) || input_->IsTrigger(DIK_SPACE);
+    if (const auto direction = menuInput_.GetDirection()) navigate(*direction);
+    const bool submitted = menuInput_.IsSubmit();
     if (submitted) ui_.Submit();
 
     // 開いたときにたまたまノードに重なっていたカーソルには反応しない。動かしてから受け付ける

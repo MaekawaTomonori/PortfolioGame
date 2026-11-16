@@ -6,6 +6,7 @@
 #include "GEUI.hpp"
 #include "IScene.hpp"
 #include "Stage/Stage.hpp"
+#include "Ui/MenuInput.hpp"
 
 class TitleScene : public IScene{
     GameStatus status_{};
@@ -14,6 +15,7 @@ class TitleScene : public IScene{
     GEUI::Canvas ui_;
     GEUI::Widget start_;
     GEUI::Widget quit_;
+    MenuInput menuInput_;
 
 public:
     ~TitleScene() override;

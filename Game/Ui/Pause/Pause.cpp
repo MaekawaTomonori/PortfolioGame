@@ -2,7 +2,6 @@
 
 #include <algorithm>
 
-#include "Pattern/Singleton.hpp"
 #include "src/Time/Time.hpp"
 
 namespace {
@@ -14,8 +13,6 @@ Pause::~Pause() {
 }
 
 void Pause::Initialize() {
-    input_ = Singleton<Input>::GetInstance();
-
     ui_ = GEUI::Canvas::Load("Assets/UI/Pause.json");
     ui_.SetVisible(false);
 
@@ -40,9 +37,8 @@ void Pause::UpdateFade(const float _deltaTime) {
 }
 
 void Pause::HandleInput() {
-    if (input_->IsTrigger(DIK_UP)   || input_->IsTrigger(DIK_W)) ui_.Navigate(GEUI::Direction::Up);
-    if (input_->IsTrigger(DIK_DOWN) || input_->IsTrigger(DIK_S)) ui_.Navigate(GEUI::Direction::Down);
-    if (input_->IsTrigger(DIK_RETURN) || input_->IsTrigger(DIK_SPACE)) ui_.Submit();
+    if (const auto direction = menuInput_.GetDirection()) ui_.Navigate(*direction);
+    if (menuInput_.IsSubmit()) ui_.Submit();
 
     // Retry / Quit はシーンを切り替えるので、押されたものだけを呼ぶ
     if (resume_.WasPressed()) {
@@ -84,7 +80,7 @@ void Pause::SetOnQuit(std::function<void()> _callback) {
 }
 
 void Pause::CheckActivateState() {
-    if (input_->IsTrigger(DIK_ESCAPE)) {
+    if (menuInput_.IsCancel()) {
         IsOpen() ? Close() : Open();
     }
 }

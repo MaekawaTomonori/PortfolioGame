@@ -1,6 +1,5 @@
 #include "GameClear.hpp"
 
-#include "Input.hpp"
 #include "Camera/Controller/CameraController.hpp"
 #include "Light/LightManager.hpp"
 #include "Pattern/Singleton.hpp"
@@ -28,7 +27,7 @@ void GameClear::Initialize() {
 }
 
 void GameClear::Update() {
-    if (Singleton<Input>::GetInstance()->IsTrigger(DIK_SPACE)) {
+    if (menuInput_.IsSubmit()) {
         next_ = "title";
         Change();
         return;

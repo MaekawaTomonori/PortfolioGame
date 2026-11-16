@@ -3,7 +3,7 @@
 #include <functional>
 
 #include "GEUI.hpp"
-#include "Input.hpp"
+#include "Ui/MenuInput.hpp"
 
 class Pause {
     GEUI::Canvas ui_;
@@ -11,7 +11,7 @@ class Pause {
     GEUI::Widget retry_;
     GEUI::Widget quit_;
 
-    Input* input_ = nullptr;
+    MenuInput menuInput_;
     float fadeTime_ = 0.f;
 
     std::function<void()> onResume_;

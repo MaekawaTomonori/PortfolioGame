@@ -1,8 +1,6 @@
 #define NOMINMAX
 #include "GameOver.hpp"
 
-#include "Input.hpp"
-#include "Pattern/Singleton.hpp"
 #include "PostProcess/Executor/PostProcessExecutor.hpp"
 
 void GameOver::Initialize() {
@@ -16,7 +14,7 @@ void GameOver::Update() {
     alpha_ += 0.01f;
     alpha_ = std::min(alpha_, 1.f);
 
-    if (Singleton<Input>::GetInstance()->IsTrigger(DIK_SPACE)) {
+    if (menuInput_.IsSubmit()) {
         next_ = "title";
         Change();
     }

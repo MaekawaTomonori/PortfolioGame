@@ -9,6 +9,7 @@
 #include "GEUI.hpp"
 #include "Input.hpp"
 #include "Status/GameStatus.hpp"
+#include "Ui/MenuInput.hpp"
 
 class SkillTree {
     struct SkillDef {
@@ -71,6 +72,7 @@ class SkillTree {
     std::vector<Node> nodes_;
     std::vector<Effect> effects_;
     Input* input_ = nullptr;
+    MenuInput menuInput_;
     // 最後の操作がキーなら選択中のノード、マウスならカーソル下のノードの説明を出す
     bool keyboardMode_ = false;
     // 開いたときのカーソル位置。ここから動くまでは、カーソル下のノードとクリックを無視する
