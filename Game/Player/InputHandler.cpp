@@ -6,36 +6,32 @@
 #include "Screen/Screen.hpp"
 #include "src/Camera/Camera.hpp"
 
-void InputHandler::Initialize() {
+void InputHandler::Initialize(const KeyBinds& _binds) {
     input_ = Singleton<Input>::GetInstance();
+    binds_ = _binds;
 }
 
-void InputHandler::UpdateContext(MovementContext& context, const Vector3& currentPos) {
+void InputHandler::UpdateContext(MovementContext& _context, const Vector3& _currentPos) const {
     if (!input_) return;
 
-    context.Reset();
-    context.position = currentPos;
-    context.targetPosition = GetMouseInWorld();
+    _context.Reset();
+    _context.position = _currentPos;
+    _context.targetPosition = GetMouseInWorld();
 
     // 移動入力
-    if (input_->IsPress(DIK_W)) context.moveDirection.z += 1.0f;
-    if (input_->IsPress(DIK_S)) context.moveDirection.z -= 1.0f;
-    if (input_->IsPress(DIK_A)) context.moveDirection.x -= 1.0f;
-    if (input_->IsPress(DIK_D)) context.moveDirection.x += 1.0f;
+    if (IsPress(InputAction::MoveForward)) _context.moveDirection.z += 1.0f;
+    if (IsPress(InputAction::MoveBack)) _context.moveDirection.z -= 1.0f;
+    if (IsPress(InputAction::MoveLeft)) _context.moveDirection.x -= 1.0f;
+    if (IsPress(InputAction::MoveRight)) _context.moveDirection.x += 1.0f;
 
     // 正規化
-    if (context.moveDirection.Length() > 0.0f) {
-        context.moveDirection = context.moveDirection.Normalize();
+    if (_context.moveDirection.Length() > 0.0f) {
+        _context.moveDirection = _context.moveDirection.Normalize();
     }
 
-    // ダッシュ
-    context.isDashRequested = input_->IsPress(DIK_SPACE);
-
-    // フラッシュ
-    context.isFlashRequested = input_->IsTrigger(DIK_F);
-
-    // スキル (Qキー)
-    context.isSkillRequested = input_->IsTrigger(DIK_Q);
+    _context.isDashRequested = IsPress(InputAction::Dodge);
+    _context.isSkillRequested = IsTrigger(InputAction::Ability1);
+    _context.isFlashRequested = IsTrigger(InputAction::Ability2);
 }
 
 Vector3 InputHandler::GetMouseInWorld() const {
@@ -71,4 +67,12 @@ Vector3 InputHandler::GetMouseInWorld() const {
         return res;
     }
     return {};
+}
+
+bool InputHandler::IsPress(InputAction _action) const {
+    return input_->IsPress(binds_.GetKey(_action));
+}
+
+bool InputHandler::IsTrigger(InputAction _action) const {
+    return input_->IsTrigger(binds_.GetKey(_action));
 }

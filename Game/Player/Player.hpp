@@ -18,6 +18,7 @@
 
 #include "InputHandler.hpp"
 #include "FollowCamera.hpp"
+#include "KeyBinds.hpp"
 #include "Status/PlayerStatus.hpp"
 #include "Sprite.hpp"
 
@@ -66,7 +67,7 @@ class Player : public GameObject {
     bool enable_ = false;
 
 public:
-    Player(ParticleSystem* _particle, PostProcessExecutor* _postEffect);
+    Player(ParticleSystem* _particle, PostProcessExecutor* _postEffect, const KeyBinds& _binds);
     void Initialize() override;
     void Update() override;
     void Draw() override;

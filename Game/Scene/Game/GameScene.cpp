@@ -25,11 +25,13 @@ void GameScene::Initialize() {
             .as = 1.f
         }
     };
+
     LoadStatus();
     HpBar::LoadSettings();
+    binds_.Load();
 
     stage_ = std::make_unique<Stage>(status_);
-    stage_->Setup(Particle(), PostEffect());
+    stage_->Setup(Particle(), PostEffect(), binds_);
     stage_->Initialize();
 
     followCamera_ = std::make_unique<FollowCamera>();
@@ -54,7 +56,7 @@ void GameScene::Initialize() {
     pause_->SetOnQuit([this]{ next_ = "title"; Change(); });
 
     keyGuide_ = std::make_unique<KeyGuide>();
-    keyGuide_->Initialize();
+    keyGuide_->Initialize(binds_);
 
     killCounter_ = std::make_unique<KillCounter>();
     killCounter_->Initialize();
@@ -220,10 +222,10 @@ void GameScene::UpdatePlay() {
     keyGuide_->Update();
 
     if (const auto* player = stage_->GetPlayer()) {
-        keyGuide_->SetCooldown(DIK_F, player->GetFlashCooldownRatio());
+        keyGuide_->SetCooldown(InputAction::Ability2, player->GetFlashCooldownRatio());
     }
     if (const auto* sm = stage_->GetSkillManager()) {
-        keyGuide_->SetCooldown(DIK_Q, sm->GetBlackHoleCooldownRatio());
+        keyGuide_->SetCooldown(InputAction::Ability1, sm->GetBlackHoleCooldownRatio());
     }
 
     // is clear (タイマーより優先してチェック)

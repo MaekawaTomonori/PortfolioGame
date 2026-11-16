@@ -4,8 +4,8 @@
 
 #include "FollowCamera.hpp"
 #include "Ui/GameTimer/GameTimer.hpp"
-#include "Outro/Outro.hpp"
 #include "Performance/Intro/Intro.hpp"
+#include "Player/KeyBinds.hpp"
 #include "Stage/Stage.hpp"
 #include "Status/GameStatus.hpp"
 #include "Ui/KeyGuide/KeyGuide.hpp"
@@ -43,6 +43,8 @@ class GameScene : public IScene {
     std::unique_ptr<StageInfoUI> stageInfoUI_;
 
     bool cursorShown_ = false;
+
+    KeyBinds binds_;
 
 public:
     void Initialize() override;

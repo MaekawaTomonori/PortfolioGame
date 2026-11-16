@@ -27,8 +27,8 @@ class Stage {
 
 public:
     Stage(GameStatus& _status) : status_(_status) {}
-    void Setup(ParticleSystem* _particle, PostProcessExecutor* _postEffect);
-    void Initialize();
+    void Setup(const GESTD::ReferencePtr<ParticleSystem>& _particle, const GESTD::ReferencePtr<PostProcessExecutor>& _postEffect, const KeyBinds& _binds);
+    void Initialize() const;
     void Update();
     void Draw() const;
     void Debug();

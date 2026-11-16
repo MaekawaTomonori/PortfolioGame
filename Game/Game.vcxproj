@@ -161,6 +161,7 @@ xcopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)d
     <ClInclude Include="Player\Movement\WalkBehavior.hpp" />
     <ClInclude Include="Player\Player.hpp" />
     <ClInclude Include="Player\InputHandler.hpp" />
+    <ClInclude Include="Player\KeyBinds.hpp" />
     <ClInclude Include="Player\Status\PlayerStatus.hpp" />
     <ClInclude Include="Scene\Game\GameScene.hpp" />
     <ClInclude Include="Scene\Particle\ParticleScene.hpp" />
@@ -204,6 +205,7 @@ xcopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)d
     <ClCompile Include="Player\Movement\WalkBehavior.cpp" />
     <ClCompile Include="Player\Player.cpp" />
     <ClCompile Include="Player\InputHandler.cpp" />
+    <ClCompile Include="Player\KeyBinds.cpp" />
     <ClCompile Include="Scene\Game\GameScene.cpp" />
     <ClCompile Include="Scene\Particle\ParticleScene.cpp" />
     <ClCompile Include="Scene\Result\GameClear.cpp" />

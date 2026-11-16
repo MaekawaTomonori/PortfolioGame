@@ -34,7 +34,7 @@
             ],
             "children": [
                 {
-                    "name": "W",
+                    "name": "MoveForward",
                     "type": "Image",
                     "anchor": [
                         0.0,
@@ -95,7 +95,7 @@
                     ]
                 },
                 {
-                    "name": "A",
+                    "name": "MoveLeft",
                     "type": "Image",
                     "anchor": [
                         0.0,
@@ -156,7 +156,7 @@
                     ]
                 },
                 {
-                    "name": "S",
+                    "name": "MoveBack",
                     "type": "Image",
                     "anchor": [
                         0.0,
@@ -217,7 +217,7 @@
                     ]
                 },
                 {
-                    "name": "D",
+                    "name": "MoveRight",
                     "type": "Image",
                     "anchor": [
                         0.0,
@@ -278,7 +278,7 @@
                     ]
                 },
                 {
-                    "name": "Space",
+                    "name": "Dodge",
                     "type": "Image",
                     "anchor": [
                         0.0,
@@ -368,7 +368,7 @@
             ],
             "children": [
                 {
-                    "name": "Q",
+                    "name": "Ability1",
                     "type": "Image",
                     "anchor": [
                         0.0,
@@ -457,7 +457,7 @@
                     ]
                 },
                 {
-                    "name": "F",
+                    "name": "Ability2",
                     "type": "Image",
                     "anchor": [
                         0.0,

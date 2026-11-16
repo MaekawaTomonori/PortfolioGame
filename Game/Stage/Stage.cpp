@@ -38,7 +38,7 @@ namespace {
     constexpr float FIELD_HALF_EXTENT = TERRAIN_SIZE * 0.5f - FIELD_BOUNDARY_MARGIN;
 }
 
-void Stage::Setup(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
+void Stage::Setup(const GESTD::ReferencePtr<ParticleSystem>& _particle, const GESTD::ReferencePtr<PostProcessExecutor>& _postEffect, const KeyBinds& _binds) {
     // 初回限定
     particle_ = _particle;
     postEffect_ = _postEffect;
@@ -57,7 +57,7 @@ void Stage::Setup(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
     terrain_->SetTexture("tile.png");
     terrain_->SetName("Field");
 
-    player_ = std::make_unique<Player>(particle_, postEffect_);
+    player_ = std::make_unique<Player>(particle_, postEffect_, _binds);
     player_->SetFieldBounds(FIELD_HALF_EXTENT);
     enemies_ = std::make_unique<Enemies>(particle_, status_);
 
@@ -116,7 +116,7 @@ void Stage::Setup(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
     particle_->Register("hit");
 }
 
-void Stage::Initialize() {
+void Stage::Initialize() const {
     player_->Initialize();
     player_->SetStatus(status_.playerStatus);
 

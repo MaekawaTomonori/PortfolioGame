@@ -11,7 +11,7 @@
 #undef min
 #undef max
 
-Player::Player(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
+Player::Player(ParticleSystem* _particle, PostProcessExecutor* _postEffect, const KeyBinds& _binds) {
     particle_ = _particle;
     postEffect_ = _postEffect;
 
@@ -38,7 +38,7 @@ Player::Player(ParticleSystem* _particle, PostProcessExecutor* _postEffect) {
 
     // InputModule Initialize
     inputHandler_ = std::make_unique<InputHandler>();
-    inputHandler_->Initialize();
+    inputHandler_->Initialize(_binds);
 
     // MovementModule Initialize
     movement_ = std::make_unique<Movement>();

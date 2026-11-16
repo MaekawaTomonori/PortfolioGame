@@ -24,8 +24,11 @@ void TitleScene::Initialize() {
         }
     };
 
+    KeyBinds binds;
+    binds.Load();
+
     stage_ = std::make_unique<Stage>(status_);
-    stage_->Setup(Particle(), PostEffect());
+    stage_->Setup(Particle(), PostEffect(), binds);
     stage_->Initialize();
     stage_->SetActive(false);
 

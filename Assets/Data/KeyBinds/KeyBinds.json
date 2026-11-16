@@ -1,0 +1,13 @@
+{
+    "KeyBinds": {
+        "Player": {
+            "MoveForward": "W",
+            "MoveBack": "S",
+            "MoveLeft": "A",
+            "MoveRight": "D",
+            "Dodge": "SPACE",
+            "Ability1": "Q",
+            "Ability2": "F"
+        }
+    }
+}

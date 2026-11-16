@@ -5,19 +5,19 @@
 
 #include "GEUI.hpp"
 #include "Input.hpp"
+#include "Player/KeyBinds.hpp"
 
 class KeyGuide {
     /** @brief 押している間だけ色が変わるキー */
     struct MoveKey {
-        BYTE code = 0;
+        InputAction action{};
         GEUI::Widget box;
         GEUI::Widget label;
     };
 
     /** @brief クールダウンを持つスキルのキー */
     struct SkillKey {
-        BYTE code = 0;
-        const char* name = "";
+        InputAction action{};
         GEUI::Widget box;
         GEUI::Widget label;
         GEUI::Widget cooldown;
@@ -25,6 +25,8 @@ class KeyGuide {
         float flashTimer = 0.f;
         Vector4 flashColor{};
     };
+
+    KeyBinds binds_;
 
     GEUI::Canvas ui_;
     GEUI::Widget move_;
@@ -39,17 +41,17 @@ class KeyGuide {
 public:
     ~KeyGuide();
 
-    void Initialize();
+    void Initialize(const KeyBinds& _binds);
     void Update();
     void Debug();
     void SetActive(bool _active);
 
     /** @brief 指定キーのCT比率を設定する (0=ready, 1=full cooldown) **/
-    void SetCooldown(BYTE _key, float _ratio);
+    void SetCooldown(InputAction _action, float _ratio);
 
 private:
-    static MoveKey FindMoveKey(const GEUI::Widget& _parent, BYTE _code, const char* _name);
-    static SkillKey FindSkillKey(const GEUI::Widget& _parent, BYTE _code, const char* _name);
+    static MoveKey FindMoveKey(const GEUI::Widget& _parent, InputAction _action, const char* _name);
+    static SkillKey FindSkillKey(const GEUI::Widget& _parent, InputAction _action, const char* _name);
     void UpdateSkillKey(SkillKey& _key, float _deltaTime) const;
     static void Flash(SkillKey& _key, const Vector4& _color);
 
