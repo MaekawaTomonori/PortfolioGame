@@ -5,12 +5,10 @@
 
 #include "imgui.h"
 #include "Log.hpp"
+#include "Ui/HudStyle.hpp"
 #include "externals/json/json.hpp"
 
 namespace {
-    // HUD の Canvas はすべてこの基準解像度で作っている
-    constexpr Vector2 REFERENCE_SIZE = {1280.f, 720.f};
-
     // 直近の保存結果を Canvas ごとに覚えて、ボタンの横に出す
     std::unordered_map<std::string, bool> lastSaveResults;
 }
@@ -19,9 +17,9 @@ void HudLayout::DrawEditor(Group& _group) {
     ImGui::PushID(_group.name);
     ImGui::SeparatorText(_group.name);
 
-    Vector2 position = _group.widget.GetOffset() * REFERENCE_SIZE;
+    Vector2 position = _group.widget.GetOffset() * HudStyle::REFERENCE_SIZE;
     if (ImGui::DragFloat2("Position (px)", &position.x, 1.f)) {
-        _group.widget.SetOffset(position / REFERENCE_SIZE);
+        _group.widget.SetOffset(position / HudStyle::REFERENCE_SIZE);
     }
 
     float scale = _group.widget.GetScale();

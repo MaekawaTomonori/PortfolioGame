@@ -58,6 +58,7 @@
                         0.0,
                         0.5
                     ],
+                    "colorRole": "Panel",
                     "image": "UI/plate.png",
                     "children": []
                 },
@@ -86,9 +87,11 @@
                         1.0,
                         1.0
                     ],
+                    "colorRole": "Text",
                     "text": "KILL: 0/0",
-                    "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
-                    "fontSize": 30.0,
+                    "font": "Assets/Fonts/Rajdhani-Bold.ttf",
+                    "fontSize": 34.0,
+                    "weight": 0.6,
                     "alignX": 0,
                     "alignY": 1,
                     "children": []
@@ -113,11 +116,12 @@
                         0.138889
                     ],
                     "color": [
-                        0.2,
-                        0.2,
-                        0.2,
-                        0.8
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.5
                     ],
+                    "colorRole": "Panel",
                     "image": "UI/track.png",
                     "children": [
                         {
@@ -140,11 +144,12 @@
                                 1.0
                             ],
                             "color": [
-                                1.0,
-                                0.9,
-                                0.1,
-                                1.0
+                                0.0,
+                                0.505,
+                                0.721,
+                                0.874
                             ],
+                            "colorRole": "Accent",
                             "image": "UI/track.png",
                             "children": []
                         }

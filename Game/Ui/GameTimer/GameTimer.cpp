@@ -8,17 +8,23 @@
 #include "imgui.h"
 #include "Ui/HudLayout.hpp"
 #include "Ui/HudStyle.hpp"
+#include "Ui/UiTheme.hpp"
 #include "src/Time/Time.hpp"
 
 namespace {
     constexpr const char* CANVAS_PATH = "Assets/UI/Timer.json";
+
+    // 残り時間がこの割合を切ったらゲージを赤くする
+    constexpr float LOW_TIME_RATIO = 0.25f;
 }
 
 GameTimer::~GameTimer() {
     ui_.Unload();
 }
 
-void GameTimer::Initialize() {
+void GameTimer::Initialize(const UiTheme& _theme) {
+    theme_ = &_theme;
+
     ui_ = GEUI::Canvas::Load(CANVAS_PATH);
     ui_.SetVisible(false);
 
@@ -92,5 +98,5 @@ void GameTimer::ApplyTime() {
 
     const float ratio = duration_ > 0.f ? time_ / duration_ : 0.f;
     fill_.SetSize({ratio, 1.f});
-    fill_.SetColor(HudStyle::GaugeColor(ratio));
+    fill_.SetColor(theme_->Get(ratio > LOW_TIME_RATIO ? UiColor::Accent : UiColor::Danger));
 }

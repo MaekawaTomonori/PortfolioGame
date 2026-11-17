@@ -7,6 +7,7 @@
 
 #include "Math/Easing.hpp"
 #include "Ui/HudStyle.hpp"
+#include "Ui/UiTheme.hpp"
 #include "src/Time/Time.hpp"
 
 namespace {
@@ -16,21 +17,25 @@ namespace {
     constexpr float MOVE_DURATION      = 0.6f;
 
     // 背景の大きさと左上での位置（画面に対する割合）。Assets/UI/StageInfo.json の値と合わせる
-    constexpr Vector2 CENTER_SIZE   = {600.f / 1280.f, 170.f / 720.f};
-    constexpr Vector2 CORNER_SIZE   = {230.f / 1280.f, 72.f / 720.f};
-    constexpr Vector2 CORNER_OFFSET = {(20.f + 230.f * 0.5f) / 1280.f, (16.f + 72.f * 0.5f) / 720.f};
+    constexpr Vector2 CENTER_SIZE   = {600.f / HudStyle::REFERENCE_SIZE.x, 170.f / HudStyle::REFERENCE_SIZE.y};
+    constexpr Vector2 CORNER_SIZE   = {230.f / HudStyle::REFERENCE_SIZE.x, 72.f / HudStyle::REFERENCE_SIZE.y};
+    constexpr Vector2 CORNER_OFFSET = {(20.f + 230.f * 0.5f) / HudStyle::REFERENCE_SIZE.x, (16.f + 72.f * 0.5f) / HudStyle::REFERENCE_SIZE.y};
 }
 
-void StageInfoUI::TextGroup::SetAlpha(const float _alpha) {
-    label.SetColor({HudStyle::GRAY.x, HudStyle::GRAY.y, HudStyle::GRAY.z, HudStyle::GRAY.w * _alpha});
-    goal.SetColor({HudStyle::WHITE.x, HudStyle::WHITE.y, HudStyle::WHITE.z, HudStyle::WHITE.w * _alpha});
+void StageInfoUI::TextGroup::SetAlpha(const float _alpha, const UiTheme& _theme) {
+    const Vector4& labelColor = _theme.Get(UiColor::TextDim);
+    const Vector4& goalColor = _theme.Get(UiColor::Text);
+    label.SetColor({labelColor.x, labelColor.y, labelColor.z, labelColor.w * _alpha});
+    goal.SetColor({goalColor.x, goalColor.y, goalColor.z, goalColor.w * _alpha});
 }
 
 StageInfoUI::~StageInfoUI() {
     ui_.Unload();
 }
 
-void StageInfoUI::Initialize() {
+void StageInfoUI::Initialize(const UiTheme& _theme) {
+    theme_ = &_theme;
+
     ui_ = GEUI::Canvas::Load("Assets/UI/StageInfo.json");
     ui_.SetVisible(false);
 
@@ -58,7 +63,7 @@ void StageInfoUI::Update() {
 
     case Phase::HideLargeText: {
         const float t = std::min(elapsed_ / TEXT_FADE_DURATION, 1.f);
-        large_.SetAlpha(1.f - t);
+        large_.SetAlpha(1.f - t, *theme_);
         if (t >= 1.f) {
             NextPhase(Phase::Moving);
             if (onMoveStart_) onMoveStart_();
@@ -73,7 +78,7 @@ void StageInfoUI::Update() {
     }
     case Phase::ShowSmallText: {
         const float t = std::min(elapsed_ / TEXT_FADE_DURATION, 1.f);
-        small_.SetAlpha(t);
+        small_.SetAlpha(t, *theme_);
         if (t >= 1.f) NextPhase(Phase::Done);
         break;
     }
@@ -86,8 +91,8 @@ void StageInfoUI::Setup(const uint16_t _requireKill) {
     SetGoalText(_requireKill);
 
     ApplyMove(0.f);
-    large_.SetAlpha(1.f);
-    small_.SetAlpha(0.f);
+    large_.SetAlpha(1.f, *theme_);
+    small_.SetAlpha(0.f, *theme_);
     ui_.SetAlpha(0.f);
     ui_.SetVisible(true);
     NextPhase(Phase::Showing);
@@ -97,8 +102,8 @@ void StageInfoUI::ShowAtCorner(const uint16_t _requireKill) {
     SetGoalText(_requireKill);
 
     ApplyMove(1.f);
-    large_.SetAlpha(0.f);
-    small_.SetAlpha(1.f);
+    large_.SetAlpha(0.f, *theme_);
+    small_.SetAlpha(1.f, *theme_);
     ui_.SetAlpha(1.f);
     ui_.SetVisible(true);
     NextPhase(Phase::Done);

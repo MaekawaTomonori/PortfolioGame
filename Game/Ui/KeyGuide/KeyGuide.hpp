@@ -7,6 +7,8 @@
 #include "Input.hpp"
 #include "Player/KeyBinds.hpp"
 
+class UiTheme;
+
 class KeyGuide {
     /** @brief 押している間だけ色が変わるキー */
     struct MoveKey {
@@ -27,6 +29,7 @@ class KeyGuide {
     };
 
     KeyBinds binds_;
+    const UiTheme* theme_ = nullptr;
 
     GEUI::Canvas ui_;
     GEUI::Widget move_;
@@ -41,7 +44,7 @@ class KeyGuide {
 public:
     ~KeyGuide();
 
-    void Initialize(const KeyBinds& _binds);
+    void Initialize(const KeyBinds& _binds, const UiTheme& _theme);
     void Update();
     void Debug();
     void SetActive(bool _active);

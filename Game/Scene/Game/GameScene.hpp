@@ -13,6 +13,7 @@
 #include "Ui/Pause/Pause.hpp"
 #include "Ui/SkillTree/SkillTree.hpp"
 #include "Ui/StageInfo/StageInfoUI.hpp"
+#include "Ui/UiTheme.hpp"
 
 class GameScene : public IScene {
     enum State {
@@ -23,6 +24,9 @@ class GameScene : public IScene {
     };
 
     State state_ = INTRO;
+
+    KeyBinds binds_;
+    UiTheme theme_;
 
     std::unique_ptr<FollowCamera> followCamera_;
     std::unique_ptr<Stage> stage_;
@@ -43,8 +47,6 @@ class GameScene : public IScene {
     std::unique_ptr<StageInfoUI> stageInfoUI_;
 
     bool cursorShown_ = false;
-
-    KeyBinds binds_;
 
 public:
     void Initialize() override;

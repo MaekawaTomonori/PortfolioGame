@@ -8,6 +8,7 @@
 #include "Enemy/Enemies.hpp"
 #include "Ui/HudLayout.hpp"
 #include "Ui/HudStyle.hpp"
+#include "Ui/UiTheme.hpp"
 #include "src/Time/Time.hpp"
 
 namespace {
@@ -18,7 +19,9 @@ KillCounter::~KillCounter() {
     ui_.Unload();
 }
 
-void KillCounter::Initialize() {
+void KillCounter::Initialize(const UiTheme& _theme) {
+    theme_ = &_theme;
+
     ui_ = GEUI::Canvas::Load(CANVAS_PATH);
     ui_.SetVisible(false);
 
@@ -75,7 +78,7 @@ void KillCounter::PlayIntroAnim() {
 void KillCounter::ApplyCount(const uint16_t _count) {
     const bool reached = max_ > 0 && _count >= max_;
     text_.SetText(std::format("KILL: {}/{}{}", _count, max_, reached ? " OK!" : ""));
-    text_.SetColor(reached ? HudStyle::YELLOW : HudStyle::WHITE);
+    text_.SetColor(theme_->Get(reached ? UiColor::Highlight : UiColor::Text));
 
     const float ratio = max_ > 0 ? static_cast<float>(_count) / static_cast<float>(max_) : 0.f;
     fill_.SetSize({ratio, 1.f});

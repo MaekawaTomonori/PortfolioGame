@@ -14,7 +14,7 @@ class HpBar {
 public:
     /** @brief 全HPバー共通の見た目の設定 */
     struct Settings {
-        // 基準解像度(1280x720)でのピクセル。実際の大きさは画面の倍率に合わせて拡縮される
+        // 基準解像度(HudStyle::REFERENCE_SIZE)でのピクセル。実際の大きさは画面の倍率に合わせて拡縮される
         Vector2 size = {40.f, 6.f};
         float scale = 1.f;
         // 持ち主の原点からの高さ（ワールド）と、画面上でさらに上へずらす量（基準解像度のピクセル）

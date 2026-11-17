@@ -2,11 +2,15 @@
 #define GameTimer_HPP_
 #include "GEUI.hpp"
 
+class UiTheme;
+
 class GameTimer {
     GEUI::Canvas ui_;
     GEUI::Widget root_;
     GEUI::Widget text_;
     GEUI::Widget fill_;
+
+    const UiTheme* theme_ = nullptr;
 
     float duration_ = 0.f;
     float time_ = 0.f;
@@ -19,7 +23,7 @@ class GameTimer {
 public:
     ~GameTimer();
 
-    void Initialize();
+    void Initialize(const UiTheme& _theme);
     void Update();
     void Debug();
 

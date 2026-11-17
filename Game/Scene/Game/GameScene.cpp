@@ -29,6 +29,7 @@ void GameScene::Initialize() {
     LoadStatus();
     HpBar::LoadSettings();
     binds_.Load();
+    theme_.Load();
 
     stage_ = std::make_unique<Stage>(status_);
     stage_->Setup(Particle(), PostEffect(), binds_);
@@ -47,7 +48,7 @@ void GameScene::Initialize() {
     intro_ = std::make_unique<Intro>();
 
     gameTimer_ = std::make_unique<GameTimer>();
-    gameTimer_->Initialize();
+    gameTimer_->Initialize(theme_);
     gameTimer_->SetDuration(status_.time);
 
     pause_ = std::make_unique<Pause>();
@@ -56,13 +57,13 @@ void GameScene::Initialize() {
     pause_->SetOnQuit([this]{ next_ = "title"; Change(); });
 
     keyGuide_ = std::make_unique<KeyGuide>();
-    keyGuide_->Initialize(binds_);
+    keyGuide_->Initialize(binds_, theme_);
 
     killCounter_ = std::make_unique<KillCounter>();
-    killCounter_->Initialize();
+    killCounter_->Initialize(theme_);
 
     stageInfoUI_ = std::make_unique<StageInfoUI>();
-    stageInfoUI_->Initialize();
+    stageInfoUI_->Initialize(theme_);
     // Objective が左上へ動き始めたら、その下のキルカウンターをその場でフェードインさせる
     stageInfoUI_->SetOnMoveStart([this] {
         killCounter_->Setup(stage_->GetEnemies(), status_.requirementKill);
@@ -70,7 +71,7 @@ void GameScene::Initialize() {
     });
 
     skillTree_ = std::make_unique<SkillTree>();
-    skillTree_->Initialize(&status_);
+    skillTree_->Initialize(&status_, theme_);
     skillTree_->SetOnContinue([this] {
         PlayTransition(Transition::Type::Fade, [this] {
             StartNextRound();
@@ -170,6 +171,7 @@ void GameScene::Debug() {
     keyGuide_->Debug();
     killCounter_->Debug();
     HpBar::DebugSettings();
+    theme_.Debug();
 
     ImGui::Begin("Status");
     if (ImGui::Button("Save to JSON")) {

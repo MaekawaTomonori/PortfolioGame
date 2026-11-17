@@ -178,6 +178,7 @@ xcopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)d
     <ClInclude Include="Ui\KillCount\KillCounter.hpp" />
     <ClInclude Include="Ui\Pause\Pause.hpp" />
     <ClInclude Include="Ui\MenuInput.hpp" />
+    <ClInclude Include="Ui\UiTheme.hpp" />
     <ClInclude Include="Ui\StageInfo\StageInfoUI.hpp" />
     <ClInclude Include="Ui\SkillTree\SkillTree.hpp" />
     <ClInclude Include="Combat\DamageSource.hpp" />
@@ -221,6 +222,7 @@ xcopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)d
     <ClCompile Include="Ui\KillCount\KillCounter.cpp" />
     <ClCompile Include="Ui\Pause\Pause.cpp" />
     <ClCompile Include="Ui\MenuInput.cpp" />
+    <ClCompile Include="Ui\UiTheme.cpp" />
     <ClCompile Include="Ui\StageInfo\StageInfoUI.cpp" />
     <ClCompile Include="Ui\SkillTree\SkillTree.cpp" />
     <ClCompile Include="Combat\DamageSource.cpp" />

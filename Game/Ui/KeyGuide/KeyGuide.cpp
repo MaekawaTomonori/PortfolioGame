@@ -10,16 +10,13 @@
 #include "Pattern/Singleton.hpp"
 #include "Ui/HudLayout.hpp"
 #include "Ui/HudStyle.hpp"
+#include "Ui/UiTheme.hpp"
 #include "src/Time/Time.hpp"
 
 namespace {
     constexpr const char* CANVAS_PATH = "Assets/UI/KeyGuide.json";
 
     constexpr float FLASH_DURATION = 0.3f;
-
-    // 押している間は黄色くする
-    constexpr Vector4 PRESSED_BOX   = {1.f, 0.9f, 0.1f, 0.9f};
-    constexpr Vector4 PRESSED_LABEL = {0.f, 0.f, 0.f, 1.f};
 
     constexpr float COOLDOWN_EPSILON = 0.001f;
 }
@@ -28,9 +25,10 @@ KeyGuide::~KeyGuide() {
     ui_.Unload();
 }
 
-void KeyGuide::Initialize(const KeyBinds& _binds) {
+void KeyGuide::Initialize(const KeyBinds& _binds, const UiTheme& _theme) {
     input_ = Singleton<Input>::GetInstance();
     binds_ = _binds;
+    theme_ = &_theme;
 
     ui_ = GEUI::Canvas::Load(CANVAS_PATH);
     ui_.SetVisible(false);
@@ -67,13 +65,13 @@ void KeyGuide::Update() {
 
     for (MoveKey& key : moveKeys_) {
         const bool pressed = input_->IsPress(binds_.GetKey(key.action));
-        key.box.SetColor(pressed ? PRESSED_BOX : HudStyle::BOX);
-        key.label.SetColor(pressed ? PRESSED_LABEL : HudStyle::WHITE);
+        key.box.SetColor(theme_->Get(pressed ? UiColor::Accent : UiColor::Panel));
+        key.label.SetColor(theme_->Get(UiColor::Text));
     }
 
     for (SkillKey& key : skillKeys_) {
         if (key.cooldownRatio > COOLDOWN_EPSILON && input_->IsTrigger(binds_.GetKey(key.action))) {
-            Flash(key, HudStyle::RED);
+            Flash(key, theme_->Get(UiColor::Danger));
         }
         UpdateSkillKey(key, deltaTime);
     }
@@ -113,9 +111,9 @@ void KeyGuide::SetCooldown(const InputAction _action, const float _ratio) {
 
         const float ratio = std::clamp(_ratio, 0.f, 1.f);
         const bool ready = ratio <= COOLDOWN_EPSILON;
-        // 使えるようになったら緑に光らせる
+        // 使えるようになったら光らせる
         if (key.cooldownRatio > COOLDOWN_EPSILON && ready) {
-            Flash(key, HudStyle::GREEN);
+            Flash(key, theme_->Get(UiColor::Highlight));
         }
         key.cooldownRatio = ratio;
 
@@ -145,11 +143,11 @@ void KeyGuide::UpdateSkillKey(SkillKey& _key, const float _deltaTime) const {
     const bool ready = _key.cooldownRatio <= COOLDOWN_EPSILON;
     const bool pressed = ready && input_->IsPress(binds_.GetKey(_key.action));
 
-    _key.label.SetColor(pressed ? PRESSED_LABEL : (ready ? HudStyle::WHITE : HudStyle::GRAY));
+    _key.label.SetColor(theme_->Get(ready ? UiColor::Text : UiColor::TextDim));
 
     _key.flashTimer = std::max(0.f, _key.flashTimer - _deltaTime);
     const float t = _key.flashTimer / FLASH_DURATION;
-    const Vector4& box = pressed ? PRESSED_BOX : HudStyle::BOX;
+    const Vector4& box = theme_->Get(pressed ? UiColor::Accent : UiColor::Panel);
     _key.box.SetColor(HudStyle::Lerp(box, _key.flashColor, t));
 }
 

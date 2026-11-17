@@ -12,6 +12,7 @@
 #include "Pattern/Singleton.hpp"
 #include "src/Time/Time.hpp"
 #include "Ui/HudStyle.hpp"
+#include "Ui/UiTheme.hpp"
 
 #undef min
 #undef max
@@ -59,11 +60,7 @@ namespace {
         return t >= DURATION;
     }
 
-    // 届かない線と、取れないノードの色
-    constexpr Vector4 COLOR_LOCKED = {0.35f, 0.35f, 0.35f, 1.f};
 
-    // 位置の計算は基準解像度の px で行い、親（画面）に対する割合へ直す
-    constexpr Vector2 SCREEN_SIZE  = {1280.f, 720.f};
     // Assets/UI/SkillTree.json のノード（選択中は 1.1 倍）と SkillTreeTooltip.json の大きさ
     constexpr float   NODE_HALF    = 36.f * 1.1f;
     constexpr Vector2 TOOLTIP_SIZE = {300.f, 172.f};
@@ -98,11 +95,11 @@ namespace {
     }
 
     Vector2 ToScreenPixels(const Vector2& _offset) {
-        return {_offset.x * SCREEN_SIZE.x, _offset.y * SCREEN_SIZE.y};
+        return {_offset.x * HudStyle::REFERENCE_SIZE.x, _offset.y * HudStyle::REFERENCE_SIZE.y};
     }
 
     Vector2 ToScreenRatio(const Vector2& _pixels) {
-        return {_pixels.x / SCREEN_SIZE.x, _pixels.y / SCREEN_SIZE.y};
+        return {_pixels.x / HudStyle::REFERENCE_SIZE.x, _pixels.y / HudStyle::REFERENCE_SIZE.y};
     }
 }
 
@@ -111,8 +108,9 @@ SkillTree::~SkillTree() {
     ui_.Unload();
 }
 
-void SkillTree::Initialize(GameStatus* _status) {
+void SkillTree::Initialize(GameStatus* _status, const UiTheme& _theme) {
     status_ = _status;
+    theme_ = &_theme;
     input_ = Singleton<Input>::GetInstance();
 
     LoadSkills("Assets/Data/SkillTree/data.json");
@@ -293,21 +291,19 @@ void SkillTree::Refresh() {
         const bool pressable = !maxed && requirementsMet && affordable;
         node.button.SetEnabled(pressable);
 
-        // 黄 = MAX, 緑 = 取得済み, 白 = 今すぐ取れる, 灰 = 前提を今取れる, 暗い灰 = 取れない
-        const Vector4* color = &COLOR_LOCKED;
-        if (maxed)           color = &HudStyle::YELLOW;
-        else if (acquired)   color = &HudStyle::GREEN;
-        else if (pressable)  color = &HudStyle::WHITE;
-        else if (prereqHint) color = &HudStyle::GRAY;
-        node.icon.SetColor(*color);
+        UiColor color = UiColor::Locked;
+        if (maxed)           color = UiColor::Highlight;
+        else if (acquired)   color = UiColor::Accent;
+        else if (pressable)  color = UiColor::Text;
+        else if (prereqHint) color = UiColor::TextDim;
+        node.icon.SetColor(theme_->Get(color));
 
         node.level.SetText(maxed ? "MAX" : std::format("{}/{}", level, skill.maxLevel));
-        node.level.SetColor(*color);
+        node.level.SetColor(theme_->Get(color));
 
-        // 既に取得済み/今すぐ取れるノードへの線は白、まだ届かない線は暗い灰
         if (node.line.IsValid()) {
             const bool reachable = acquired || pressable;
-            node.line.SetColor(reachable ? HudStyle::WHITE : COLOR_LOCKED);
+            node.line.SetColor(theme_->Get(reachable ? UiColor::Text : UiColor::Locked));
         }
     }
 
@@ -430,7 +426,7 @@ void SkillTree::UpdateTooltip() {
         lineTop += TOOLTIP_LINE_STEP;
     };
 
-    showLine(tooltip_.description, skill.description, HudStyle::GRAY);
+    showLine(tooltip_.description, skill.description, theme_->Get(UiColor::TextDim));
 
     // 効果は今の値と取得後の値を並べる。MAX なら今の値だけ
     const StatChange stats[] = {
@@ -453,7 +449,7 @@ void SkillTree::UpdateTooltip() {
         if (!maxed) {
             text += " -> " + FormatStat(stat.current + stat.delta, stat);
         }
-        showLine(tooltip_.effects[effectCount++], text, HudStyle::WHITE);
+        showLine(tooltip_.effects[effectCount++], text, theme_->Get(UiColor::Text));
     }
     for (size_t i = effectCount; i < tooltip_.effects.size(); ++i) {
         tooltip_.effects[i].SetVisible(false);
@@ -464,7 +460,7 @@ void SkillTree::UpdateTooltip() {
         tooltip_.cost.SetVisible(false);
     } else {
         const bool affordable = (status_->point >= skill.cost);
-        showLine(tooltip_.cost, std::format("Cost: {}pt", skill.cost), affordable ? HudStyle::WHITE : HudStyle::RED);
+        showLine(tooltip_.cost, std::format("Cost: {}pt", skill.cost), theme_->Get(affordable ? UiColor::Text : UiColor::Danger));
     }
 
     // 前提は MAX まで取る必要があるので、まだ足りない前提だけを出す
@@ -478,18 +474,18 @@ void SkillTree::UpdateTooltip() {
     if (missing.empty()) {
         tooltip_.need.SetVisible(false);
     } else {
-        showLine(tooltip_.need, std::format("(Need: {})", missing), HudStyle::RED);
+        showLine(tooltip_.need, std::format("(Need: {})", missing), theme_->Get(UiColor::Danger));
     }
 
     // ノードの右に出し、画面からはみ出すなら左に出す。上下は画面の内側に収める
     const Vector2 center = ToScreenPixels(node->button.GetOffset());
     Vector2 topLeft = {center.x + NODE_HALF + TOOLTIP_GAP, center.y - TOOLTIP_SIZE.y * 0.5f};
     float slide = -TOOLTIP_SLIDE;
-    if (topLeft.x + TOOLTIP_SIZE.x > SCREEN_SIZE.x - SCREEN_MARGIN) {
+    if (topLeft.x + TOOLTIP_SIZE.x > HudStyle::REFERENCE_SIZE.x - SCREEN_MARGIN) {
         topLeft.x = center.x - NODE_HALF - TOOLTIP_GAP - TOOLTIP_SIZE.x;
         slide = TOOLTIP_SLIDE;
     }
-    topLeft.y = std::clamp(topLeft.y, SCREEN_MARGIN, SCREEN_SIZE.y - SCREEN_MARGIN - TOOLTIP_SIZE.y);
+    topLeft.y = std::clamp(topLeft.y, SCREEN_MARGIN, HudStyle::REFERENCE_SIZE.y - SCREEN_MARGIN - TOOLTIP_SIZE.y);
     tooltip_.offset = ToScreenRatio(topLeft);
     tooltip_.slide = slide;
 
@@ -511,7 +507,7 @@ void SkillTree::UpdateTooltipFade(float _deltaTime) {
     const float eased = 1.f - (1.f - t) * (1.f - t);
 
     tooltip_.canvas.SetAlpha(eased);
-    const float slide = tooltip_.slide * (1.f - eased) / SCREEN_SIZE.x;
+    const float slide = tooltip_.slide * (1.f - eased) / HudStyle::REFERENCE_SIZE.x;
     tooltip_.root.SetOffset({tooltip_.offset.x + slide, tooltip_.offset.y});
 }
 

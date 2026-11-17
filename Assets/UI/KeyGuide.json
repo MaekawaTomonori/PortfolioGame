@@ -58,6 +58,7 @@
                         0.0,
                         0.5
                     ],
+                    "colorRole": "Panel",
                     "image": "UI/key.png",
                     "children": [
                         {
@@ -85,9 +86,11 @@
                                 1.0,
                                 1.0
                             ],
+                            "colorRole": "Text",
                             "text": "W",
-                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
-                            "fontSize": 18.0,
+                            "font": "Assets/Fonts/Rajdhani-Bold.ttf",
+                            "fontSize": 21.0,
+                            "weight": 0.3,
                             "alignX": 1,
                             "alignY": 1,
                             "children": []
@@ -119,6 +122,7 @@
                         0.0,
                         0.5
                     ],
+                    "colorRole": "Panel",
                     "image": "UI/key.png",
                     "children": [
                         {
@@ -146,9 +150,11 @@
                                 1.0,
                                 1.0
                             ],
+                            "colorRole": "Text",
                             "text": "A",
-                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
-                            "fontSize": 18.0,
+                            "font": "Assets/Fonts/Rajdhani-Bold.ttf",
+                            "fontSize": 21.0,
+                            "weight": 0.3,
                             "alignX": 1,
                             "alignY": 1,
                             "children": []
@@ -180,6 +186,7 @@
                         0.0,
                         0.5
                     ],
+                    "colorRole": "Panel",
                     "image": "UI/key.png",
                     "children": [
                         {
@@ -207,9 +214,11 @@
                                 1.0,
                                 1.0
                             ],
+                            "colorRole": "Text",
                             "text": "S",
-                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
-                            "fontSize": 18.0,
+                            "font": "Assets/Fonts/Rajdhani-Bold.ttf",
+                            "fontSize": 21.0,
+                            "weight": 0.3,
                             "alignX": 1,
                             "alignY": 1,
                             "children": []
@@ -241,6 +250,7 @@
                         0.0,
                         0.5
                     ],
+                    "colorRole": "Panel",
                     "image": "UI/key.png",
                     "children": [
                         {
@@ -268,9 +278,11 @@
                                 1.0,
                                 1.0
                             ],
+                            "colorRole": "Text",
                             "text": "D",
-                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
-                            "fontSize": 18.0,
+                            "font": "Assets/Fonts/Rajdhani-Bold.ttf",
+                            "fontSize": 21.0,
+                            "weight": 0.3,
                             "alignX": 1,
                             "alignY": 1,
                             "children": []
@@ -302,6 +314,7 @@
                         0.0,
                         0.5
                     ],
+                    "colorRole": "Panel",
                     "image": "UI/key_wide.png",
                     "children": [
                         {
@@ -329,9 +342,11 @@
                                 1.0,
                                 1.0
                             ],
+                            "colorRole": "Text",
                             "text": "SPACE",
-                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
-                            "fontSize": 14.0,
+                            "font": "Assets/Fonts/Rajdhani-Bold.ttf",
+                            "fontSize": 16.0,
+                            "weight": 0.3,
                             "alignX": 1,
                             "alignY": 1,
                             "children": []
@@ -392,6 +407,7 @@
                         0.0,
                         0.5
                     ],
+                    "colorRole": "Panel",
                     "image": "UI/key.png",
                     "children": [
                         {
@@ -447,9 +463,11 @@
                                 1.0,
                                 1.0
                             ],
+                            "colorRole": "Text",
                             "text": "Q",
-                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
-                            "fontSize": 30.0,
+                            "font": "Assets/Fonts/Rajdhani-Bold.ttf",
+                            "fontSize": 34.0,
+                            "weight": 0.6,
                             "alignX": 1,
                             "alignY": 1,
                             "children": []
@@ -481,6 +499,7 @@
                         0.0,
                         0.5
                     ],
+                    "colorRole": "Panel",
                     "image": "UI/key.png",
                     "children": [
                         {
@@ -536,9 +555,11 @@
                                 1.0,
                                 1.0
                             ],
+                            "colorRole": "Text",
                             "text": "F",
-                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
-                            "fontSize": 30.0,
+                            "font": "Assets/Fonts/Rajdhani-Bold.ttf",
+                            "fontSize": 34.0,
+                            "weight": 0.6,
                             "alignX": 1,
                             "alignY": 1,
                             "children": []

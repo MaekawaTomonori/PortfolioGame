@@ -5,6 +5,8 @@
 
 #include "GEUI.hpp"
 
+class UiTheme;
+
 /** @brief ラウンドの目標（Objective）表示
  * 初回は画面中央に大きく出してから、同じ背景を左上へ縮めながら移動し、以降は左上に残り続ける。
  * 文字は拡縮できないため、移動の前後で大きい文字と小さい文字を入れ替える。
@@ -17,8 +19,10 @@ class StageInfoUI {
         GEUI::Widget label;
         GEUI::Widget goal;
 
-        void SetAlpha(float _alpha);
+        void SetAlpha(float _alpha, const UiTheme& _theme);
     };
+
+    const UiTheme* theme_ = nullptr;
 
     GEUI::Canvas ui_;
     GEUI::Widget panel_;
@@ -34,7 +38,7 @@ class StageInfoUI {
 public:
     ~StageInfoUI();
 
-    void Initialize();
+    void Initialize(const UiTheme& _theme);
     void Update();
 
     /** @brief 中央に大きく表示し、左上へ移動する演出を始める */

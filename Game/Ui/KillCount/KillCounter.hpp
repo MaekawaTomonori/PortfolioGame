@@ -5,12 +5,15 @@
 #include "GEUI.hpp"
 
 class Enemies;
+class UiTheme;
 
 class KillCounter {
     GEUI::Canvas ui_;
     GEUI::Widget root_;
     GEUI::Widget text_;
     GEUI::Widget fill_;
+
+    const UiTheme* theme_ = nullptr;
 
     Enemies* enemies_ = nullptr;
     uint16_t max_ = 0;
@@ -21,7 +24,7 @@ class KillCounter {
 public:
     ~KillCounter();
 
-    void Initialize();
+    void Initialize(const UiTheme& _theme);
     void Update();
     void Debug();
 

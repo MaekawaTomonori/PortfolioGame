@@ -85,6 +85,7 @@
                         1.0,
                         1.0
                     ],
+                    "colorRole": "Text",
                     "children": []
                 },
                 {
@@ -112,6 +113,7 @@
                         1.0,
                         1.0
                     ],
+                    "colorRole": "Text",
                     "children": []
                 },
                 {
@@ -139,6 +141,7 @@
                         0.35,
                         1.0
                     ],
+                    "colorRole": "Locked",
                     "children": []
                 },
                 {
@@ -166,6 +169,7 @@
                         0.35,
                         1.0
                     ],
+                    "colorRole": "Locked",
                     "children": []
                 },
                 {
@@ -193,6 +197,7 @@
                         0.35,
                         1.0
                     ],
+                    "colorRole": "Locked",
                     "children": []
                 },
                 {
@@ -220,6 +225,7 @@
                         0.35,
                         1.0
                     ],
+                    "colorRole": "Locked",
                     "children": []
                 },
                 {
@@ -247,6 +253,7 @@
                         0.35,
                         1.0
                     ],
+                    "colorRole": "Locked",
                     "children": []
                 },
                 {
@@ -274,6 +281,7 @@
                         0.35,
                         1.0
                     ],
+                    "colorRole": "Locked",
                     "children": []
                 },
                 {
@@ -301,6 +309,7 @@
                         0.35,
                         1.0
                     ],
+                    "colorRole": "Locked",
                     "children": []
                 },
                 {
@@ -328,6 +337,7 @@
                         0.35,
                         1.0
                     ],
+                    "colorRole": "Locked",
                     "children": []
                 },
                 {
@@ -355,6 +365,7 @@
                         0.35,
                         1.0
                     ],
+                    "colorRole": "Locked",
                     "children": []
                 },
                 {
@@ -382,6 +393,7 @@
                         0.35,
                         1.0
                     ],
+                    "colorRole": "Locked",
                     "children": []
                 },
                 {
@@ -409,6 +421,7 @@
                         0.35,
                         1.0
                     ],
+                    "colorRole": "Locked",
                     "children": []
                 },
                 {
@@ -436,6 +449,7 @@
                         0.35,
                         1.0
                     ],
+                    "colorRole": "Locked",
                     "children": []
                 },
                 {
@@ -463,6 +477,7 @@
                         0.35,
                         1.0
                     ],
+                    "colorRole": "Locked",
                     "children": []
                 },
                 {
@@ -490,6 +505,7 @@
                         0.35,
                         1.0
                     ],
+                    "colorRole": "Locked",
                     "children": []
                 },
                 {
@@ -517,6 +533,7 @@
                         0.35,
                         1.0
                     ],
+                    "colorRole": "Locked",
                     "children": []
                 },
                 {
@@ -544,6 +561,7 @@
                         0.35,
                         1.0
                     ],
+                    "colorRole": "Locked",
                     "children": []
                 },
                 {
@@ -571,6 +589,7 @@
                         0.35,
                         1.0
                     ],
+                    "colorRole": "Locked",
                     "children": []
                 },
                 {
@@ -598,6 +617,7 @@
                         0.35,
                         1.0
                     ],
+                    "colorRole": "Locked",
                     "children": []
                 },
                 {
@@ -665,14 +685,15 @@
                                 0.0,
                                 0.5
                             ],
+                            "colorRole": "Panel",
                             "image": "UI/key.png",
                             "followState": true,
                             "selectedStyle": {
                                 "color": [
-                                    1.0,
-                                    1.0,
-                                    1.0,
-                                    0.3
+                                    0.0,
+                                    0.505,
+                                    0.721,
+                                    0.874
                                 ],
                                 "shift": [
                                     0.0,
@@ -680,6 +701,7 @@
                                 ],
                                 "scale": 1.0
                             },
+                            "selectedRole": "Accent",
                             "children": []
                         },
                         {
@@ -707,6 +729,7 @@
                                 0.35,
                                 1.0
                             ],
+                            "colorRole": "Locked",
                             "image": "heart.png",
                             "children": []
                         },
@@ -735,9 +758,11 @@
                                 1.0,
                                 1.0
                             ],
+                            "colorRole": "Text",
                             "text": "0/1",
-                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
-                            "fontSize": 14.0,
+                            "font": "Assets/Fonts/Rajdhani-Bold.ttf",
+                            "fontSize": 16.0,
+                            "weight": 0.3,
                             "alignX": 1,
                             "alignY": 0,
                             "children": []
@@ -809,14 +834,15 @@
                                 0.0,
                                 0.5
                             ],
+                            "colorRole": "Panel",
                             "image": "UI/key.png",
                             "followState": true,
                             "selectedStyle": {
                                 "color": [
-                                    1.0,
-                                    1.0,
-                                    1.0,
-                                    0.3
+                                    0.0,
+                                    0.505,
+                                    0.721,
+                                    0.874
                                 ],
                                 "shift": [
                                     0.0,
@@ -824,6 +850,7 @@
                                 ],
                                 "scale": 1.0
                             },
+                            "selectedRole": "Accent",
                             "children": []
                         },
                         {
@@ -851,6 +878,7 @@
                                 0.35,
                                 1.0
                             ],
+                            "colorRole": "Locked",
                             "image": "sword.png",
                             "children": []
                         },
@@ -879,9 +907,11 @@
                                 1.0,
                                 1.0
                             ],
+                            "colorRole": "Text",
                             "text": "0/1",
-                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
-                            "fontSize": 14.0,
+                            "font": "Assets/Fonts/Rajdhani-Bold.ttf",
+                            "fontSize": 16.0,
+                            "weight": 0.3,
                             "alignX": 1,
                             "alignY": 0,
                             "children": []
@@ -953,14 +983,15 @@
                                 0.0,
                                 0.5
                             ],
+                            "colorRole": "Panel",
                             "image": "UI/key.png",
                             "followState": true,
                             "selectedStyle": {
                                 "color": [
-                                    1.0,
-                                    1.0,
-                                    1.0,
-                                    0.3
+                                    0.0,
+                                    0.505,
+                                    0.721,
+                                    0.874
                                 ],
                                 "shift": [
                                     0.0,
@@ -968,6 +999,7 @@
                                 ],
                                 "scale": 1.0
                             },
+                            "selectedRole": "Accent",
                             "children": []
                         },
                         {
@@ -995,6 +1027,7 @@
                                 0.35,
                                 1.0
                             ],
+                            "colorRole": "Locked",
                             "image": "sword.png",
                             "children": []
                         },
@@ -1023,9 +1056,11 @@
                                 1.0,
                                 1.0
                             ],
+                            "colorRole": "Text",
                             "text": "0/1",
-                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
-                            "fontSize": 14.0,
+                            "font": "Assets/Fonts/Rajdhani-Bold.ttf",
+                            "fontSize": 16.0,
+                            "weight": 0.3,
                             "alignX": 1,
                             "alignY": 0,
                             "children": []
@@ -1097,14 +1132,15 @@
                                 0.0,
                                 0.5
                             ],
+                            "colorRole": "Panel",
                             "image": "UI/key.png",
                             "followState": true,
                             "selectedStyle": {
                                 "color": [
-                                    1.0,
-                                    1.0,
-                                    1.0,
-                                    0.3
+                                    0.0,
+                                    0.505,
+                                    0.721,
+                                    0.874
                                 ],
                                 "shift": [
                                     0.0,
@@ -1112,6 +1148,7 @@
                                 ],
                                 "scale": 1.0
                             },
+                            "selectedRole": "Accent",
                             "children": []
                         },
                         {
@@ -1139,6 +1176,7 @@
                                 0.35,
                                 1.0
                             ],
+                            "colorRole": "Locked",
                             "image": "sword.png",
                             "children": []
                         },
@@ -1167,9 +1205,11 @@
                                 1.0,
                                 1.0
                             ],
+                            "colorRole": "Text",
                             "text": "0/1",
-                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
-                            "fontSize": 14.0,
+                            "font": "Assets/Fonts/Rajdhani-Bold.ttf",
+                            "fontSize": 16.0,
+                            "weight": 0.3,
                             "alignX": 1,
                             "alignY": 0,
                             "children": []
@@ -1241,14 +1281,15 @@
                                 0.0,
                                 0.5
                             ],
+                            "colorRole": "Panel",
                             "image": "UI/key.png",
                             "followState": true,
                             "selectedStyle": {
                                 "color": [
-                                    1.0,
-                                    1.0,
-                                    1.0,
-                                    0.3
+                                    0.0,
+                                    0.505,
+                                    0.721,
+                                    0.874
                                 ],
                                 "shift": [
                                     0.0,
@@ -1256,6 +1297,7 @@
                                 ],
                                 "scale": 1.0
                             },
+                            "selectedRole": "Accent",
                             "children": []
                         },
                         {
@@ -1283,6 +1325,7 @@
                                 0.35,
                                 1.0
                             ],
+                            "colorRole": "Locked",
                             "image": "sword.png",
                             "children": []
                         },
@@ -1311,9 +1354,11 @@
                                 1.0,
                                 1.0
                             ],
+                            "colorRole": "Text",
                             "text": "0/1",
-                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
-                            "fontSize": 14.0,
+                            "font": "Assets/Fonts/Rajdhani-Bold.ttf",
+                            "fontSize": 16.0,
+                            "weight": 0.3,
                             "alignX": 1,
                             "alignY": 0,
                             "children": []
@@ -1385,14 +1430,15 @@
                                 0.0,
                                 0.5
                             ],
+                            "colorRole": "Panel",
                             "image": "UI/key.png",
                             "followState": true,
                             "selectedStyle": {
                                 "color": [
-                                    1.0,
-                                    1.0,
-                                    1.0,
-                                    0.3
+                                    0.0,
+                                    0.505,
+                                    0.721,
+                                    0.874
                                 ],
                                 "shift": [
                                     0.0,
@@ -1400,6 +1446,7 @@
                                 ],
                                 "scale": 1.0
                             },
+                            "selectedRole": "Accent",
                             "children": []
                         },
                         {
@@ -1427,6 +1474,7 @@
                                 0.35,
                                 1.0
                             ],
+                            "colorRole": "Locked",
                             "image": "heart.png",
                             "children": []
                         },
@@ -1455,9 +1503,11 @@
                                 1.0,
                                 1.0
                             ],
+                            "colorRole": "Text",
                             "text": "0/1",
-                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
-                            "fontSize": 14.0,
+                            "font": "Assets/Fonts/Rajdhani-Bold.ttf",
+                            "fontSize": 16.0,
+                            "weight": 0.3,
                             "alignX": 1,
                             "alignY": 0,
                             "children": []
@@ -1529,14 +1579,15 @@
                                 0.0,
                                 0.5
                             ],
+                            "colorRole": "Panel",
                             "image": "UI/key.png",
                             "followState": true,
                             "selectedStyle": {
                                 "color": [
-                                    1.0,
-                                    1.0,
-                                    1.0,
-                                    0.3
+                                    0.0,
+                                    0.505,
+                                    0.721,
+                                    0.874
                                 ],
                                 "shift": [
                                     0.0,
@@ -1544,6 +1595,7 @@
                                 ],
                                 "scale": 1.0
                             },
+                            "selectedRole": "Accent",
                             "children": []
                         },
                         {
@@ -1571,6 +1623,7 @@
                                 0.35,
                                 1.0
                             ],
+                            "colorRole": "Locked",
                             "image": "heart.png",
                             "children": []
                         },
@@ -1599,9 +1652,11 @@
                                 1.0,
                                 1.0
                             ],
+                            "colorRole": "Text",
                             "text": "0/1",
-                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
-                            "fontSize": 14.0,
+                            "font": "Assets/Fonts/Rajdhani-Bold.ttf",
+                            "fontSize": 16.0,
+                            "weight": 0.3,
                             "alignX": 1,
                             "alignY": 0,
                             "children": []
@@ -1673,14 +1728,15 @@
                                 0.0,
                                 0.5
                             ],
+                            "colorRole": "Panel",
                             "image": "UI/key.png",
                             "followState": true,
                             "selectedStyle": {
                                 "color": [
-                                    1.0,
-                                    1.0,
-                                    1.0,
-                                    0.3
+                                    0.0,
+                                    0.505,
+                                    0.721,
+                                    0.874
                                 ],
                                 "shift": [
                                     0.0,
@@ -1688,6 +1744,7 @@
                                 ],
                                 "scale": 1.0
                             },
+                            "selectedRole": "Accent",
                             "children": []
                         },
                         {
@@ -1715,6 +1772,7 @@
                                 0.35,
                                 1.0
                             ],
+                            "colorRole": "Locked",
                             "image": "heart.png",
                             "children": []
                         },
@@ -1743,9 +1801,11 @@
                                 1.0,
                                 1.0
                             ],
+                            "colorRole": "Text",
                             "text": "0/1",
-                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
-                            "fontSize": 14.0,
+                            "font": "Assets/Fonts/Rajdhani-Bold.ttf",
+                            "fontSize": 16.0,
+                            "weight": 0.3,
                             "alignX": 1,
                             "alignY": 0,
                             "children": []
@@ -1817,14 +1877,15 @@
                                 0.0,
                                 0.5
                             ],
+                            "colorRole": "Panel",
                             "image": "UI/key.png",
                             "followState": true,
                             "selectedStyle": {
                                 "color": [
-                                    1.0,
-                                    1.0,
-                                    1.0,
-                                    0.3
+                                    0.0,
+                                    0.505,
+                                    0.721,
+                                    0.874
                                 ],
                                 "shift": [
                                     0.0,
@@ -1832,6 +1893,7 @@
                                 ],
                                 "scale": 1.0
                             },
+                            "selectedRole": "Accent",
                             "children": []
                         },
                         {
@@ -1859,6 +1921,7 @@
                                 0.35,
                                 1.0
                             ],
+                            "colorRole": "Locked",
                             "image": "heart.png",
                             "children": []
                         },
@@ -1887,9 +1950,11 @@
                                 1.0,
                                 1.0
                             ],
+                            "colorRole": "Text",
                             "text": "0/1",
-                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
-                            "fontSize": 14.0,
+                            "font": "Assets/Fonts/Rajdhani-Bold.ttf",
+                            "fontSize": 16.0,
+                            "weight": 0.3,
                             "alignX": 1,
                             "alignY": 0,
                             "children": []
@@ -1961,14 +2026,15 @@
                                 0.0,
                                 0.5
                             ],
+                            "colorRole": "Panel",
                             "image": "UI/key.png",
                             "followState": true,
                             "selectedStyle": {
                                 "color": [
-                                    1.0,
-                                    1.0,
-                                    1.0,
-                                    0.3
+                                    0.0,
+                                    0.505,
+                                    0.721,
+                                    0.874
                                 ],
                                 "shift": [
                                     0.0,
@@ -1976,6 +2042,7 @@
                                 ],
                                 "scale": 1.0
                             },
+                            "selectedRole": "Accent",
                             "children": []
                         },
                         {
@@ -2003,6 +2070,7 @@
                                 0.35,
                                 1.0
                             ],
+                            "colorRole": "Locked",
                             "image": "ms.png",
                             "children": []
                         },
@@ -2031,9 +2099,11 @@
                                 1.0,
                                 1.0
                             ],
+                            "colorRole": "Text",
                             "text": "0/1",
-                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
-                            "fontSize": 14.0,
+                            "font": "Assets/Fonts/Rajdhani-Bold.ttf",
+                            "fontSize": 16.0,
+                            "weight": 0.3,
                             "alignX": 1,
                             "alignY": 0,
                             "children": []
@@ -2105,14 +2175,15 @@
                                 0.0,
                                 0.5
                             ],
+                            "colorRole": "Panel",
                             "image": "UI/key.png",
                             "followState": true,
                             "selectedStyle": {
                                 "color": [
-                                    1.0,
-                                    1.0,
-                                    1.0,
-                                    0.3
+                                    0.0,
+                                    0.505,
+                                    0.721,
+                                    0.874
                                 ],
                                 "shift": [
                                     0.0,
@@ -2120,6 +2191,7 @@
                                 ],
                                 "scale": 1.0
                             },
+                            "selectedRole": "Accent",
                             "children": []
                         },
                         {
@@ -2147,6 +2219,7 @@
                                 0.35,
                                 1.0
                             ],
+                            "colorRole": "Locked",
                             "image": "ms.png",
                             "children": []
                         },
@@ -2175,9 +2248,11 @@
                                 1.0,
                                 1.0
                             ],
+                            "colorRole": "Text",
                             "text": "0/1",
-                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
-                            "fontSize": 14.0,
+                            "font": "Assets/Fonts/Rajdhani-Bold.ttf",
+                            "fontSize": 16.0,
+                            "weight": 0.3,
                             "alignX": 1,
                             "alignY": 0,
                             "children": []
@@ -2249,14 +2324,15 @@
                                 0.0,
                                 0.5
                             ],
+                            "colorRole": "Panel",
                             "image": "UI/key.png",
                             "followState": true,
                             "selectedStyle": {
                                 "color": [
-                                    1.0,
-                                    1.0,
-                                    1.0,
-                                    0.3
+                                    0.0,
+                                    0.505,
+                                    0.721,
+                                    0.874
                                 ],
                                 "shift": [
                                     0.0,
@@ -2264,6 +2340,7 @@
                                 ],
                                 "scale": 1.0
                             },
+                            "selectedRole": "Accent",
                             "children": []
                         },
                         {
@@ -2291,6 +2368,7 @@
                                 0.35,
                                 1.0
                             ],
+                            "colorRole": "Locked",
                             "image": "ms.png",
                             "children": []
                         },
@@ -2319,9 +2397,11 @@
                                 1.0,
                                 1.0
                             ],
+                            "colorRole": "Text",
                             "text": "0/1",
-                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
-                            "fontSize": 14.0,
+                            "font": "Assets/Fonts/Rajdhani-Bold.ttf",
+                            "fontSize": 16.0,
+                            "weight": 0.3,
                             "alignX": 1,
                             "alignY": 0,
                             "children": []
@@ -2393,14 +2473,15 @@
                                 0.0,
                                 0.5
                             ],
+                            "colorRole": "Panel",
                             "image": "UI/key.png",
                             "followState": true,
                             "selectedStyle": {
                                 "color": [
-                                    1.0,
-                                    1.0,
-                                    1.0,
-                                    0.3
+                                    0.0,
+                                    0.505,
+                                    0.721,
+                                    0.874
                                 ],
                                 "shift": [
                                     0.0,
@@ -2408,6 +2489,7 @@
                                 ],
                                 "scale": 1.0
                             },
+                            "selectedRole": "Accent",
                             "children": []
                         },
                         {
@@ -2435,6 +2517,7 @@
                                 0.35,
                                 1.0
                             ],
+                            "colorRole": "Locked",
                             "image": "as.png",
                             "children": []
                         },
@@ -2463,9 +2546,11 @@
                                 1.0,
                                 1.0
                             ],
+                            "colorRole": "Text",
                             "text": "0/1",
-                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
-                            "fontSize": 14.0,
+                            "font": "Assets/Fonts/Rajdhani-Bold.ttf",
+                            "fontSize": 16.0,
+                            "weight": 0.3,
                             "alignX": 1,
                             "alignY": 0,
                             "children": []
@@ -2537,14 +2622,15 @@
                                 0.0,
                                 0.5
                             ],
+                            "colorRole": "Panel",
                             "image": "UI/key.png",
                             "followState": true,
                             "selectedStyle": {
                                 "color": [
-                                    1.0,
-                                    1.0,
-                                    1.0,
-                                    0.3
+                                    0.0,
+                                    0.505,
+                                    0.721,
+                                    0.874
                                 ],
                                 "shift": [
                                     0.0,
@@ -2552,6 +2638,7 @@
                                 ],
                                 "scale": 1.0
                             },
+                            "selectedRole": "Accent",
                             "children": []
                         },
                         {
@@ -2579,6 +2666,7 @@
                                 0.35,
                                 1.0
                             ],
+                            "colorRole": "Locked",
                             "image": "as.png",
                             "children": []
                         },
@@ -2607,9 +2695,11 @@
                                 1.0,
                                 1.0
                             ],
+                            "colorRole": "Text",
                             "text": "0/1",
-                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
-                            "fontSize": 14.0,
+                            "font": "Assets/Fonts/Rajdhani-Bold.ttf",
+                            "fontSize": 16.0,
+                            "weight": 0.3,
                             "alignX": 1,
                             "alignY": 0,
                             "children": []
@@ -2681,14 +2771,15 @@
                                 0.0,
                                 0.5
                             ],
+                            "colorRole": "Panel",
                             "image": "UI/key.png",
                             "followState": true,
                             "selectedStyle": {
                                 "color": [
-                                    1.0,
-                                    1.0,
-                                    1.0,
-                                    0.3
+                                    0.0,
+                                    0.505,
+                                    0.721,
+                                    0.874
                                 ],
                                 "shift": [
                                     0.0,
@@ -2696,6 +2787,7 @@
                                 ],
                                 "scale": 1.0
                             },
+                            "selectedRole": "Accent",
                             "children": []
                         },
                         {
@@ -2723,6 +2815,7 @@
                                 0.35,
                                 1.0
                             ],
+                            "colorRole": "Locked",
                             "image": "as.png",
                             "children": []
                         },
@@ -2751,9 +2844,11 @@
                                 1.0,
                                 1.0
                             ],
+                            "colorRole": "Text",
                             "text": "0/1",
-                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
-                            "fontSize": 14.0,
+                            "font": "Assets/Fonts/Rajdhani-Bold.ttf",
+                            "fontSize": 16.0,
+                            "weight": 0.3,
                             "alignX": 1,
                             "alignY": 0,
                             "children": []
@@ -2825,14 +2920,15 @@
                                 0.0,
                                 0.5
                             ],
+                            "colorRole": "Panel",
                             "image": "UI/key.png",
                             "followState": true,
                             "selectedStyle": {
                                 "color": [
-                                    1.0,
-                                    1.0,
-                                    1.0,
-                                    0.3
+                                    0.0,
+                                    0.505,
+                                    0.721,
+                                    0.874
                                 ],
                                 "shift": [
                                     0.0,
@@ -2840,6 +2936,7 @@
                                 ],
                                 "scale": 1.0
                             },
+                            "selectedRole": "Accent",
                             "children": []
                         },
                         {
@@ -2867,6 +2964,7 @@
                                 0.35,
                                 1.0
                             ],
+                            "colorRole": "Locked",
                             "image": "clock.png",
                             "children": []
                         },
@@ -2895,9 +2993,11 @@
                                 1.0,
                                 1.0
                             ],
+                            "colorRole": "Text",
                             "text": "0/1",
-                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
-                            "fontSize": 14.0,
+                            "font": "Assets/Fonts/Rajdhani-Bold.ttf",
+                            "fontSize": 16.0,
+                            "weight": 0.3,
                             "alignX": 1,
                             "alignY": 0,
                             "children": []
@@ -2969,14 +3069,15 @@
                                 0.0,
                                 0.5
                             ],
+                            "colorRole": "Panel",
                             "image": "UI/key.png",
                             "followState": true,
                             "selectedStyle": {
                                 "color": [
-                                    1.0,
-                                    1.0,
-                                    1.0,
-                                    0.3
+                                    0.0,
+                                    0.505,
+                                    0.721,
+                                    0.874
                                 ],
                                 "shift": [
                                     0.0,
@@ -2984,6 +3085,7 @@
                                 ],
                                 "scale": 1.0
                             },
+                            "selectedRole": "Accent",
                             "children": []
                         },
                         {
@@ -3011,6 +3113,7 @@
                                 0.35,
                                 1.0
                             ],
+                            "colorRole": "Locked",
                             "image": "clock.png",
                             "children": []
                         },
@@ -3039,9 +3142,11 @@
                                 1.0,
                                 1.0
                             ],
+                            "colorRole": "Text",
                             "text": "0/1",
-                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
-                            "fontSize": 14.0,
+                            "font": "Assets/Fonts/Rajdhani-Bold.ttf",
+                            "fontSize": 16.0,
+                            "weight": 0.3,
                             "alignX": 1,
                             "alignY": 0,
                             "children": []
@@ -3113,14 +3218,15 @@
                                 0.0,
                                 0.5
                             ],
+                            "colorRole": "Panel",
                             "image": "UI/key.png",
                             "followState": true,
                             "selectedStyle": {
                                 "color": [
-                                    1.0,
-                                    1.0,
-                                    1.0,
-                                    0.3
+                                    0.0,
+                                    0.505,
+                                    0.721,
+                                    0.874
                                 ],
                                 "shift": [
                                     0.0,
@@ -3128,6 +3234,7 @@
                                 ],
                                 "scale": 1.0
                             },
+                            "selectedRole": "Accent",
                             "children": []
                         },
                         {
@@ -3155,6 +3262,7 @@
                                 0.35,
                                 1.0
                             ],
+                            "colorRole": "Locked",
                             "image": "enemy.png",
                             "children": []
                         },
@@ -3183,9 +3291,11 @@
                                 1.0,
                                 1.0
                             ],
+                            "colorRole": "Text",
                             "text": "0/1",
-                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
-                            "fontSize": 14.0,
+                            "font": "Assets/Fonts/Rajdhani-Bold.ttf",
+                            "fontSize": 16.0,
+                            "weight": 0.3,
                             "alignX": 1,
                             "alignY": 0,
                             "children": []
@@ -3257,14 +3367,15 @@
                                 0.0,
                                 0.5
                             ],
+                            "colorRole": "Panel",
                             "image": "UI/key.png",
                             "followState": true,
                             "selectedStyle": {
                                 "color": [
-                                    1.0,
-                                    1.0,
-                                    1.0,
-                                    0.3
+                                    0.0,
+                                    0.505,
+                                    0.721,
+                                    0.874
                                 ],
                                 "shift": [
                                     0.0,
@@ -3272,6 +3383,7 @@
                                 ],
                                 "scale": 1.0
                             },
+                            "selectedRole": "Accent",
                             "children": []
                         },
                         {
@@ -3299,6 +3411,7 @@
                                 0.35,
                                 1.0
                             ],
+                            "colorRole": "Locked",
                             "image": "enemy.png",
                             "children": []
                         },
@@ -3327,9 +3440,11 @@
                                 1.0,
                                 1.0
                             ],
+                            "colorRole": "Text",
                             "text": "0/1",
-                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
-                            "fontSize": 14.0,
+                            "font": "Assets/Fonts/Rajdhani-Bold.ttf",
+                            "fontSize": 16.0,
+                            "weight": 0.3,
                             "alignX": 1,
                             "alignY": 0,
                             "children": []
@@ -3401,14 +3516,15 @@
                                 0.0,
                                 0.5
                             ],
+                            "colorRole": "Panel",
                             "image": "UI/key_wide.png",
                             "followState": true,
                             "selectedStyle": {
                                 "color": [
-                                    1.0,
-                                    1.0,
-                                    1.0,
-                                    0.3
+                                    0.0,
+                                    0.505,
+                                    0.721,
+                                    0.874
                                 ],
                                 "shift": [
                                     0.0,
@@ -3416,6 +3532,7 @@
                                 ],
                                 "scale": 1.0
                             },
+                            "selectedRole": "Accent",
                             "children": []
                         },
                         {
@@ -3443,9 +3560,11 @@
                                 1.0,
                                 1.0
                             ],
+                            "colorRole": "Text",
                             "text": "CONTINUE",
-                            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
-                            "fontSize": 18.0,
+                            "font": "Assets/Fonts/Rajdhani-Bold.ttf",
+                            "fontSize": 21.0,
+                            "weight": 0.3,
                             "alignX": 1,
                             "alignY": 1,
                             "children": []
@@ -3479,6 +3598,7 @@
                 0.0,
                 0.5
             ],
+            "colorRole": "Panel",
             "image": "UI/key_wide.png",
             "children": [
                 {
@@ -3506,9 +3626,11 @@
                         1.0,
                         1.0
                     ],
+                    "colorRole": "Text",
                     "text": "PT 0",
-                    "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
-                    "fontSize": 22.0,
+                    "font": "Assets/Fonts/Rajdhani-Bold.ttf",
+                    "fontSize": 25.0,
+                    "weight": 0.3,
                     "alignX": 1,
                     "alignY": 1,
                     "children": []
@@ -3541,8 +3663,9 @@
                 0.0
             ],
             "text": "LEVEL UP!",
-            "font": "Assets/Fonts/MPLUS1p-Medium.ttf",
-            "fontSize": 22.0,
+            "font": "Assets/Fonts/Rajdhani-Bold.ttf",
+            "fontSize": 25.0,
+            "weight": 0.3,
             "alignX": 1,
             "alignY": 1,
             "children": []

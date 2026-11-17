@@ -11,6 +11,8 @@
 #include "Status/GameStatus.hpp"
 #include "Ui/MenuInput.hpp"
 
+class UiTheme;
+
 class SkillTree {
     struct SkillDef {
         std::string id;
@@ -73,6 +75,7 @@ class SkillTree {
     std::vector<Effect> effects_;
     Input* input_ = nullptr;
     MenuInput menuInput_;
+    const UiTheme* theme_ = nullptr;
     // 最後の操作がキーなら選択中のノード、マウスならカーソル下のノードの説明を出す
     bool keyboardMode_ = false;
     // 開いたときのカーソル位置。ここから動くまでは、カーソル下のノードとクリックを無視する
@@ -88,7 +91,7 @@ class SkillTree {
 public:
     ~SkillTree();
 
-    void Initialize(GameStatus* _status);
+    void Initialize(GameStatus* _status, const UiTheme& _theme);
     void Update();
 
     void Open();
