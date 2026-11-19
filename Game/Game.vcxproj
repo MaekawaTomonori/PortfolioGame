@@ -154,7 +154,6 @@ xcopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)d
     <ClInclude Include="Performance\Intro\Intro.hpp" />
     <ClInclude Include="Player\Module\Attack\Attack.hpp" />
     <ClInclude Include="Player\Movement\DashBehavior.hpp" />
-    <ClInclude Include="Player\Movement\FlashBehavior.hpp" />
     <ClInclude Include="Player\Movement\IMovementBehavior.hpp" />
     <ClInclude Include="Player\Movement\Movement.hpp" />
     <ClInclude Include="Player\Movement\MovementContext.hpp" />
@@ -182,9 +181,15 @@ xcopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)d
     <ClInclude Include="Ui\StageInfo\StageInfoUI.hpp" />
     <ClInclude Include="Ui\SkillTree\SkillTree.hpp" />
     <ClInclude Include="Combat\DamageSource.hpp" />
-    <ClInclude Include="Skill\ISkillEntity.hpp" />
+    <ClInclude Include="Combat\Cooldown.hpp" />
+    <ClInclude Include="Skill\SkillEntity.hpp" />
+    <ClInclude Include="Skill\ISkill.hpp" />
+    <ClInclude Include="Skill\SkillSlot.hpp" />
     <ClInclude Include="Skill\SkillManager.hpp" />
     <ClInclude Include="Skill\BlackHole\BlackHole.hpp" />
+    <ClInclude Include="Skill\BlackHole\BlackHoleSkill.hpp" />
+    <ClInclude Include="Skill\Flash\FlashSkill.hpp" />
+    <ClInclude Include="Skill\SkillParamsJson.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Bullet\Bullet.cpp" />
@@ -202,7 +207,6 @@ xcopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)d
     <ClCompile Include="Performance\Intro\Intro.cpp" />
     <ClCompile Include="Player\Module\Attack\Attack.cpp" />
     <ClCompile Include="Player\Movement\DashBehavior.cpp" />
-    <ClCompile Include="Player\Movement\FlashBehavior.cpp" />
     <ClCompile Include="Player\Movement\Movement.cpp" />
     <ClCompile Include="Player\Movement\WalkBehavior.cpp" />
     <ClCompile Include="Player\Player.cpp" />
@@ -226,8 +230,11 @@ xcopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)d
     <ClCompile Include="Ui\StageInfo\StageInfoUI.cpp" />
     <ClCompile Include="Ui\SkillTree\SkillTree.cpp" />
     <ClCompile Include="Combat\DamageSource.cpp" />
+    <ClCompile Include="Combat\Cooldown.cpp" />
     <ClCompile Include="Skill\SkillManager.cpp" />
     <ClCompile Include="Skill\BlackHole\BlackHole.cpp" />
+    <ClCompile Include="Skill\BlackHole\BlackHoleSkill.cpp" />
+    <ClCompile Include="Skill\Flash\FlashSkill.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Engine\Engine.vcxproj">

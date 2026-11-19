@@ -1,5 +1,6 @@
 #include "Player.hpp"
 #include <algorithm>
+#include <optional>
 #include "Pattern/Singleton.hpp"
 #include "Math/MathUtils.hpp"
 #include "PostProcess/Executor/PostProcessExecutor.hpp"
@@ -10,6 +11,11 @@
 
 #undef min
 #undef max
+
+namespace {
+    /** @brief マウスがこれより近いと向きが決まらないので、スキルを出さない */
+    constexpr float MIN_AIM_DISTANCE = 0.01f;
+}
 
 Player::Player(ParticleSystem* _particle, PostProcessExecutor* _postEffect, const KeyBinds& _binds) {
     particle_ = _particle;
@@ -44,13 +50,10 @@ Player::Player(ParticleSystem* _particle, PostProcessExecutor* _postEffect, cons
     movement_ = std::make_unique<Movement>();
     movement_->Initialize(this);
 
-    auto flash = std::make_unique<FlashBehavior>();
     auto dash  = std::make_unique<DashBehavior>();
     auto walk  = std::make_unique<WalkBehavior>();
-    flash_ = flash.get();
     dash_  = dash.get();
     walk_  = walk.get();
-    behaviors_.push_back(std::move(flash));
     behaviors_.push_back(std::move(dash));
     behaviors_.push_back(std::move(walk));
 
@@ -120,14 +123,7 @@ void Player::Update() {
 #endif
             UpdateAttack();
 
-        // スキル発動
-        if (movementContext_.isSkillRequested && onSkillRequest_) {
-            Vector3 dir = (movementContext_.targetPosition - position_);
-            dir.y = 0.f;
-            if (dir.Length() > 0.01f) {
-                onSkillRequest_(position_, dir.Normalize());
-            }
-        }
+        RequestSkills();
     }
 
     UpdateInvulnerability(Time().GetDeltaTime());
@@ -219,6 +215,28 @@ void Player::SetStatus(const PlayerStatus& _status) {
     if (attack_) attack_->ApplyAttackSpeed(_status.as);
 }
 
+void Player::SetOnSkillRequest(std::function<void(SkillSlot, const Vector3&, const Vector3&)> _callback) {
+    onSkillRequest_ = std::move(_callback);
+}
+
+void Player::RequestSkills() {
+    if (!inputHandler_ || !onSkillRequest_) return;
+
+    std::optional<Vector3> direction;
+    for (size_t i = 0; i < static_cast<size_t>(SkillSlot::Count); ++i) {
+        const auto slot = static_cast<SkillSlot>(i);
+        if (!inputHandler_->IsSkillRequested(slot)) continue;
+
+        if (!direction) {
+            Vector3 toMouse = inputHandler_->GetMouseInWorld() - position_;
+            toMouse.y = 0.f;
+            if (toMouse.Length() <= MIN_AIM_DISTANCE) return;
+            direction = toMouse.Normalize();
+        }
+        onSkillRequest_(slot, position_, *direction);
+    }
+}
+
 void Player::UpdateWithoutInput() {
     forLight_ = position_;
     forLight_.y += 3.0f;
@@ -245,10 +263,6 @@ void Player::LoadParams() {
         dash_->SetDuration(std::get<float>(json->GetValue("PlayerParams", "Dash",  "Duration")));
         dash_->SetCooldown(std::get<float>(json->GetValue("PlayerParams", "Dash",  "Cooldown")));
     }
-    if (flash_) {
-        flash_->SetDistance(std::get<float>(json->GetValue("PlayerParams", "Flash", "Distance")));
-        flash_->SetCooldown(std::get<float>(json->GetValue("PlayerParams", "Flash", "Cooldown")));
-    }
 }
 
 void Player::SaveParams() const {
@@ -258,10 +272,6 @@ void Player::SaveParams() const {
         json->SetValue("PlayerParams", "Dash",  "Speed",    dash_->GetSpeed());
         json->SetValue("PlayerParams", "Dash",  "Duration", dash_->GetDuration());
         json->SetValue("PlayerParams", "Dash",  "Cooldown", dash_->GetCooldown());
-    }
-    if (flash_) {
-        json->SetValue("PlayerParams", "Flash", "Distance", flash_->GetDistance());
-        json->SetValue("PlayerParams", "Flash", "Cooldown", flash_->GetCooldown());
     }
     attack_->SaveParams();
     json->Save("PlayerParams");

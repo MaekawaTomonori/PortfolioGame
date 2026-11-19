@@ -8,10 +8,6 @@
             "Duration": 0.3,
             "Cooldown": 1.0
         },
-        "Flash": {
-            "Distance": 5.0,
-            "Cooldown": 3.0
-        },
         "Attack": {
             "Rate": 1.0,
             "MinInterval": 0.1

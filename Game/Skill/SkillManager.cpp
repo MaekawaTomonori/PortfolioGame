@@ -1,33 +1,35 @@
 #include "SkillManager.hpp"
 
-#include "Enemy/Enemies.hpp"
-#include "Json/JsonParams.hpp"
-#include "Pattern/Singleton.hpp"
-#include "src/Time/Time.hpp"
+#include <algorithm>
+#include <iterator>
 
 #ifdef _DEBUG
 #include <imgui.h>
 #endif
 
+namespace {
+    bool IsValid(const SkillSlot _slot) {
+        return static_cast<size_t>(_slot) < static_cast<size_t>(SkillSlot::Count);
+    }
+}
+
 void SkillManager::Initialize() {
     entities_.clear();
-    LoadParams();
+    
+    for (auto& slot : slots_) {
+        slot.cooldown.Reset();
+    }
 }
 
 void SkillManager::Update() {
-    float deltaTime = Time().GetDeltaTime();
-
     std::erase_if(entities_, [](const auto& _entity) { return !_entity->IsActive(); });
-
-    if (blackHoleCooldownTimer_ > 0.f) {
-        blackHoleCooldownTimer_ -= deltaTime;
-        if (blackHoleCooldownTimer_ < 0.f) {
-            blackHoleCooldownTimer_ = 0.f;
-        }
-    }
 
     for (auto& entity : entities_) {
         entity->Update();
+    }
+
+    for (auto& slot : slots_) {
+        slot.cooldown.Update();
     }
 }
 
@@ -40,102 +42,47 @@ void SkillManager::Draw() const {
 void SkillManager::Debug() {
 #ifdef _DEBUG
     if (ImGui::Begin("Skill Manager")) {
-        if (ImGui::CollapsingHeader("BlackHole Params", ImGuiTreeNodeFlags_DefaultOpen)) {
-            ImGui::SeparatorText("Flying");
-            ImGui::DragFloat("Initial Speed", &blackHoleParams_.initialSpeed, 0.1f, 0.f, 50.f);
-            ImGui::DragFloat("Deceleration", &blackHoleParams_.deceleration, 0.1f, 0.f, 30.f);
-            ImGui::DragFloat("Stop Threshold", &blackHoleParams_.stopThreshold, 0.01f, 0.f, 5.f);
-            ImGui::DragFloat3("Flying Scale", &blackHoleParams_.flyingScale.x, 0.01f, 0.01f, 5.f);
-            ImGui::ColorEdit4("Flying Color", &blackHoleParams_.flyingColor.x);
-
-            ImGui::SeparatorText("Sucking");
-            ImGui::DragFloat("Suck Radius", &blackHoleParams_.suckRadius, 0.1f, 0.f, 30.f);
-            ImGui::DragFloat("Suck Force", &blackHoleParams_.suckForce, 0.1f, 0.f, 30.f);
-            ImGui::DragFloat("Suck Duration", &blackHoleParams_.suckDuration, 0.1f, 0.f, 15.f);
-            ImGui::DragFloat3("Sucking Scale", &blackHoleParams_.suckingScale.x, 0.01f, 0.01f, 5.f);
-            ImGui::ColorEdit4("Sucking Color", &blackHoleParams_.suckingColor.x);
-
-            ImGui::SeparatorText("Vortex (Ground Plane)");
-            ImGui::DragFloat("Rotate Speed", &blackHoleParams_.vortexRotateSpeed, 0.1f, 0.f, 20.f);
-            ImGui::DragFloat3("Vortex Scale", &blackHoleParams_.vortexScale.x, 0.1f, 0.1f, 20.f);
-            ImGui::ColorEdit4("Vortex Color", &blackHoleParams_.vortexColor.x);
-
-            ImGui::SeparatorText("Cooldown");
-            ImGui::DragFloat("Cooldown Duration", &blackHoleParams_.cooldownDuration, 0.1f, 0.f, 30.f);
-            if (blackHoleCooldownTimer_ > 0.f) {
-                ImGui::TextColored({1.f, 0.4f, 0.f, 1.f}, "Remaining: %.2f s", blackHoleCooldownTimer_);
-            } else {
-                ImGui::TextColored({0.f, 1.f, 0.f, 1.f}, "Ready");
-            }
-        }
-
-        ImGui::Separator();
-        if (ImGui::Button("Save to JSON", ImVec2(-1, 0))) SaveParams();
-        ImGui::TextDisabled("Assets/Data/SkillParams/SkillParams.json");
-
+        
         ImGui::SeparatorText("Active Entities");
         ImGui::Text("Count: %d", static_cast<int>(entities_.size()));
+
+        ImGui::Separator();
+
+        for (auto& slot : slots_) {
+            if (!slot.skill) continue; 
+            slot.skill->Debug();
+        }
     }
     ImGui::End();
 #endif
 }
 
-void SkillManager::LoadParams() {
-    const auto& json = Singleton<JsonParams>::GetInstance();
-    if (!json->Load("SkillParams")) return;
+void SkillManager::Equip(SkillSlot _slot, std::unique_ptr<ISkill> _skill) {
+    if (!_skill) return;
+    if (!IsValid(_slot)) return;
 
-    blackHoleParams_.initialSpeed     = std::get<float>  (json->GetValue("SkillParams", "BlackHole_Flying",  "InitialSpeed"));
-    blackHoleParams_.deceleration     = std::get<float>  (json->GetValue("SkillParams", "BlackHole_Flying",  "Deceleration"));
-    blackHoleParams_.stopThreshold    = std::get<float>  (json->GetValue("SkillParams", "BlackHole_Flying",  "StopThreshold"));
-    blackHoleParams_.flyingScale      = std::get<Vector3>(json->GetValue("SkillParams", "BlackHole_Flying",  "FlyingScale"));
-    blackHoleParams_.flyingColor      = std::get<Vector4>(json->GetValue("SkillParams", "BlackHole_Flying",  "FlyingColor"));
-
-    blackHoleParams_.suckRadius       = std::get<float>  (json->GetValue("SkillParams", "BlackHole_Sucking", "SuckRadius"));
-    blackHoleParams_.suckForce        = std::get<float>  (json->GetValue("SkillParams", "BlackHole_Sucking", "SuckForce"));
-    blackHoleParams_.suckDuration     = std::get<float>  (json->GetValue("SkillParams", "BlackHole_Sucking", "SuckDuration"));
-    blackHoleParams_.suckingScale     = std::get<Vector3>(json->GetValue("SkillParams", "BlackHole_Sucking", "SuckingScale"));
-    blackHoleParams_.suckingColor     = std::get<Vector4>(json->GetValue("SkillParams", "BlackHole_Sucking", "SuckingColor"));
-
-    blackHoleParams_.vortexRotateSpeed= std::get<float>  (json->GetValue("SkillParams", "BlackHole_Vortex",  "VortexRotateSpeed"));
-    blackHoleParams_.vortexScale      = std::get<Vector3>(json->GetValue("SkillParams", "BlackHole_Vortex",  "VortexScale"));
-    blackHoleParams_.vortexColor      = std::get<Vector4>(json->GetValue("SkillParams", "BlackHole_Vortex",  "VortexColor"));
-
-    blackHoleParams_.cooldownDuration = std::get<float>  (json->GetValue("SkillParams", "BlackHole_Cooldown","CooldownDuration"));
+    auto& skill = slots_[static_cast<size_t>(_slot)].skill;
+    skill = std::move(_skill);
+    skill->Load();
 }
 
-void SkillManager::SaveParams() {
-    const auto& json = Singleton<JsonParams>::GetInstance();
+void SkillManager::Activate(SkillSlot _slot, const SkillContext& _context) {
+    if (!IsValid(_slot)) return;
 
-    json->SetValue("SkillParams", "BlackHole_Flying",  "InitialSpeed",     blackHoleParams_.initialSpeed);
-    json->SetValue("SkillParams", "BlackHole_Flying",  "Deceleration",     blackHoleParams_.deceleration);
-    json->SetValue("SkillParams", "BlackHole_Flying",  "StopThreshold",    blackHoleParams_.stopThreshold);
-    json->SetValue("SkillParams", "BlackHole_Flying",  "FlyingScale",      blackHoleParams_.flyingScale);
-    json->SetValue("SkillParams", "BlackHole_Flying",  "FlyingColor",      blackHoleParams_.flyingColor);
+    auto& slot = slots_[static_cast<size_t>(_slot)];
 
-    json->SetValue("SkillParams", "BlackHole_Sucking", "SuckRadius",       blackHoleParams_.suckRadius);
-    json->SetValue("SkillParams", "BlackHole_Sucking", "SuckForce",        blackHoleParams_.suckForce);
-    json->SetValue("SkillParams", "BlackHole_Sucking", "SuckDuration",     blackHoleParams_.suckDuration);
-    json->SetValue("SkillParams", "BlackHole_Sucking", "SuckingScale",     blackHoleParams_.suckingScale);
-    json->SetValue("SkillParams", "BlackHole_Sucking", "SuckingColor",     blackHoleParams_.suckingColor);
+    auto& skill = slot.skill;
+    auto& cooldown = slot.cooldown;
 
-    json->SetValue("SkillParams", "BlackHole_Vortex",  "VortexRotateSpeed",blackHoleParams_.vortexRotateSpeed);
-    json->SetValue("SkillParams", "BlackHole_Vortex",  "VortexScale",      blackHoleParams_.vortexScale);
-    json->SetValue("SkillParams", "BlackHole_Vortex",  "VortexColor",      blackHoleParams_.vortexColor);
-
-    json->SetValue("SkillParams", "BlackHole_Cooldown","CooldownDuration", blackHoleParams_.cooldownDuration);
-
-    json->Save("SkillParams");
+    if (!skill || !cooldown.IsReady()) return;
+    auto created = skill->Activate(_context);
+    cooldown.Start(skill->GetCooldown());
+    
+    std::ranges::move(created, std::back_inserter(entities_));
 }
 
-void SkillManager::SpawnBlackHole(const Vector3& _position, const Vector3& _direction) {
-    if (blackHoleCooldownTimer_ > 0.f) return;
+float SkillManager::GetCooldownRatio(SkillSlot _slot) const {
+    if (!IsValid(_slot)) return 0.f;
 
-    auto blackHole = std::make_unique<BlackHole>();
-    blackHole->SetParams(&blackHoleParams_);
-    blackHole->SetEnemies(enemies_);
-    blackHole->SetParticle(particle_);
-    blackHole->Initialize(_position, _direction);
-    entities_.emplace_back(std::move(blackHole));
-
-    blackHoleCooldownTimer_ = blackHoleParams_.cooldownDuration;
+    return slots_[static_cast<size_t>(_slot)].cooldown.GetRatio();
 }

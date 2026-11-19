@@ -13,7 +13,6 @@
 #include "Movement/MovementContext.hpp"
 #include "Movement/WalkBehavior.hpp"
 #include "Movement/DashBehavior.hpp"
-#include "Movement/FlashBehavior.hpp"
 #include "Module/Attack/Attack.hpp"
 
 #include "InputHandler.hpp"
@@ -21,6 +20,7 @@
 #include "KeyBinds.hpp"
 #include "Status/PlayerStatus.hpp"
 #include "Sprite.hpp"
+#include "Skill/SkillSlot.hpp"
 
 class Player : public GameObject {
     ParticleSystem* particle_ = nullptr;
@@ -50,8 +50,7 @@ class Player : public GameObject {
 
     WalkBehavior*  walk_  = nullptr;
     DashBehavior*  dash_  = nullptr;
-    FlashBehavior* flash_ = nullptr;
-
+    
     float baseWalkSpeed_ = 5.f;
 
     bool invulnerability_ = false;
@@ -84,16 +83,9 @@ public:
     void SetEnable(bool _enable) { enable_ = _enable; }
 
     /** @brief スキル発動時のコールバックを設定
-     ** @param _callback (発射位置, 発射方向) を受け取るコールバック
+     ** @param _callback (スキルスロット, 現在位置, 指定方向) を受け取るコールバック
      **/
-    void SetOnSkillRequest(std::function<void(const Vector3&, const Vector3&)> _callback) { onSkillRequest_ = std::move(_callback); }
-
-    /** @brief フラッシュのCT比率を返す (0=ready, 1=full) **/
-    float GetFlashCooldownRatio() const {
-        if (!flash_) return 0.f;
-        const float max = flash_->GetCooldown();
-        return max > 0.f ? flash_->GetCurrentCooldown() / max : 0.f;
-    }
+    void SetOnSkillRequest(std::function<void(SkillSlot, const Vector3&, const Vector3&)> _callback);
 
     bool IsDashing() const { return dash_ && dash_->IsDashing(); }
 
@@ -107,7 +99,7 @@ public:
     const Vector3& GetLightAnchor() const { return forLight_; }
 
 private:
-    std::function<void(const Vector3&, const Vector3&)> onSkillRequest_;
+    std::function<void(SkillSlot, const Vector3&, const Vector3&)> onSkillRequest_;
 
     float fieldHalfExtent_ = 0.f;
     bool isNearFieldEdge_ = false;
@@ -117,6 +109,7 @@ private:
     void SaveParams() const;
     void UpdateInvulnerability(float _deltaTime);
     void UpdateAttack();
+    void RequestSkills();
     void ClampToFieldBounds();
 };
 #endif // PLAYER_HPP_

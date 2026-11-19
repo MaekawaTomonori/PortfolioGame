@@ -11,7 +11,7 @@ enum class InputAction {
     MoveBack,
     MoveLeft,
     MoveRight,
-    Dodge,
+    Dash,
     Ability1,
     Ability2,
     Count,

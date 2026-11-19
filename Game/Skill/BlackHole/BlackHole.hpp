@@ -1,7 +1,7 @@
 #ifndef BLACK_HOLE_HPP_
 #define BLACK_HOLE_HPP_
 
-#include "Skill/ISkillEntity.hpp"
+#include "Skill/SkillEntity.hpp"
 #include "Math/Vector4.hpp"
 #include "Model.hpp"
 
@@ -12,7 +12,7 @@ class ParticleSystem;
  ** マウス方向に飛び、減速停止後に周囲の敵を吸い込む
  ** 状態遷移: Flying → Sucking → 消滅
  **/
-class BlackHole : public ISkillEntity {
+class BlackHole : public SkillEntity {
 public:
     /** @brief ブラックホールの共通パラメータ
      ** SkillManagerが所有し、全インスタンスが参照する
@@ -45,6 +45,10 @@ private:
     enum class State { Flying, Sucking };
     State state_ = State::Flying;
 
+    const Params* params_ = nullptr;
+    Enemies* enemies_ = nullptr;
+    ParticleSystem* particle_ = nullptr;
+
     float speed_ = 0.f;
     float suckTimer_ = 0.f;
     float vortexAngle_ = 0.f;
@@ -52,10 +56,6 @@ private:
     std::unique_ptr<Model> vortexPlane_;
     float particleTimer_ = 0.f;
     std::string particleGroupName_;
-
-    const Params* params_ = nullptr;
-    Enemies* enemies_ = nullptr;
-    ParticleSystem* particle_ = nullptr;
 
 public:
     void Initialize(const Vector3& _position, const Vector3& _direction) override;

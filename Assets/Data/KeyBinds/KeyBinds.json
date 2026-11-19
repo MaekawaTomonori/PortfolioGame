@@ -5,7 +5,7 @@
             "MoveBack": "S",
             "MoveLeft": "A",
             "MoveRight": "D",
-            "Dodge": "SPACE",
+            "Dash": "SPACE",
             "Ability1": "Q",
             "Ability2": "F"
         }

@@ -21,6 +21,10 @@
         },
         "BlackHole_Cooldown": {
             "CooldownDuration": 5.0
+        },
+        "Flash": {
+            "Distance": 5.0,
+            "Cooldown": 3.0
         }
     }
 }

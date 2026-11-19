@@ -4,9 +4,10 @@
 #include "Movement/MovementContext.hpp"
 #include "Input.hpp"
 #include "KeyBinds.hpp"
+#include "Skill/SkillSlot.hpp"
 
 /**
- * @brief プレイヤー入力をMovementContextに変換
+ * @brief プレイヤー入力から移動とスキルのリクエストを作る
  */
 class InputHandler {
     Input* input_ = nullptr;
@@ -25,8 +26,10 @@ public:
      */
     void UpdateContext(MovementContext& _context, const Vector3& _currentPos) const;
 
-private:
+    [[nodiscard]] bool IsSkillRequested(SkillSlot _slot) const;
+
     Vector3 GetMouseInWorld() const;
+private:
 
     [[nodiscard]] bool IsPress(InputAction _action) const;
     [[nodiscard]] bool IsTrigger(InputAction _action) const;

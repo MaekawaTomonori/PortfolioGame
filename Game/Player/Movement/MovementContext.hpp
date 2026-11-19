@@ -9,14 +9,10 @@ struct MovementContext {
     Vector3 position = {};
     Vector3 velocity = {};
     Vector3 rotation = {};
-    Vector3 targetPosition = {};
     Vector3 moveDirection = {};
 
     bool isDashRequested = false;
-    bool isJumpRequested = false;
-    bool isFlashRequested = false;
-    bool isSkillRequested = false;
-
+    
     GameObject* owner = nullptr;
     GameObject* target = nullptr;
 
@@ -24,12 +20,8 @@ struct MovementContext {
         position = {};
         velocity = {};
         rotation = {};
-        targetPosition = {};
         moveDirection = {};
         isDashRequested = false;
-        isJumpRequested = false;
-        isFlashRequested = false;
-        isSkillRequested = false;
         owner = nullptr;
         target = nullptr;
     }

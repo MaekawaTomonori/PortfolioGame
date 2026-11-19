@@ -1,26 +1,24 @@
 #ifndef SKILL_MANAGER_HPP_
 #define SKILL_MANAGER_HPP_
 
-#include <vector>
+#include <array>
 #include <memory>
 
-#include "ISkillEntity.hpp"
-#include "BlackHole/BlackHole.hpp"
+#include "ISkill.hpp"
+#include "SkillEntity.hpp"
+#include "SkillSlot.hpp"
+#include "Combat/Cooldown.hpp"
 
-class Enemies;
-class ParticleSystem;
-
-/** @brief スキルエンティティの管理クラス
- ** スキルの生成・更新・描画・破棄を一括管理する
- ** 各スキルの共通パラメータを所有し、常時ImGuiで調整可能
- **/
 class SkillManager {
-    std::vector<std::unique_ptr<ISkillEntity>> entities_;
-    Enemies* enemies_ = nullptr;
-    ParticleSystem* particle_ = nullptr;
 
-    BlackHole::Params blackHoleParams_;
-    float blackHoleCooldownTimer_ = 0.f;
+    struct Slot {
+        std::unique_ptr<ISkill> skill;
+        Cooldown cooldown;
+    };
+
+    std::vector<std::unique_ptr<SkillEntity>> entities_;
+
+    std::array<Slot, static_cast<size_t>(SkillSlot::Count)> slots_;
 
 public:
     void Initialize();
@@ -28,31 +26,15 @@ public:
     void Draw() const;
     void Debug();
 
-    /** @brief ブラックホールスキルを生成
-     ** @param _position 発生位置
-     ** @param _direction 発射方向
+    void Equip(SkillSlot _slot, std::unique_ptr<ISkill> _skill);
+
+    /** @brief スキル発動
+     ** @param _slot どのスロットのスキルか
+     ** @param _context 位置や発動方向を指定
      **/
-    void SpawnBlackHole(const Vector3& _position, const Vector3& _direction);
+    void Activate(SkillSlot _slot, const SkillContext& _context);
 
-    /** @brief ブラックホールが発動可能かを返す **/
-    bool IsBlackHoleReady() const { return blackHoleCooldownTimer_ <= 0.f; }
-
-    /** @brief ブラックホールのクールタイム残り時間を返す **/
-    float GetBlackHoleCooldown() const { return blackHoleCooldownTimer_; }
-
-    /** @brief ブラックホールのCT比率を返す (0=ready, 1=full) **/
-    float GetBlackHoleCooldownRatio() const {
-        return blackHoleParams_.cooldownDuration > 0.f
-            ? blackHoleCooldownTimer_ / blackHoleParams_.cooldownDuration
-            : 0.f;
-    }
-
-    void SetEnemies(Enemies* _enemies) { enemies_ = _enemies; }
-    void SetParticle(ParticleSystem* _particle) { particle_ = _particle; }
-
-private:
-    void LoadParams();
-    void SaveParams();
+    float GetCooldownRatio(SkillSlot _slot) const;
 };
 
 #endif // SKILL_MANAGER_HPP_

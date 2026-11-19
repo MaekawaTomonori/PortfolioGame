@@ -16,7 +16,6 @@ void InputHandler::UpdateContext(MovementContext& _context, const Vector3& _curr
 
     _context.Reset();
     _context.position = _currentPos;
-    _context.targetPosition = GetMouseInWorld();
 
     // 移動入力
     if (IsPress(InputAction::MoveForward)) _context.moveDirection.z += 1.0f;
@@ -29,9 +28,17 @@ void InputHandler::UpdateContext(MovementContext& _context, const Vector3& _curr
         _context.moveDirection = _context.moveDirection.Normalize();
     }
 
-    _context.isDashRequested = IsPress(InputAction::Dodge);
-    _context.isSkillRequested = IsTrigger(InputAction::Ability1);
-    _context.isFlashRequested = IsTrigger(InputAction::Ability2);
+    _context.isDashRequested = IsPress(InputAction::Dash);
+}
+
+bool InputHandler::IsSkillRequested(SkillSlot _slot) const {
+    if (!input_) return false;
+
+    switch (_slot) {
+    case SkillSlot::Ability1: return IsTrigger(InputAction::Ability1);
+    case SkillSlot::Ability2: return IsTrigger(InputAction::Ability2);
+    default: return false;
+    }
 }
 
 Vector3 InputHandler::GetMouseInWorld() const {

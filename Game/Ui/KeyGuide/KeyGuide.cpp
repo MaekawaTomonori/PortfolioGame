@@ -2,8 +2,6 @@
 #include "KeyGuide.hpp"
 
 #include <algorithm>
-#include <cmath>
-#include <format>
 #include <string>
 
 #include "imgui.h"
@@ -19,6 +17,9 @@ namespace {
     constexpr float FLASH_DURATION = 0.3f;
 
     constexpr float COOLDOWN_EPSILON = 0.001f;
+
+    /** @brief CT の溜まり具合は文字が読めるよう Accent より薄くする */
+    constexpr float COOLDOWN_FILL_ALPHA = 0.5f;
 }
 
 KeyGuide::~KeyGuide() {
@@ -39,7 +40,7 @@ void KeyGuide::Initialize(const KeyBinds& _binds, const UiTheme& _theme) {
         FindMoveKey(move_, InputAction::MoveLeft, "MoveLeft"),
         FindMoveKey(move_, InputAction::MoveBack, "MoveBack"),
         FindMoveKey(move_, InputAction::MoveRight, "MoveRight"),
-        FindMoveKey(move_, InputAction::Dodge, "Dodge"),
+        FindMoveKey(move_, InputAction::Dash, "Dash"),
     };
     for (MoveKey& key : moveKeys_) {
         key.label.SetText(binds_.GetLabel(key.action));
@@ -51,6 +52,7 @@ void KeyGuide::Initialize(const KeyBinds& _binds, const UiTheme& _theme) {
         FindSkillKey(skills_, InputAction::Ability2, "Ability2"),
     };
     for (SkillKey& key : skillKeys_) {
+        key.label.SetText(binds_.GetLabel(key.action));
         SetCooldown(key.action, 0.f);
     }
 }
@@ -117,9 +119,11 @@ void KeyGuide::SetCooldown(const InputAction _action, const float _ratio) {
         }
         key.cooldownRatio = ratio;
 
-        // CT中は残りを % で出す
-        key.cooldown.SetSize({1.f, ratio});
-        key.label.SetText(ready ? binds_.GetLabel(key.action) : std::format("{}%", static_cast<int>(std::ceil(ratio * 100.f))));
+        // CT中は下から溜まっていき、使える間は満タンのまま
+        Vector4 fill = theme_->Get(UiColor::Accent);
+        fill.w *= COOLDOWN_FILL_ALPHA;
+        key.cooldown.SetColor(fill);
+        key.cooldown.SetSize({1.f, 1.f - ratio});
         return;
     }
 }

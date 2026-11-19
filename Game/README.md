@@ -38,11 +38,11 @@
 - [ToTargetCommand.hpp](D:/repos/PortfolioGame/Game/Command/Move/ToTargetCommand.hpp)
 
 ### 3. スキルエンティティの独立管理
-- `ISkillEntity` 経由で生成・更新・寿命管理
+- `SkillEntity` 経由で生成・更新・寿命管理
 - 新スキルを追加しやすい構造
 
 対象:
-- [ISkillEntity.hpp](D:/repos/PortfolioGame/Game/Skill/ISkillEntity.hpp)
+- [SkillEntity.hpp](D:/repos/PortfolioGame/Game/Skill/SkillEntity.hpp)
 - [SkillManager.hpp](D:/repos/PortfolioGame/Game/Skill/SkillManager.hpp)
 - [BlackHole.hpp](D:/repos/PortfolioGame/Game/Skill/BlackHole/BlackHole.hpp)
 
@@ -65,7 +65,7 @@
 
 ## 拡張しやすいポイント
 1. 新移動の追加: `IMovementBehavior` 実装を追加して `Movement` に登録
-2. 新スキルの追加: `ISkillEntity` 継承クラスを実装して `SkillManager` へ追加
+2. 新スキルの追加: `SkillEntity` 継承クラスを実装して `SkillManager` へ追加
 3. 新演出の追加: `PostEffectFactory` に生成分岐を追加
 4. 新シーンの追加: `IScene` 継承クラスを作成し `MyGame::Register()` に登録
 

@@ -19,7 +19,7 @@ namespace {
         {InputAction::MoveBack,    "MoveBack",    "S"},
         {InputAction::MoveLeft,    "MoveLeft",    "A"},
         {InputAction::MoveRight,   "MoveRight",   "D"},
-        {InputAction::Dodge,       "Dodge",       "SPACE"},
+        {InputAction::Dash,       "Dash",       "SPACE"},
         {InputAction::Ability1,    "Ability1",    "Q"},
         {InputAction::Ability2,    "Ability2",    "F"},
     };

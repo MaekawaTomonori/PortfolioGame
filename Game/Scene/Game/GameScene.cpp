@@ -223,11 +223,9 @@ void GameScene::UpdatePlay() {
     followCamera_->Update();
     keyGuide_->Update();
 
-    if (const auto* player = stage_->GetPlayer()) {
-        keyGuide_->SetCooldown(InputAction::Ability2, player->GetFlashCooldownRatio());
-    }
     if (const auto* sm = stage_->GetSkillManager()) {
-        keyGuide_->SetCooldown(InputAction::Ability1, sm->GetBlackHoleCooldownRatio());
+        keyGuide_->SetCooldown(InputAction::Ability1, sm->GetCooldownRatio(SkillSlot::Ability1));
+        keyGuide_->SetCooldown(InputAction::Ability2, sm->GetCooldownRatio(SkillSlot::Ability2));
     }
 
     // is clear (タイマーより優先してチェック)

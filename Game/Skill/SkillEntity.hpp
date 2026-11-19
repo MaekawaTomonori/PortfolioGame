@@ -1,5 +1,5 @@
-#ifndef I_SKILL_ENTITY_HPP_
-#define I_SKILL_ENTITY_HPP_
+#ifndef SKILL_ENTITY_HPP_
+#define SKILL_ENTITY_HPP_
 
 #include "GameObject/GameObject.hpp"
 #include "Collision/Collider.h"
@@ -9,13 +9,13 @@
 /** @brief スキルエンティティの基底クラス
  ** GameObjectを継承し、コライダーとライフタイムを共通で管理する
  **/
-class ISkillEntity : public GameObject {
+class SkillEntity : public GameObject {
 protected:
     std::unique_ptr<Collision::Collider> collider_;
     float lifetime_ = 5.f;
 
 public:
-    ~ISkillEntity() override = default;
+    ~SkillEntity() override = default;
 
     /** @brief スキルエンティティを初期化
      ** @param _position 発生位置
@@ -26,4 +26,4 @@ public:
     void Initialize() override {}
 };
 
-#endif // I_SKILL_ENTITY_HPP_
+#endif // SKILL_ENTITY_HPP_

@@ -290,7 +290,7 @@
                     ]
                 },
                 {
-                    "name": "Dodge",
+                    "name": "Dash",
                     "type": "Image",
                     "anchor": [
                         0.0,
@@ -415,11 +415,11 @@
                             "type": "Image",
                             "anchor": [
                                 0.5,
-                                0.0
+                                1.0
                             ],
                             "pivot": [
                                 0.5,
-                                0.0
+                                1.0
                             ],
                             "offset": [
                                 0,
@@ -507,11 +507,11 @@
                             "type": "Image",
                             "anchor": [
                                 0.5,
-                                0.0
+                                1.0
                             ],
                             "pivot": [
                                 0.5,
-                                0.0
+                                1.0
                             ],
                             "offset": [
                                 0,

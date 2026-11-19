@@ -4,6 +4,8 @@
 #include "Math/MathUtils.hpp"
 #include "Pattern/Singleton.hpp"
 #include "Light/LightManager.hpp"
+#include "Skill/BlackHole/BlackHoleSkill.hpp"
+#include "Skill/Flash/FlashSkill.hpp"
 #include "src/Time/Time.hpp"
 
 #undef max
@@ -62,11 +64,11 @@ void Stage::Setup(const GESTD::ReferencePtr<ParticleSystem>& _particle, const GE
     enemies_ = std::make_unique<Enemies>(particle_, status_);
 
     skillManager_ = std::make_unique<SkillManager>();
-    skillManager_->SetEnemies(enemies_.get());
-    skillManager_->SetParticle(particle_);
+    skillManager_->Equip(SkillSlot::Ability1, std::make_unique<BlackHoleSkill>(enemies_.get(), particle_));
+    skillManager_->Equip(SkillSlot::Ability2, std::make_unique<FlashSkill>());
 
-    player_->SetOnSkillRequest([this](const Vector3& _pos, const Vector3& _dir) {
-        skillManager_->SpawnBlackHole(_pos, _dir);
+    player_->SetOnSkillRequest([this](SkillSlot _slot, const Vector3& _pos, const Vector3& _dir) {
+        skillManager_->Activate(_slot, {*player_, _pos, _dir });
     });
 
     // フィールドの暗闇感を演出する霧エフェクトのスポーン関数（発生中心の周囲にランダム配置）
