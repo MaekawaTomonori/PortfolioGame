@@ -1,19 +1,38 @@
 #include "Bullet.hpp"
 
-#include "CollisionAttribute.hpp"
 #include "Time/Time.hpp"
 
-void Bullet::Initialize(GameObject* _owner, const Vector3& _direction, const Params& _params,
-    CollisionAttribute _attribute, CollisionAttribute _ignoreAttribute, CollisionAttribute _targetAttribute) {
-    speed_    = _params.speed;
-    lifetime_ = _params.lifetime;
-    damageSource_.SetDamage(_params.damage);
-    owner_    = _owner;
-    velocity_  = _direction.Normalize() * speed_;
-    attribute_ = _attribute;
-    ignoreAttribute_ = _ignoreAttribute;
-    targetAttribute_ = _targetAttribute;
-    Initialize();
+namespace {
+    constexpr float BULLET_SIZE = 0.3f;
+}
+
+void Bullet::SetParams(const Params& _params) {
+    params_ = _params;
+}
+
+void Bullet::Initialize(const Vector3& _position, const Vector3& _direction) {
+    position_ = _position;
+    velocity_ = _direction.Normalize() * params_.speed;
+    lifetime_ = params_.lifetime;
+    damageSource_.SetDamage(params_.damage);
+
+    scale_ = { BULLET_SIZE, BULLET_SIZE, BULLET_SIZE };
+    SetModel("animatedCube");
+    model_->SetTexture("white_x16.png");
+    model_->SetName("Bullet");
+    UpdateModel();
+
+    collider_ = std::make_unique<Collision::Collider>();
+    collider_->SetEvent(Collision::EventType::Trigger, [this](const Collision::Collider* _pCol) { this->OnCollision(_pCol); })
+        ->SetType(Collision::Type::Sphere)
+        ->SetSize(BULLET_SIZE)
+        ->SetTranslate({ position_.x, position_.y, position_.z })
+        ->AddAttribute(static_cast<uint32_t>(attribute_))
+        ->AddIgnore(static_cast<uint32_t>(ignoreAttribute_))
+        ->AddIgnore(static_cast<uint32_t>(attribute_))
+        ->Enable();
+
+    damageSource_.AttachTo(*collider_);
 }
 
 void Bullet::Update() {
@@ -33,28 +52,6 @@ void Bullet::Draw() {
     if (!active_ || !model_)return;
 
     model_->Draw();
-}
-
-void Bullet::Initialize() {
-    type_ = owner_->GetType();
-    position_ = owner_->GetPosition();
-    scale_ = { 0.3f, 0.3f, 0.3f };
-    SetModel("animatedCube");
-    model_->SetTexture("white_x16.png");
-    model_->SetName("Bullet");
-    UpdateModel();
-
-    collider_ = std::make_unique<Collision::Collider>();
-    collider_->SetEvent(Collision::EventType::Trigger, [this](const Collision::Collider* _pCol) { this->OnCollision(_pCol); })
-        ->SetType(Collision::Type::Sphere)
-        ->SetSize(0.3f)
-        ->SetTranslate({ position_.x, position_.y, position_.z })
-        ->AddAttribute(static_cast<uint32_t>(attribute_))
-        ->AddIgnore(static_cast<uint32_t>(ignoreAttribute_))
-        ->AddIgnore(static_cast<uint32_t>(attribute_))
-        ->Enable();
-
-    damageSource_.AttachTo(*collider_);
 }
 
 void Bullet::OnCollision(const Collision::Collider* _collider) {

@@ -5,6 +5,7 @@
 #include <functional>
 #include <vector>
 
+#include "Collision/Collider.h"
 #include "ParticleSystem/ParticleSystem.hpp"
 
 #include "GameObject/GameObject.hpp"
@@ -13,7 +14,6 @@
 #include "Movement/MovementContext.hpp"
 #include "Movement/WalkBehavior.hpp"
 #include "Movement/DashBehavior.hpp"
-#include "Module/Attack/Attack.hpp"
 
 #include "InputHandler.hpp"
 #include "FollowCamera.hpp"
@@ -31,7 +31,6 @@ class Player : public GameObject {
     static constexpr Vector4 DAMAGE_FLASH_COLOR = {2.f, 2.f, 2.f, 1.f};
 
     std::unique_ptr<Movement> movement_;
-    std::unique_ptr<Attack> attack_;
 
     std::unique_ptr<InputHandler> inputHandler_;
 
@@ -108,7 +107,7 @@ private:
     void LoadParams();
     void SaveParams() const;
     void UpdateInvulnerability(float _deltaTime);
-    void UpdateAttack();
+    void RequestAutoAttack();
     void RequestSkills();
     void ClampToFieldBounds();
 };

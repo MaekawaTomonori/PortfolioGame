@@ -4,6 +4,7 @@
 #include "Math/MathUtils.hpp"
 #include "Pattern/Singleton.hpp"
 #include "Light/LightManager.hpp"
+#include "Skill/BasicShot/BasicShotSkill.hpp"
 #include "Skill/BlackHole/BlackHoleSkill.hpp"
 #include "Skill/Flash/FlashSkill.hpp"
 #include "src/Time/Time.hpp"
@@ -64,6 +65,7 @@ void Stage::Setup(const GESTD::ReferencePtr<ParticleSystem>& _particle, const GE
     enemies_ = std::make_unique<Enemies>(particle_, status_);
 
     skillManager_ = std::make_unique<SkillManager>();
+    skillManager_->Equip(SkillSlot::AutoAttack, std::make_unique<BasicShotSkill>(status_.playerStatus));
     skillManager_->Equip(SkillSlot::Ability1, std::make_unique<BlackHoleSkill>(enemies_.get(), particle_));
     skillManager_->Equip(SkillSlot::Ability2, std::make_unique<FlashSkill>());
 

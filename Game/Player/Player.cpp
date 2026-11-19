@@ -61,12 +61,6 @@ Player::Player(ParticleSystem* _particle, PostProcessExecutor* _postEffect, cons
         movement_->AddBehavior(behavior.get());
     }
 
-    // AttackModule Initialize
-    attack_ = std::make_unique<Attack>();
-    attack_->Initialize();
-    attack_->SetOwner(this);
-    attack_->SetStatus(status_);
-    
     reticle_ = std::make_unique<Sprite>();
     reticle_->Initialize("crosshair.png");
     reticle_->SetSize({32.f, 32.f});
@@ -85,9 +79,6 @@ void Player::Initialize() {
     };
 
     LoadParams();
-    attack_->LoadParams();
-    // 前のラウンドの弾を持ち越さない
-    attack_->Initialize();
 
     // 振る舞いは1回しか作らないので、クールダウンや被弾後の無敵をラウンドごとに戻す
     for (auto& behavior : behaviors_) {
@@ -121,7 +112,7 @@ void Player::Update() {
 #ifdef _DEBUG
         if (!no_atk)
 #endif
-            UpdateAttack();
+            RequestAutoAttack();
 
         RequestSkills();
     }
@@ -141,13 +132,6 @@ void Player::Update() {
 
 void Player::Draw() {
     if (!model_) return;
-
-    if (attack_) {
-#ifdef _DEBUG
-        if (!no_atk) 
-#endif
-          attack_->Draw();
-    }
 
     if (active_ && enable_ && reticle_) {
         reticle_->Draw();
@@ -212,7 +196,6 @@ void Player::SetCamera(FollowCamera* _camera) {
 void Player::SetStatus(const PlayerStatus& _status) {
     status_ = _status;
     if (walk_) walk_->SetSpeed(baseWalkSpeed_ * _status.ms);
-    if (attack_) attack_->ApplyAttackSpeed(_status.as);
 }
 
 void Player::SetOnSkillRequest(std::function<void(SkillSlot, const Vector3&, const Vector3&)> _callback) {
@@ -273,7 +256,6 @@ void Player::SaveParams() const {
         json->SetValue("PlayerParams", "Dash",  "Duration", dash_->GetDuration());
         json->SetValue("PlayerParams", "Dash",  "Cooldown", dash_->GetCooldown());
     }
-    attack_->SaveParams();
     json->Save("PlayerParams");
 }
 
@@ -320,14 +302,13 @@ void Player::UpdateInvulnerability(const float _deltaTime) {
     }
 }
 
-void Player::UpdateAttack() {
-    if (!attack_) return;
-
-    // 飛んでいる弾は、狙う相手がいなくなっても動かし続ける
-    attack_->Update();
-    if (!targetExist_) return;
-
-    attack_->SetDirection((targetPosition_ - position_).Normalize());
-    attack_->Fire();
+void Player::RequestAutoAttack() {
+    if (!targetExist_ || !onSkillRequest_) return;
     targetExist_ = false;
+
+    Vector3 toTarget = targetPosition_ - position_;
+    toTarget.y = 0.f;
+    if (toTarget.Length() <= MIN_AIM_DISTANCE) return;
+
+    onSkillRequest_(SkillSlot::AutoAttack, position_, toTarget.Normalize());
 }

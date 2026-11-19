@@ -1,11 +1,11 @@
 #ifndef BULLET_HPP_
 #define BULLET_HPP_
-#include "GameObject/GameObject.hpp"
-#include "Collision/Collider.h"
+#include <cstdint>
+#include "Skill/SkillEntity.hpp"
 #include "CollisionAttribute.hpp"
 #include "Combat/DamageSource.hpp"
 
-class Bullet : public GameObject{
+class Bullet : public SkillEntity {
 public:
     struct Params {
         float speed = 5.f;
@@ -14,29 +14,24 @@ public:
     };
 
 private:
-    GameObject* owner_ = nullptr;
-
-    float speed_ = 0.f;
-    float lifetime_ = 2.f;
-    float piercing_ = 0.f;
+    Params params_;
+    int32_t piercing_ = 0;
 
     CollisionAttribute attribute_ = CollisionAttribute::PlayerBullet;
     CollisionAttribute ignoreAttribute_ = CollisionAttribute::Player;
     CollisionAttribute targetAttribute_ = CollisionAttribute::Enemy;
 
-    std::unique_ptr<Collision::Collider> collider_;
-
     DamageSource damageSource_;
 
 public:
-    void Initialize(GameObject* _owner, const Vector3& _direction, const Params& _params = {},
-        CollisionAttribute _attribute = CollisionAttribute::PlayerBullet, CollisionAttribute _ignoreAttribute = CollisionAttribute::Player,
-        CollisionAttribute _targetAttribute = CollisionAttribute::Enemy);
+    /** @brief Initialize より前に呼ぶ。撃った時点の値をコピーして持つ */
+    void SetParams(const Params& _params);
+
+    void Initialize(const Vector3& _position, const Vector3& _direction) override;
     void Update() override;
     void Draw() override;
 
 private:
-    void Initialize() override;
     void OnCollision(const Collision::Collider* _collider);
 }; // class Bullet
 

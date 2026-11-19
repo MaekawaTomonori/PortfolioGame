@@ -25,6 +25,12 @@
         "Flash": {
             "Distance": 5.0,
             "Cooldown": 3.0
+        },
+        "BasicShot": {
+            "Interval": 1.0,
+            "MinInterval": 0.1,
+            "Speed": 5.0,
+            "Lifetime": 2.0
         }
     }
 }
