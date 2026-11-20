@@ -7,13 +7,6 @@
 #include "Math/Transform.hpp"
 
 class GameObject {
-    enum class Type {
-        PLAYER,
-        ENEMY,
-
-        NONE
-    };
-
     Transform transform_{};
 
 protected:
@@ -24,8 +17,6 @@ protected:
     Vector3 offset_ {};
     Vector3 velocity_{};
     bool active_{true};
-
-    Type type_{ Type::NONE };
 
 public:
     virtual ~GameObject() = default;
@@ -52,8 +43,6 @@ public:
 
     bool IsActive() const { return active_; }
     void SetActive(bool active) { active_ = active; }
-
-    Type GetType() const { return type_; }
 
 protected:
     void UpdateModel();

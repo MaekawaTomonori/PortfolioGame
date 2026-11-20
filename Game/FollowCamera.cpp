@@ -19,8 +19,8 @@ namespace {
     constexpr float DEFAULT_FOV           = 0.45f;
     constexpr float MIN_PITCH_COS         = 0.65f;
     constexpr float ENEMY_DISTANCE_WEIGHT = 0.3f;
-    constexpr float ZOOM_IN_LERP_SPEED    = 0.1f;
-    constexpr float ZOOM_OUT_LERP_SPEED   = 0.08f;
+    constexpr float ZOOM_IN_LERP_SPEED    = 0.08f;
+    constexpr float ZOOM_OUT_LERP_SPEED   = 0.1f;
     constexpr float SHAKE_DECAY_RATE      = 0.9f;
 
     constexpr float DASH_FOV_MULTIPLIER = 1.15f;
@@ -114,7 +114,7 @@ void FollowCamera::UpdateCameraDistance() {
 
     targetDistance = std::clamp(targetDistance, minDistance_, maxDistance_);
 
-    float lerpSpeed = (targetDistance > distance_) ? ZOOM_IN_LERP_SPEED : ZOOM_OUT_LERP_SPEED;
+    float lerpSpeed = (targetDistance > distance_) ? ZOOM_OUT_LERP_SPEED : ZOOM_IN_LERP_SPEED;
     distance_ = MathUtils::Lerp(distance_, targetDistance, lerpSpeed);
 }
 
