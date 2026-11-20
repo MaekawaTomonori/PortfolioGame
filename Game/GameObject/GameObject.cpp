@@ -4,23 +4,14 @@
 
 void GameObject::SetPosition(const Vector3& position) {
     position_ = position;
-    UpdateTransform();
 }
 
 void GameObject::SetRotation(const Vector3& rotation) {
     rotation_ = rotation;
-    UpdateTransform();
 }
 
 void GameObject::SetScale(const Vector3& scale) {
     scale_ = scale;
-    UpdateTransform();
-}
-
-void GameObject::UpdateTransform() {
-    transform_.translate = position_ + offset_;
-    transform_.rotate = rotation_;
-    transform_.scale = scale_;
 }
 
 void GameObject::ApplyVelocity() {
@@ -33,12 +24,10 @@ void GameObject::SetModel(const std::string& _name) {
 }
 
 void GameObject::UpdateModel() {
-    UpdateTransform();
-    // モデル更新
     if (model_){
-        model_->SetScale(transform_.scale);
-        model_->SetRotate(std::get<Vector3>(transform_.rotate));
-        model_->SetTranslate(transform_.translate);
+        model_->SetScale(scale_);
+        model_->SetRotate(rotation_);
+        model_->SetTranslate(position_ + offset_);
         model_->Update();
     }
 

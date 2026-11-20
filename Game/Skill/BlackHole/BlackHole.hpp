@@ -58,13 +58,16 @@ private:
     std::string particleGroupName_;
 
 public:
-    void Initialize(const Vector3& _position, const Vector3& _direction) override;
+    /** @brief _params は BlackHoleSkill が持つものを参照する（調整中の値をそのまま反映するため） */
+    BlackHole(const Params& _params, const Vector3& _position, const Vector3& _direction);
+
     void Update() override;
     void Draw() override;
 
-    void SetParams(const Params* _params) { params_ = _params; }
+    /** @brief 吸い込む相手。渡さなければ吸い込まない */
     void SetEnemies(Enemies* _enemies) { enemies_ = _enemies; }
-    void SetParticle(ParticleSystem* _particle) { particle_ = _particle; }
+    /** @brief 吸い込みのエフェクトを登録する。渡さなければエフェクトは出ない */
+    void SetParticle(ParticleSystem* _particle);
 
 private:
     void UpdateFlying(float _deltaTime);

@@ -4,11 +4,8 @@
 
 #include "Model.hpp"
 #include "Math/Vector3.hpp"
-#include "Math/Transform.hpp"
 
 class GameObject {
-    Transform transform_{};
-
 protected:
     std::unique_ptr<Model> model_{ nullptr };
     Vector3 position_{0.f, 1.f, 0.f};
@@ -20,7 +17,6 @@ protected:
 
 public:
     virtual ~GameObject() = default;
-    virtual void Initialize() = 0;
     // 基本更新・描画
     virtual void Update() = 0;
     virtual void Draw() = 0;
@@ -30,7 +26,6 @@ public:
     const Vector3& GetPosition() const { return position_; }
     const Vector3& GetRotation() const { return rotation_; }
     const Vector3& GetScale() const { return scale_; }
-    const Transform& GetTransform() const { return transform_; }
 
     void SetPosition(const Vector3& position);
     void SetRotation(const Vector3& rotation);
@@ -53,9 +48,6 @@ protected:
     void ApplyVelocity();
 
     void SetModel(const std::string& _name);
-
-private:
-    void UpdateTransform();
 }; // class GameObject
 
 #endif // GameObject_HPP_

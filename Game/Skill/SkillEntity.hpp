@@ -16,14 +16,6 @@ protected:
 
 public:
     ~SkillEntity() override = default;
-
-    /** @brief スキルエンティティを初期化
-     ** @param _position 発生位置
-     ** @param _direction 発射方向
-     **/
-    virtual void Initialize(const Vector3& _position, const Vector3& _direction) = 0;
-
-    void Initialize() override {}
 };
 
 #endif // SKILL_ENTITY_HPP_

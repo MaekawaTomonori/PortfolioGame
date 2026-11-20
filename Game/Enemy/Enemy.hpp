@@ -65,9 +65,9 @@ private:
     std::unique_ptr<IEnemyActionModule> actionModule_;
 
 public:
+    /** @brief _params は Enemies が持つものを全員で参照する */
+    Enemy(const Params& _params, const Vector3& _position);
     ~Enemy() override;
-
-    void Initialize() override;
 
     void Update() override;
     void Draw() override;
@@ -87,8 +87,6 @@ public:
 
     void AddExternalForce(const Vector3& _force) { externalForce_ += _force; }
 
-    // パラメータの設定・取得
-    void SetParams(const Params* _params) { params_ = _params; }
     const Params* GetParams() const { return params_; }
 
     void SetActionModule(std::unique_ptr<IEnemyActionModule> _module);

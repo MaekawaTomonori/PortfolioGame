@@ -45,19 +45,9 @@ namespace {
     constexpr float DEBUG_KNOCKBACK_DURATION = HIT_KNOCKBACK_DURATION;
 }
 
-Enemy::~Enemy() = default;
-
-void Enemy::SetActionModule(std::unique_ptr<IEnemyActionModule> _module) {
-    actionModule_ = std::move(_module);
-}
-
-void Enemy::Initialize() {
-    // パラメータが無いと HP も動きも決まらないので、生成せずに消える扱いにする
-    if (!params_) {
-        Utils::Alert("Enemy: Params is not set before Initialize");
-        active_ = false;
-        return;
-    }
+Enemy::Enemy(const Params& _params, const Vector3& _position)
+    : params_(&_params) {
+    position_ = _position;
 
     SetModel("animatedcube");
     model_->SetName("Enemy");
@@ -85,6 +75,12 @@ void Enemy::Initialize() {
 
     state_ = std::make_unique<EnemyStateIdle>(this);
     state_->Enter();
+}
+
+Enemy::~Enemy() = default;
+
+void Enemy::SetActionModule(std::unique_ptr<IEnemyActionModule> _module) {
+    actionModule_ = std::move(_module);
 }
 
 void Enemy::Update() {

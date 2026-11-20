@@ -6,11 +6,8 @@ namespace {
     constexpr float BULLET_SIZE = 0.3f;
 }
 
-void Bullet::SetParams(const Params& _params) {
-    params_ = _params;
-}
-
-void Bullet::Initialize(const Vector3& _position, const Vector3& _direction) {
+Bullet::Bullet(const Params& _params, const Vector3& _position, const Vector3& _direction)
+    : params_(_params) {
     position_ = _position;
     velocity_ = _direction.Normalize() * params_.speed;
     lifetime_ = params_.lifetime;

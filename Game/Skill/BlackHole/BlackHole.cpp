@@ -10,7 +10,8 @@
 
 #undef max
 
-void BlackHole::Initialize(const Vector3& _position, const Vector3& _direction) {
+BlackHole::BlackHole(const Params& _params, const Vector3& _position, const Vector3& _direction)
+    : params_(&_params) {
     position_ = _position;
     speed_ = params_->initialSpeed;
     velocity_ = _direction.Normalize() * speed_;
@@ -34,6 +35,10 @@ void BlackHole::Initialize(const Vector3& _position, const Vector3& _direction) 
         ->AddIgnore(static_cast<uint32_t>(CollisionAttribute::PlayerBullet))
         ->AddIgnore(static_cast<uint32_t>(CollisionAttribute::Skill))
         ->Enable();
+}
+
+void BlackHole::SetParticle(ParticleSystem* _particle) {
+    particle_ = _particle;
 
     // 吸い込みパーティクル登録
     if (particle_) {

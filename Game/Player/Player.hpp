@@ -66,7 +66,7 @@ class Player : public GameObject {
 
 public:
     Player(ParticleSystem* _particle, PostProcessExecutor* _postEffect, const KeyBinds& _binds);
-    void Initialize() override;
+    void Initialize();
     void Update() override;
     void Draw() override;
     void Debug() override;

@@ -16,12 +16,8 @@ std::vector<std::unique_ptr<SkillEntity>> BasicShotSkill::Activate(const SkillCo
     Bullet::Params params = bulletParams_;
     params.damage = status_.damage;
 
-    auto bullet = std::make_unique<Bullet>();
-    bullet->SetParams(params);
-    bullet->Initialize(_context.position, _context.direction);
-
     std::vector<std::unique_ptr<SkillEntity>> spawned;
-    spawned.emplace_back(std::move(bullet));
+    spawned.emplace_back(std::make_unique<Bullet>(params, _context.position, _context.direction));
     return spawned;
 }
 

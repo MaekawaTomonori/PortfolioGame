@@ -24,10 +24,9 @@ private:
     DamageSource damageSource_;
 
 public:
-    /** @brief Initialize より前に呼ぶ。撃った時点の値をコピーして持つ */
-    void SetParams(const Params& _params);
+    /** @brief 撃った時点の値をコピーして持つ */
+    Bullet(const Params& _params, const Vector3& _position, const Vector3& _direction);
 
-    void Initialize(const Vector3& _position, const Vector3& _direction) override;
     void Update() override;
     void Draw() override;
 

@@ -310,10 +310,7 @@ void Enemies::Spawn() {
     position += Vector3::Random().Normalize() * MathUtils::Random(distance_.x, distance_.y);
     position.y = .5f;
 
-    std::unique_ptr<Enemy> enemy = std::make_unique<Enemy>();
-
-    // Initialize で HP を決めるのに使うので、先に渡しておく（すべてのEnemyが同じパラメータを参照）
-    enemy->SetParams(&enemyParams_);
+    auto enemy = std::make_unique<Enemy>(enemyParams_, position);
     enemy->SetParticleSystem(particle_);
     enemy->SetTarget(target_);
 
@@ -321,8 +318,6 @@ void Enemies::Spawn() {
     dash->SetParams(&dashParams_);
     enemy->SetActionModule(std::move(dash));
 
-    enemy->Initialize();
-    enemy->SetPosition(position);
     enemy->SetScale({SIZE, SIZE, SIZE});
 
     enemies_.push_back(std::move(enemy));

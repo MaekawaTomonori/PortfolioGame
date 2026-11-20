@@ -10,11 +10,9 @@ BlackHoleSkill::BlackHoleSkill(Enemies* _enemies, ParticleSystem* _particle)
     : enemies_(_enemies), particle_(_particle) {}
 
 std::vector<std::unique_ptr<SkillEntity>> BlackHoleSkill::Activate(const SkillContext& _context) {
-    auto blackHole = std::make_unique<BlackHole>();
-    blackHole->SetParams(&params_);
+    auto blackHole = std::make_unique<BlackHole>(params_, _context.position, _context.direction);
     blackHole->SetEnemies(enemies_);
     blackHole->SetParticle(particle_);
-    blackHole->Initialize(_context.position, _context.direction);
 
     std::vector<std::unique_ptr<SkillEntity>> spawned;
     spawned.emplace_back(std::move(blackHole));
