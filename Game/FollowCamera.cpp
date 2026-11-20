@@ -40,6 +40,7 @@ void FollowCamera::Initialize() {
     cameraController_->GetActive()->transform_.rotate = INITIAL_CAMERA_ROTATION;
 
     Load();
+    distance_ = minDistance_;
     fov_ = cameraController_->GetActive()->GetFov();
     UpdateCameraDistance();
     UpdateCameraPosition();
@@ -69,7 +70,6 @@ void FollowCamera::Load() {
     const auto& json = Singleton<JsonParams>::GetInstance();
 
     if (json->Load("FollowCamera")){
-        distance_ = std::get<float>(json->GetValue("FollowCamera", "Settings", "Distance"));
         yaw_ = std::get<float>(json->GetValue("FollowCamera", "Settings", "Yaw"));
         pitch_ = std::get<float>(json->GetValue("FollowCamera", "Settings", "Pitch"));
         minDistance_ = std::get<float>(json->GetValue("FollowCamera", "Settings", "MinDistance"));
@@ -80,7 +80,6 @@ void FollowCamera::Load() {
 
 void FollowCamera::Save() {
     const auto& json = Singleton<JsonParams>::GetInstance();
-    json->SetValue("FollowCamera", "Settings", "Distance", distance_);
     json->SetValue("FollowCamera", "Settings", "Yaw", yaw_);
     json->SetValue("FollowCamera", "Settings", "Pitch", pitch_);
     json->SetValue("FollowCamera", "Settings", "MinDistance", minDistance_);
@@ -174,6 +173,27 @@ void FollowCamera::UpdateCameraPosition() {
 
     auto& active = cameraController_->GetActive()->transform_;
 
+    UpdateOffset();
+    Vector3 destination = target_->GetPosition() + offset_ * distance_;
+    active.translate = MathUtils::Lerp(active.translate, destination, interpolationTime_);
+    active.rotate = Vector3{ pitch_, yaw_, 0.f };
+}
+
+void FollowCamera::ResetToTarget() {
+    distance_ = minDistance_;
+    shaking_ = false;
+    shakeTimer_ = 0.f;
+
+    if (!cameraController_ || !target_) return;
+
+    auto& active = cameraController_->GetActive()->transform_;
+
+    UpdateOffset();
+    active.translate = target_->GetPosition() + offset_ * distance_;
+    active.rotate = Vector3{ pitch_, yaw_, 0.f };
+}
+
+void FollowCamera::UpdateOffset() {
     float cosPitch = cosf(pitch_ + MathUtils::F_PI/2.f);
     float sinPitch = sinf(pitch_ + MathUtils::F_PI/2.f);
     float cosYaw = cosf(yaw_);
@@ -184,10 +204,6 @@ void FollowCamera::UpdateCameraPosition() {
         -cosPitch,
         -cosYaw * sinPitch
     };
-
-    Vector3 destination = target_->GetPosition() + offset_ * distance_;
-    active.translate = MathUtils::Lerp(active.translate, destination, interpolationTime_);
-    active.rotate = Vector3{ pitch_, yaw_, 0.f };
 }
 
 void FollowCamera::UpdateFov() {

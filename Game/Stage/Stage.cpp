@@ -60,6 +60,10 @@ void Stage::Setup(const GESTD::ReferencePtr<ParticleSystem>& _particle, const GE
     terrain_->SetTexture("tile.png");
     terrain_->SetName("Field");
 
+    // 暗転が明けている間は Update が呼ばれないので、タイルの細かさと空の見た目を先に反映しておく
+    skybox_->Update();
+    terrain_->Update();
+
     player_ = std::make_unique<Player>(particle_, postEffect_, _binds);
     player_->SetFieldBounds(FIELD_HALF_EXTENT);
     enemies_ = std::make_unique<Enemies>(particle_, status_);

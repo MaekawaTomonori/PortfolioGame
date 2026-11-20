@@ -263,6 +263,7 @@ void GameScene::UpdatePlay() {
 void GameScene::StartNextRound() {
     gameTimer_->SetDuration(status_.time);
     stage_->Initialize();
+    followCamera_->ResetToTarget();
     state_ = PLAY;
 
     // 2回目以降は中央の演出をせず、Objective とキルカウンターを最初から左上に出す

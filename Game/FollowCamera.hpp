@@ -56,12 +56,16 @@ public:
 
     void Shake(float _time, float _power);
 
+    /** @brief 補間せずに、プレイヤーを映す位置へカメラを置き直す。ラウンドの始めに呼ぶ */
+    void ResetToTarget();
+
 private:
     void Load();
     void Save();
 
     void UpdateCameraDistance();
     void UpdateCameraPosition();
+    void UpdateOffset();
     void UpdateFov();
     void ApplyShake();
 };
