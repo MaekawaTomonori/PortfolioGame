@@ -10,7 +10,7 @@
 #include "Time/Time.hpp"
 
 namespace {
-    /** @brief マウスがこれより近いと向きが決まらないので、スキルを出さない */
+    /** @brief マウスがこれより近いときはスキルを出さない */
     constexpr float MIN_AIM_DISTANCE = 0.01f;
 
     /** @brief プレイヤーを照らす点光源を、プレイヤーからどれだけ上に置くか */
@@ -66,12 +66,12 @@ Player::Player(ParticleSystem* _particle, PostProcessExecutor* _postEffect, cons
 }
 
 void Player::Initialize() {
-    // 実際の値はこのあと Stage が SetStatus で入れる。前のラウンドの値を残さないように初期値へ戻す
+    // 値は Stage が SetStatus で入れる
     status_ = {};
 
     LoadParams();
 
-    // 振る舞いは1回しか作らないので、クールダウンや被弾後の無敵をラウンドごとに戻す
+    // ラウンドごとに状態を戻す
     for (auto& behavior : behaviors_) {
         behavior->Reset();
     }

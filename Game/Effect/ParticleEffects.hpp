@@ -3,9 +3,7 @@
 
 class ParticleSystem;
 
-/** @brief ゲームで使うパーティクルの動きを登録する
- * 本番のシーンと、見た目を確かめる ParticleScene の両方から同じものを使う
- */
+/** @brief ゲームで使うパーティクルの動きを登録する */
 namespace ParticleEffects {
     /** @brief フィールドに漂う霧（field_fog_spawn / field_fog_update） */
     void RegisterFieldFog(ParticleSystem& _particle);

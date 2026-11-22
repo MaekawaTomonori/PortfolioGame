@@ -36,7 +36,7 @@ bool HudLayout::Save(const std::string& _canvasPath, std::span<const Group> _gro
         Log::Send(Log::Level::ERR, "HudLayout: failed to open " + _canvasPath);
         return false;
     }
-    // 例外を使わずに読み、壊れていれば書き戻さない
+    // 壊れていれば書き戻さない
     nlohmann::json root = nlohmann::json::parse(input, nullptr, false);
     input.close();
     if (root.is_discarded() || !root.contains("children") || !root["children"].is_array()) {

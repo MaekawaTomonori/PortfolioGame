@@ -27,7 +27,7 @@ class Enemies {
     Enemy::Params enemyParams_;
     DashActionModule::Params dashParams_;
 
-    // Release では常に true。Debug の画面からだけ止められる
+    // Debug 画面から止められる
     bool autoSpawn_ = true;
 
 #ifdef _DEBUG

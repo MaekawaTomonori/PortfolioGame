@@ -17,7 +17,6 @@ void PlayHud::Initialize(const KeyBinds& _binds, const UiTheme& _theme) {
 }
 
 void PlayHud::Update() {
-    // どれも非表示の間は何もしないので、まとめて呼んでよい
     gameTimer_->Update();
     stageInfo_->Update();
     killCounter_->Update();

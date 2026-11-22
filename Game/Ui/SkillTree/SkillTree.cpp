@@ -152,7 +152,7 @@ void SkillTree::Update() {
 }
 
 void SkillTree::Open() {
-    // 前回の取得演出が開幕に残らないよう、元の見た目へ戻す
+    // 前回の取得演出を止める
     StopAllEffects();
 
     ui_.SetVisible(true);
@@ -224,7 +224,7 @@ void SkillTree::HandleInput() {
     const bool submitted = menuInput_.IsSubmit();
     if (submitted) ui_.Submit();
 
-    // 開いたときにたまたまノードに重なっていたカーソルには反応しない。動かしてから受け付ける
+    // カーソルを動かすまでは反応しない
     if (!mouseMoved_) {
         const Vector2 mouse = input_->GetMousePosition();
         mouseMoved_ = (mouse.x != openMousePosition_.x || mouse.y != openMousePosition_.y);
@@ -315,7 +315,7 @@ void SkillTree::LoadSkills(const std::string& _path) {
         return;
     }
 
-    // 例外を使わないので、壊れた JSON は discarded として受け取る
+    // 壊れた JSON は discarded になる
     const nlohmann::json root = nlohmann::json::parse(file, nullptr, false);
     if (root.is_discarded()) {
         Log::Send(Log::Level::ERR, "SkillTree: JSON parse error - " + _path);
@@ -483,7 +483,7 @@ void SkillTree::UpdateTooltip() {
     tooltip_.offset = ToScreenRatio(topLeft);
     tooltip_.slide = slide;
 
-    // 出す相手が変わったときだけ出し直す。取得で中身が変わっただけなら、そのまま見せる
+    // 出す相手が変わったときだけ出し直す
     if (tooltip_.target != node) {
         tooltip_.target = node;
         tooltip_.time = 0.f;
@@ -514,7 +514,7 @@ void SkillTree::UpdatePointDisplay() {
 void SkillTree::PlayAcquireEffect(const Node& _node, bool _isMaxed) {
     PlayEffect(_node.icon, _node.button, _isMaxed ? MaxedAnim : LevelUpAnim);
 
-    // 文字はノードの真上から始める。戻す先の位置を読むので、前の演出を止めてから置く
+    // 文字はノードの真上から出す
     StopEffect(badge_);
     const Vector2 center = ToScreenPixels(_node.button.GetOffset());
     badge_.SetOffset(ToScreenRatio({center.x, center.y - NODE_HALF - BADGE_GAP}));
@@ -523,7 +523,7 @@ void SkillTree::PlayAcquireEffect(const Node& _node, bool _isMaxed) {
 }
 
 void SkillTree::PlayEffect(GEUI::Widget _colored, GEUI::Widget _moved, AnimFunc _func) {
-    // 同じ相手の演出を重ねると戻す先がずれるので、前の演出を戻してから始める
+    // 同じ相手の演出は重ねない
     StopEffect(_colored);
 
     Effect effect;

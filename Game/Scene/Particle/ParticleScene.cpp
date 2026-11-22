@@ -3,7 +3,7 @@
 #include "Effect/ParticleEffects.hpp"
 
 void ParticleScene::Initialize() {
-    // エンジンのパーティクル編集画面で、本番と同じ動きを確かめられるようにする
+    // パーティクル編集画面で、本番と同じ動きを確かめる
     auto particle = Particle();
     if (!particle) return;
 

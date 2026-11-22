@@ -21,7 +21,7 @@ Enemies::Enemies(ParticleSystem* _particle, const GameStatus& _status) :status_(
     line_.SetColor({0.3f, 1.f, 0.3f, 1.f});
 #endif
 
-    // Alert は止まらないので、パーティクルの登録だけ飛ばす（Enemy 側は particle_ が null でも動く）
+    // パーティクルが無くても敵は動く
     if (!particle_) {
         Utils::Alert("ParticleSystem is null");
         return;

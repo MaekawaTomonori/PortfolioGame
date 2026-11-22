@@ -6,7 +6,7 @@
 namespace {
     constexpr const char* FILE_NAME = "GameStatus";
 
-    /** @brief JSON では整数を int32_t で持つので、読んでから uint16_t に直す */
+    /** @brief int32_t で読んで uint16_t に直す */
     void ReadCount(const JsonParams& _json, const char* _group, const char* _key, uint16_t& _out) {
         int32_t count = _out;
         if (_json.TryGetValue(FILE_NAME, _group, _key, count)) _out = static_cast<uint16_t>(count);

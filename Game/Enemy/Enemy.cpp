@@ -215,7 +215,7 @@ void Enemy::UpdatePulse(float _deltaTime) {
         return;
     }
 
-    // 半周期の sin にすると、一度膨らんでから元の大きさに戻る
+    // 一度膨らんでから元の大きさに戻る
     float progress = pulseTimer_ / pulseDuration_;
     float curve = std::sin(progress * MathUtils::F_PI);
     float scaleFactor = DEFAULT_SCALE.x * (1.0f + curve * PULSE_AMPLITUDE);

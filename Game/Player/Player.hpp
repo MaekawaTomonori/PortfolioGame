@@ -63,7 +63,7 @@ class Player : public GameObject {
     bool enable_ = false;
 
 public:
-    /** @brief プレイヤーの基本色。クリア画面の展示でも同じ色を使う */
+    /** @brief プレイヤーの基本色 */
     static constexpr Vector4 BASE_COLOR = {0.3f, 0.3f, 1.f, 1.f};
 
     Player(ParticleSystem* _particle, PostProcessExecutor* _postEffect, const KeyBinds& _binds);
