@@ -4,7 +4,6 @@
 #include "HpBar/HpBar.hpp"
 #include "Input.hpp"
 #include "Log.hpp"
-#include "Json/JsonParams.hpp"
 #include "Pattern/Singleton.hpp"
 #include "PostProcess/Executor/PostProcessExecutor.hpp"
 #include "Debug/Debugger.hpp"
@@ -12,21 +11,7 @@
 void GameScene::Initialize() {
     entryTransition_ = Transition::Type::Fade;
 
-    status_ ={
-        .point = 0,
-        .time = 15,
-        .requirementKill = 5,
-        .maxEnemyCount = 100,
-        .enemySpawnInterval = 2.f,
-        .playerStatus = {
-            .hp = 10.f,
-            .damage = 1.f,
-            .ms = 1.f,
-            .as = 1.f
-        }
-    };
-
-    LoadStatus();
+    status_.Load();
     HpBar::LoadSettings();
     binds_.Load();
     theme_.Load();
@@ -47,28 +32,13 @@ void GameScene::Initialize() {
 
     intro_ = std::make_unique<Intro>();
 
-    gameTimer_ = std::make_unique<GameTimer>();
-    gameTimer_->Initialize(theme_);
-    gameTimer_->SetDuration(status_.time);
+    hud_ = std::make_unique<PlayHud>();
+    hud_->Initialize(binds_, theme_);
 
     pause_ = std::make_unique<Pause>();
     pause_->Initialize();
     pause_->SetOnRetry([this]{ next_ = "game"; Change(); });
     pause_->SetOnQuit([this]{ next_ = "title"; Change(); });
-
-    keyGuide_ = std::make_unique<KeyGuide>();
-    keyGuide_->Initialize(binds_, theme_);
-
-    killCounter_ = std::make_unique<KillCounter>();
-    killCounter_->Initialize(theme_);
-
-    stageInfoUI_ = std::make_unique<StageInfoUI>();
-    stageInfoUI_->Initialize(theme_);
-    // Objective が左上へ動き始めたら、その下のキルカウンターをその場でフェードインさせる
-    stageInfoUI_->SetOnMoveStart([this] {
-        killCounter_->Setup(stage_->GetEnemies(), status_.requirementKill);
-        killCounter_->PlayIntroAnim();
-    });
 
     skillTree_ = std::make_unique<SkillTree>();
     skillTree_->Initialize(&status_, theme_);
@@ -105,17 +75,16 @@ void GameScene::Update() {
         if (!intro_) break;
         intro_->Update();
         stage_->Update();
-        stageInfoUI_->Update();
-        killCounter_->Update();
+        hud_->Update();
         followCamera_->Update();
 
         if (intro_->IsCameraDone()) {
             followCamera_->SetActive(true);
         }
-        if (intro_->IsFinish() && stageInfoUI_->IsFinish()) {
+        if (intro_->IsFinish() && hud_->IsIntroFinished()) {
             state_ = PLAY;
             stage_->SetActive(true);
-            ShowPlayHud();
+            hud_->Show();
             UpdatePlay();
         }
         break;
@@ -165,67 +134,33 @@ void GameScene::Draw() {
 
 void GameScene::Debug() {
     followCamera_->Debug();
-    gameTimer_->Debug();
     stage_->Debug();
     skillTree_->Debug();
-    keyGuide_->Debug();
-    killCounter_->Debug();
+    hud_->Debug();
     HpBar::DebugSettings();
     theme_.Debug();
 
     ImGui::Begin("Status");
     if (ImGui::Button("Save to JSON")) {
-        SaveStatus();
+        status_.Save();
     }
     ImGui::SameLine();
     ImGui::TextDisabled("Assets/Data/GameStatus/GameStatus.json");
     ImGui::End();
 }
 
-void GameScene::LoadStatus() {
-    const auto& json = Singleton<JsonParams>::GetInstance();
-    if (!json->Load("GameStatus")) return;
-
-    status_.time               = std::get<float>  (json->GetValue("GameStatus", "Stage",  "Time"));
-    status_.maxEnemyCount      = static_cast<uint16_t>(std::get<int32_t>(json->GetValue("GameStatus", "Stage",  "MaxEnemyCount")));
-    status_.requirementKill    = static_cast<uint16_t>(std::get<int32_t>(json->GetValue("GameStatus", "Stage",  "RequirementKill")));
-    status_.enemySpawnInterval = std::get<float>  (json->GetValue("GameStatus", "Stage",  "EnemySpawnInterval"));
-    status_.playerStatus.hp    = std::get<float>  (json->GetValue("GameStatus", "Player", "HP"));
-    status_.playerStatus.damage= std::get<float>  (json->GetValue("GameStatus", "Player", "Damage"));
-    status_.playerStatus.ms    = std::get<float>  (json->GetValue("GameStatus", "Player", "MS"));
-    status_.playerStatus.as    = std::get<float>  (json->GetValue("GameStatus", "Player", "AS"));
-}
-
-void GameScene::SaveStatus() {
-    const auto& json = Singleton<JsonParams>::GetInstance();
-    json->SetValue("GameStatus", "Stage",  "Time",               status_.time);
-    json->SetValue("GameStatus", "Stage",  "MaxEnemyCount",      static_cast<int32_t>(status_.maxEnemyCount));
-    json->SetValue("GameStatus", "Stage",  "RequirementKill",    static_cast<int32_t>(status_.requirementKill));
-    json->SetValue("GameStatus", "Stage",  "EnemySpawnInterval", status_.enemySpawnInterval);
-    json->SetValue("GameStatus", "Player", "HP",                 status_.playerStatus.hp);
-    json->SetValue("GameStatus", "Player", "Damage",             status_.playerStatus.damage);
-    json->SetValue("GameStatus", "Player", "MS",                 status_.playerStatus.ms);
-    json->SetValue("GameStatus", "Player", "AS",                 status_.playerStatus.as);
-    json->Save("GameStatus");
-}
-
 void GameScene::OnEnable() {
     intro_->Initialize();
-    stageInfoUI_->Setup(status_.requirementKill);
+    hud_->PlayIntro(status_.requirementKill, stage_->GetEnemies(), status_.time);
 }
 
 void GameScene::UpdatePlay() {
-    gameTimer_->Update();
     stage_->Update();
-    // 左上に着いた直後は、まだ小さい文字のフェードインが続いている
-    stageInfoUI_->Update();
-    killCounter_->Update();
     followCamera_->Update();
-    keyGuide_->Update();
+    hud_->Update();
 
-    if (const auto* sm = stage_->GetSkillManager()) {
-        keyGuide_->SetCooldown(InputAction::Ability1, sm->GetCooldownRatio(SkillSlot::Ability1));
-        keyGuide_->SetCooldown(InputAction::Ability2, sm->GetCooldownRatio(SkillSlot::Ability2));
+    if (const auto* skillManager = stage_->GetSkillManager()) {
+        hud_->SetCooldowns(*skillManager);
     }
 
     // is clear (タイマーより優先してチェック)
@@ -235,16 +170,16 @@ void GameScene::UpdatePlay() {
 #endif
     if (isClear) {
         state_ = OUTRO;
-        HidePlayHud();
+        hud_->Hide();
         PostEffect()->ApplyPreset("DarkScene", [&] {
             next_ = "gameclear";
             Change();
         });
-    } else if (gameTimer_->IsDone()) {
+    } else if (hud_->IsTimeUp()) {
         status_.point += stage_->GetEnemies()->GetDeathCount();
         PlayTransition(Transition::Type::Fade, [this] {
             state_ = UPGRADE;
-            HidePlayHud();
+            hud_->Hide();
             skillTree_->Open();
             skillTree_->Update();
         });
@@ -252,7 +187,7 @@ void GameScene::UpdatePlay() {
 
     if (stage_->IsGameOver()) {
         state_ = OUTRO;
-        HidePlayHud();
+        hud_->Hide();
         PostEffect()->ApplyPreset("DarkScene", [&] {
             next_ = "gameover";
             Change();
@@ -261,27 +196,10 @@ void GameScene::UpdatePlay() {
 }
 
 void GameScene::StartNextRound() {
-    gameTimer_->SetDuration(status_.time);
     stage_->Initialize();
     followCamera_->ResetToTarget();
     state_ = PLAY;
 
-    // 2回目以降は中央の演出をせず、Objective とキルカウンターを最初から左上に出す
-    stageInfoUI_->ShowAtCorner(status_.requirementKill);
-    killCounter_->Setup(stage_->GetEnemies(), status_.requirementKill);
-    killCounter_->SetActive(true);
-    ShowPlayHud();
-}
-
-void GameScene::ShowPlayHud() {
-    keyGuide_->SetActive(true);
-    // タイマーはフェードインが終わってから時間が進み始める
-    gameTimer_->PlayIntroAnim();
-}
-
-void GameScene::HidePlayHud() {
-    stageInfoUI_->SetActive(false);
-    gameTimer_->SetActive(false);
-    keyGuide_->SetActive(false);
-    killCounter_->SetActive(false);
+    hud_->StartRound(status_.requirementKill, stage_->GetEnemies(), status_.time);
+    hud_->Show();
 }

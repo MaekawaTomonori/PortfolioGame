@@ -3,16 +3,13 @@
 #include "IScene.hpp"
 
 #include "FollowCamera.hpp"
-#include "Ui/GameTimer/GameTimer.hpp"
 #include "Performance/Intro/Intro.hpp"
 #include "Player/KeyBinds.hpp"
 #include "Stage/Stage.hpp"
 #include "Status/GameStatus.hpp"
-#include "Ui/KeyGuide/KeyGuide.hpp"
-#include "Ui/KillCount/KillCounter.hpp"
 #include "Ui/Pause/Pause.hpp"
+#include "Ui/PlayHud.hpp"
 #include "Ui/SkillTree/SkillTree.hpp"
-#include "Ui/StageInfo/StageInfoUI.hpp"
 #include "Ui/UiTheme.hpp"
 
 class GameScene : public IScene {
@@ -38,13 +35,8 @@ class GameScene : public IScene {
     // Status --
     GameStatus status_ {};
 
-    std::unique_ptr<GameTimer> gameTimer_;
-
+    std::unique_ptr<PlayHud> hud_;
     std::unique_ptr<Pause> pause_;
-
-    std::unique_ptr<KeyGuide> keyGuide_;
-    std::unique_ptr<KillCounter> killCounter_;
-    std::unique_ptr<StageInfoUI> stageInfoUI_;
 
     bool cursorShown_ = false;
 
@@ -65,15 +57,6 @@ private:
 
     /** @brief ステージを初期化し、次のラウンドをPLAY状態で開始する */
     void StartNextRound();
-
-    /** @brief プレイ開始時のHUD（キー案内・タイマー）を表示し、登場演出を流す */
-    void ShowPlayHud();
-
-    /** @brief プレイ中のHUDを隠す */
-    void HidePlayHud();
-
-    void LoadStatus();
-    void SaveStatus();
 
 }; // class GameScene
 

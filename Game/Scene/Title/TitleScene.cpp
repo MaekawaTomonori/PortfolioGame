@@ -10,19 +10,10 @@ TitleScene::~TitleScene() {
 void TitleScene::Initialize() {
     exitTransition_ = Transition::Type::Fade;
 
-    status_ = {
-        .point = 0,
-        .time = 15,
-        .requirementKill = 10,
-        .maxEnemyCount = 1,
-        .enemySpawnInterval = 0.f,
-        .playerStatus = {
-            .hp = 10.f,
-            .damage = 1.f,
-            .ms = 1.f,
-            .as = 1.f
-        }
-    };
+    // 背景のデモでは、敵を1体だけ出し続ける
+    status_.requirementKill = 10;
+    status_.maxEnemyCount = 1;
+    status_.enemySpawnInterval = 0.f;
 
     KeyBinds binds;
     binds.Load();

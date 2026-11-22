@@ -170,6 +170,7 @@ xcopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)d
     <ClInclude Include="Stage\Stage.hpp" />
     <ClInclude Include="Status\GameStatus.hpp" />
     <ClInclude Include="Ui\HudLayout.hpp" />
+    <ClInclude Include="Ui\PlayHud.hpp" />
     <ClInclude Include="Ui\HudStyle.hpp" />
     <ClInclude Include="Ui\GameTimer\GameTimer.hpp" />
     <ClInclude Include="Ui\KeyGuide\KeyGuide.hpp" />
@@ -220,6 +221,7 @@ xcopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)d
     <ClCompile Include="Showcase\ItemShowcase.cpp" />
     <ClCompile Include="Stage\Stage.cpp" />
     <ClCompile Include="Ui\HudLayout.cpp" />
+    <ClCompile Include="Ui\PlayHud.cpp" />
     <ClCompile Include="Ui\GameTimer\GameTimer.cpp" />
     <ClCompile Include="Ui\KeyGuide\KeyGuide.cpp" />
     <ClCompile Include="Ui\KillCount\KillCounter.cpp" />
@@ -231,6 +233,7 @@ xcopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)d
     <ClCompile Include="Combat\DamageSource.cpp" />
     <ClCompile Include="Combat\Cooldown.cpp" />
     <ClCompile Include="Skill\SkillManager.cpp" />
+    <ClCompile Include="Status\GameStatus.cpp" />
     <ClCompile Include="Skill\BlackHole\BlackHole.cpp" />
     <ClCompile Include="Skill\BlackHole\BlackHoleSkill.cpp" />
     <ClCompile Include="Skill\Flash\FlashSkill.cpp" />
