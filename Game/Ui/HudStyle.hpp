@@ -1,5 +1,5 @@
-#ifndef HUDSTYLE_HPP_
-#define HUDSTYLE_HPP_
+#ifndef HUD_STYLE_HPP_
+#define HUD_STYLE_HPP_
 #include "GEUI.hpp"
 
 /** @brief HUD 共通の値と小さな表示ヘルパー（色は UiTheme から取る） */
@@ -19,4 +19,4 @@ namespace HudStyle {
     }
 }
 
-#endif // HUDSTYLE_HPP_
+#endif // HUD_STYLE_HPP_

@@ -1,4 +1,3 @@
-#define NOMINMAX
 #include "FollowCamera.hpp"
 
 #include <algorithm>
@@ -69,13 +68,13 @@ void FollowCamera::Shake(const float _time, const float _power) {
 void FollowCamera::Load() {
     const auto& json = Singleton<JsonParams>::GetInstance();
 
-    if (json->Load("FollowCamera")){
-        yaw_ = std::get<float>(json->GetValue("FollowCamera", "Settings", "Yaw"));
-        pitch_ = std::get<float>(json->GetValue("FollowCamera", "Settings", "Pitch"));
-        minDistance_ = std::get<float>(json->GetValue("FollowCamera", "Settings", "MinDistance"));
-        maxDistance_ = std::get<float>(json->GetValue("FollowCamera", "Settings", "MaxDistance"));
-        zoomSensitivity_ = std::get<float>(json->GetValue("FollowCamera", "Settings", "ZoomSensitivity"));
-    }
+    if (!json->Load("FollowCamera")) return;
+
+    json->TryGetValue("FollowCamera", "Settings", "Yaw", yaw_);
+    json->TryGetValue("FollowCamera", "Settings", "Pitch", pitch_);
+    json->TryGetValue("FollowCamera", "Settings", "MinDistance", minDistance_);
+    json->TryGetValue("FollowCamera", "Settings", "MaxDistance", maxDistance_);
+    json->TryGetValue("FollowCamera", "Settings", "ZoomSensitivity", zoomSensitivity_);
 }
 
 void FollowCamera::Save() {

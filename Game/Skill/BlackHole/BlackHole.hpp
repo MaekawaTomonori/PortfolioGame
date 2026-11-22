@@ -9,14 +9,13 @@ class Enemies;
 class ParticleSystem;
 
 /** @brief ブラックホールスキル
- ** マウス方向に飛び、減速停止後に周囲の敵を吸い込む
- ** 状態遷移: Flying → Sucking → 消滅
- **/
+ * マウス方向に飛び、減速して止まったら周囲の敵を吸い込み、時間が来たら消える
+ */
 class BlackHole : public SkillEntity {
 public:
     /** @brief ブラックホールの共通パラメータ
-     ** SkillManagerが所有し、全インスタンスが参照する
-     **/
+     * BlackHoleSkill が持ち、出したブラックホールはすべてそれを参照する
+     */
     struct Params {
         // Flying
         float initialSpeed = 15.f;

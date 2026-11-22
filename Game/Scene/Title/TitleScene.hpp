@@ -1,5 +1,5 @@
-#ifndef TitleScene_HPP_
-#define TitleScene_HPP_
+#ifndef TITLE_SCENE_HPP_
+#define TITLE_SCENE_HPP_
 
 #include <memory>
 
@@ -31,4 +31,4 @@ private:
     void HandleInput();
 }; // class TitleScene
 
-#endif // TitleScene_HPP_
+#endif // TITLE_SCENE_HPP_

@@ -1,5 +1,5 @@
-#ifndef Pause_HPP_
-#define Pause_HPP_
+#ifndef PAUSE_HPP_
+#define PAUSE_HPP_
 #include <functional>
 
 #include "GEUI.hpp"
@@ -39,4 +39,4 @@ private:
 
 }; // class Pause
 
-#endif // Pause_HPP_
+#endif // PAUSE_HPP_

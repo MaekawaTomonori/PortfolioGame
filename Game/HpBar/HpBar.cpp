@@ -1,4 +1,3 @@
-#define NOMINMAX
 #include "HpBar.hpp"
 
 #include <algorithm>
@@ -25,11 +24,9 @@ namespace {
         return sprite;
     }
 
-    // 項目が無い・型が違うときは今の値を残す
     template <typename T>
     void ReadParam(const JsonParams& _json, const char* _key, T& _value) {
-        const auto value = _json.GetValue(PARAMS_NAME, PARAMS_GROUP, _key);
-        if (const T* read = std::get_if<T>(&value)) _value = *read;
+        _json.TryGetValue(PARAMS_NAME, PARAMS_GROUP, _key, _value);
     }
 }
 

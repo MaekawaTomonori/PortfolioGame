@@ -1,5 +1,5 @@
-#ifndef Enemies_HPP_
-#define Enemies_HPP_
+#ifndef ENEMIES_HPP_
+#define ENEMIES_HPP_
 #include <vector>
 #include <memory>
 
@@ -10,8 +10,6 @@
 #include "Status/GameStatus.hpp"
 
 class Enemies {
-    const float SIZE = 0.5f;
-    
     ParticleSystem* particle_ = nullptr;
     const GameStatus& status_;
 
@@ -29,9 +27,10 @@ class Enemies {
     Enemy::Params enemyParams_;
     DashActionModule::Params dashParams_;
 
+    // Release では常に true。Debug の画面からだけ止められる
+    bool autoSpawn_ = true;
 
 #ifdef _DEBUG
-    bool autoSpawn_ = true;
     Line line_;
 #endif
 
@@ -61,6 +60,9 @@ private:
     void LoadParams();
     void SaveParams();
 
+    /** @brief 出現する距離の範囲（内側と外側の円）を線で描く。Debug のみ */
+    void DrawSpawnRange();
+
 }; // class Enemies
 
-#endif // Enemies_HPP_
+#endif // ENEMIES_HPP_

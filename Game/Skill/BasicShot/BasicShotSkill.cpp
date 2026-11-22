@@ -1,4 +1,3 @@
-#define NOMINMAX
 #include "BasicShotSkill.hpp"
 
 #include <algorithm>
@@ -27,12 +26,13 @@ float BasicShotSkill::GetCooldown() const {
 }
 
 void BasicShotSkill::Load() {
-    if (!Singleton<JsonParams>::GetInstance()->Load(SKILL_PARAMS_FILE)) return;
+    const auto& json = Singleton<JsonParams>::GetInstance();
+    if (!json->Load(SKILL_PARAMS_FILE)) return;
 
-    ReadSkillParam("BasicShot", "Interval", baseInterval_);
-    ReadSkillParam("BasicShot", "MinInterval", minInterval_);
-    ReadSkillParam("BasicShot", "Speed", bulletParams_.speed);
-    ReadSkillParam("BasicShot", "Lifetime", bulletParams_.lifetime);
+    json->TryGetValue(SKILL_PARAMS_FILE, "BasicShot", "Interval", baseInterval_);
+    json->TryGetValue(SKILL_PARAMS_FILE, "BasicShot", "MinInterval", minInterval_);
+    json->TryGetValue(SKILL_PARAMS_FILE, "BasicShot", "Speed", bulletParams_.speed);
+    json->TryGetValue(SKILL_PARAMS_FILE, "BasicShot", "Lifetime", bulletParams_.lifetime);
 }
 
 void BasicShotSkill::Save() const {

@@ -3,7 +3,6 @@
 #include "imgui.h"
 #include "HpBar/HpBar.hpp"
 #include "Input.hpp"
-#include "Log.hpp"
 #include "Pattern/Singleton.hpp"
 #include "PostProcess/Executor/PostProcessExecutor.hpp"
 #include "Debug/Debugger.hpp"
@@ -163,7 +162,7 @@ void GameScene::UpdatePlay() {
         hud_->SetCooldowns(*skillManager);
     }
 
-    // is clear (タイマーより優先してチェック)
+    // 最後の1体と時間切れが重なったときはクリアを優先する
     bool isClear = stage_->IsClear();
 #ifdef _DEBUG
     isClear |= Singleton<Input>::GetInstance()->IsTrigger(DIK_T);

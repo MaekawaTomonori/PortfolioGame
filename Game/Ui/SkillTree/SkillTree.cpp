@@ -14,9 +14,6 @@
 #include "Ui/HudStyle.hpp"
 #include "Ui/UiTheme.hpp"
 
-#undef min
-#undef max
-
 namespace {
     // レベルアップ: 白フラッシュ + 上バウンス (0.4s)
     bool LevelUpAnim(float t, Vector2& pos, Vector4& col, float& /*scale*/) {
@@ -318,13 +315,10 @@ void SkillTree::LoadSkills(const std::string& _path) {
         return;
     }
 
-    nlohmann::json root;
-    try {
-        file >> root;
-        file.close();
-    } catch (const nlohmann::json::parse_error& e) {
-        Log::Send(Log::Level::ERR, "SkillTree: JSON parse error - " + std::string(e.what()));
-        file.close();
+    // 例外を使わないので、壊れた JSON は discarded として受け取る
+    const nlohmann::json root = nlohmann::json::parse(file, nullptr, false);
+    if (root.is_discarded()) {
+        Log::Send(Log::Level::ERR, "SkillTree: JSON parse error - " + _path);
         return;
     }
 

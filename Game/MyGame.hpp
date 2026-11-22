@@ -1,5 +1,5 @@
-#ifndef MyGame_HPP_
-#define MyGame_HPP_
+#ifndef MY_GAME_HPP_
+#define MY_GAME_HPP_
 #include "IGame.hpp"
 
 class MyGame final : public IGame{
@@ -10,4 +10,4 @@ private:
     void Register();
 }; // class MyGame
 
-#endif // MyGame_HPP_
+#endif // MY_GAME_HPP_

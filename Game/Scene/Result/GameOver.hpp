@@ -1,5 +1,5 @@
-#ifndef GameOver_HPP_
-#define GameOver_HPP_
+#ifndef GAME_OVER_HPP_
+#define GAME_OVER_HPP_
 #include <memory>
 
 #include "IScene.hpp"
@@ -23,4 +23,4 @@ private:
     void OnEnable() override;
 }; // class GameOver
 
-#endif // GameOver_HPP_
+#endif // GAME_OVER_HPP_

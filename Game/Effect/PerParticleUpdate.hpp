@@ -1,5 +1,5 @@
-#ifndef PERPARTICLEUPDATE_HPP_
-#define PERPARTICLEUPDATE_HPP_
+#ifndef PER_PARTICLE_UPDATE_HPP_
+#define PER_PARTICLE_UPDATE_HPP_
 #include <span>
 #include <utility>
 
@@ -22,4 +22,4 @@ ParticleSystem::UpdateFunc PerParticleUpdate(Func _func) {
     };
 }
 
-#endif // PERPARTICLEUPDATE_HPP_
+#endif // PER_PARTICLE_UPDATE_HPP_

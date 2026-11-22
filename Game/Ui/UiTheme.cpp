@@ -1,4 +1,3 @@
-#define NOMINMAX
 #include "UiTheme.hpp"
 
 #include <algorithm>
@@ -137,23 +136,14 @@ void UiTheme::Load() {
 
     const auto& json = Singleton<JsonParams>::GetInstance();
     if (json->Load(FILE_NAME)) {
-        const auto readColor = [&json](const char* _group, const char* _key, Vector4& _out) {
-            const auto value = json->GetValue(FILE_NAME, _group, _key);
-            if (const auto* color = std::get_if<Vector4>(&value)) _out = *color;
-        };
-        const auto readFloat = [&json](const char* _key, float& _out) {
-            const auto value = json->GetValue(FILE_NAME, DERIVED_GROUP, _key);
-            if (const auto* number = std::get_if<float>(&value)) _out = *number;
-        };
-
-        readColor(BASE_GROUP, BASE_KEY, base_);
+        json->TryGetValue(FILE_NAME, BASE_GROUP, BASE_KEY, base_);
         for (size_t i = 0; i < colors_.size(); ++i) {
             if (IsDerived(static_cast<UiColor>(i))) continue;
-            readColor(FIXED_GROUP, COLOR_NAMES[i], colors_[i]);
+            json->TryGetValue(FILE_NAME, FIXED_GROUP, COLOR_NAMES[i], colors_[i]);
         }
-        readFloat("AccentAlpha", accentAlpha_);
-        readFloat("HighlightSaturation", highlightSaturation_);
-        readFloat("HighlightValue", highlightValue_);
+        json->TryGetValue(FILE_NAME, DERIVED_GROUP, "AccentAlpha", accentAlpha_);
+        json->TryGetValue(FILE_NAME, DERIVED_GROUP, "HighlightSaturation", highlightSaturation_);
+        json->TryGetValue(FILE_NAME, DERIVED_GROUP, "HighlightValue", highlightValue_);
     }
     Rebuild();
 }

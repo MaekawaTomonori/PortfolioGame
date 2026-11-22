@@ -23,7 +23,7 @@ Bullet::Bullet(const Params& _params, const Vector3& _position, const Vector3& _
     collider_->SetEvent(Collision::EventType::Trigger, [this](const Collision::Collider* _pCol) { this->OnCollision(_pCol); })
         ->SetType(Collision::Type::Sphere)
         ->SetSize(BULLET_SIZE)
-        ->SetTranslate({ position_.x, position_.y, position_.z })
+        ->SetTranslate(position_)
         ->AddAttribute(static_cast<uint32_t>(attribute_))
         ->AddIgnore(static_cast<uint32_t>(ignoreAttribute_))
         ->AddIgnore(static_cast<uint32_t>(attribute_))
@@ -41,7 +41,7 @@ void Bullet::Update() {
         active_ = false;
     }
 
-    collider_->SetTranslate({position_.x, position_.y, position_.z} );
+    collider_->SetTranslate(position_);
     UpdateModel();
 }
 

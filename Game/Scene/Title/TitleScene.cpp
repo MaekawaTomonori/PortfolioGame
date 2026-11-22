@@ -47,8 +47,7 @@ void TitleScene::HandleInput() {
         next_ = "game";
         Change();
     } else if (quit_.WasPressed()) {
-        // Engine のメインループは WM_QUIT を受け取ると終わる
-        PostQuitMessage(0);
+        Quit();
     }
 }
 

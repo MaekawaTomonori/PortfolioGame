@@ -27,20 +27,20 @@ void BlackHoleSkill::Load() {
     const auto& json = Singleton<JsonParams>::GetInstance();
     if (!json->Load(SKILL_PARAMS_FILE)) return;
 
-    ReadSkillParam("BlackHole_Flying", "InitialSpeed", params_.initialSpeed);
-    ReadSkillParam("BlackHole_Flying", "Deceleration", params_.deceleration);
-    ReadSkillParam("BlackHole_Flying", "StopThreshold", params_.stopThreshold);
-    ReadSkillParam("BlackHole_Flying", "FlyingScale", params_.flyingScale);
-    ReadSkillParam("BlackHole_Flying", "FlyingColor", params_.flyingColor);
-    ReadSkillParam("BlackHole_Sucking", "SuckRadius", params_.suckRadius);
-    ReadSkillParam("BlackHole_Sucking", "SuckForce", params_.suckForce);
-    ReadSkillParam("BlackHole_Sucking", "SuckDuration", params_.suckDuration);
-    ReadSkillParam("BlackHole_Sucking", "SuckingScale", params_.suckingScale);
-    ReadSkillParam("BlackHole_Sucking", "SuckingColor", params_.suckingColor);
-    ReadSkillParam("BlackHole_Vortex", "VortexRotateSpeed", params_.vortexRotateSpeed);
-    ReadSkillParam("BlackHole_Vortex", "VortexScale", params_.vortexScale);
-    ReadSkillParam("BlackHole_Vortex", "VortexColor", params_.vortexColor);
-    ReadSkillParam("BlackHole_Cooldown", "CooldownDuration", params_.cooldownDuration);
+    json->TryGetValue(SKILL_PARAMS_FILE, "BlackHole_Flying", "InitialSpeed", params_.initialSpeed);
+    json->TryGetValue(SKILL_PARAMS_FILE, "BlackHole_Flying", "Deceleration", params_.deceleration);
+    json->TryGetValue(SKILL_PARAMS_FILE, "BlackHole_Flying", "StopThreshold", params_.stopThreshold);
+    json->TryGetValue(SKILL_PARAMS_FILE, "BlackHole_Flying", "FlyingScale", params_.flyingScale);
+    json->TryGetValue(SKILL_PARAMS_FILE, "BlackHole_Flying", "FlyingColor", params_.flyingColor);
+    json->TryGetValue(SKILL_PARAMS_FILE, "BlackHole_Sucking", "SuckRadius", params_.suckRadius);
+    json->TryGetValue(SKILL_PARAMS_FILE, "BlackHole_Sucking", "SuckForce", params_.suckForce);
+    json->TryGetValue(SKILL_PARAMS_FILE, "BlackHole_Sucking", "SuckDuration", params_.suckDuration);
+    json->TryGetValue(SKILL_PARAMS_FILE, "BlackHole_Sucking", "SuckingScale", params_.suckingScale);
+    json->TryGetValue(SKILL_PARAMS_FILE, "BlackHole_Sucking", "SuckingColor", params_.suckingColor);
+    json->TryGetValue(SKILL_PARAMS_FILE, "BlackHole_Vortex", "VortexRotateSpeed", params_.vortexRotateSpeed);
+    json->TryGetValue(SKILL_PARAMS_FILE, "BlackHole_Vortex", "VortexScale", params_.vortexScale);
+    json->TryGetValue(SKILL_PARAMS_FILE, "BlackHole_Vortex", "VortexColor", params_.vortexColor);
+    json->TryGetValue(SKILL_PARAMS_FILE, "BlackHole_Cooldown", "CooldownDuration", params_.cooldownDuration);
 }
 
 void BlackHoleSkill::Save() const {

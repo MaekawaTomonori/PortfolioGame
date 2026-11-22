@@ -1,14 +1,12 @@
 #include "BlackHole.hpp"
 
 #include "CollisionAttribute.hpp"
-#include "Effect/PerParticleUpdate.hpp"
+#include "Effect/ParticleEffects.hpp"
 #include "Enemy/Enemies.hpp"
 #include "Math/MathUtils.hpp"
 #include "ParticleSystem/ParticleSystem.hpp"
 #include "Random/RandomEngine.hpp"
 #include "Time/Time.hpp"
-
-#undef max
 
 BlackHole::BlackHole(const Params& _params, const Vector3& _position, const Vector3& _direction)
     : params_(&_params) {
@@ -29,7 +27,7 @@ BlackHole::BlackHole(const Params& _params, const Vector3& _position, const Vect
     collider_->SetEvent(Collision::EventType::Trigger, [this](const Collision::Collider* _col) { OnCollision(_col); })
         ->SetType(Collision::Type::Sphere)
         ->SetSize(0.25f)
-        ->SetTranslate({position_.x, position_.y, position_.z})
+        ->SetTranslate(position_)
         ->AddAttribute(static_cast<uint32_t>(CollisionAttribute::Skill))
         ->AddIgnore(static_cast<uint32_t>(CollisionAttribute::Player))
         ->AddIgnore(static_cast<uint32_t>(CollisionAttribute::PlayerBullet))
@@ -39,51 +37,11 @@ BlackHole::BlackHole(const Params& _params, const Vector3& _position, const Vect
 
 void BlackHole::SetParticle(ParticleSystem* _particle) {
     particle_ = _particle;
+    if (!particle_) return;
 
-    // 吸い込みパーティクル登録
-    if (particle_) {
-        particleGroupName_ = "bh_suction";
-
-        // 外周リングにランダムスポーン
-        particle_->RegisterSpawnFunc("bh_spawn", [](const Vector3& center, Vector3& pos, Vector3& vel) {
-            float angle = MathUtils::Random(0.f, MathUtils::F_PI * 2.f);
-            float radius = MathUtils::Random(2.5f, 4.5f);
-            pos = {
-                center.x + std::cos(angle) * radius,
-                center.y + MathUtils::Random(0.f, 0.8f),
-                center.z + std::sin(angle) * radius,
-            };
-            vel = {};
-        });
-
-        // 中心に向かって加速しながらスパイラル
-        particle_->RegisterUpdateFunc("bh_suction", PerParticleUpdate([](float t, const Vector3& origin, Vector3& pos, Vector3& vel, Vector4& color) {
-            Vector3 toCenter = origin - pos;
-            toCenter.y = 0.f;
-            float dist = toCenter.Length();
-
-            if (dist > 0.08f) {
-                Vector3 inward = toCenter.Normalize();
-                Vector3 tangent = {-inward.z, 0.f, inward.x};
-                // 距離が近いほど強く引き寄せる
-                float pull = 2.f + 6.f / (dist + 0.4f);
-                vel.x = inward.x * pull + tangent.x * 1.8f;
-                vel.z = inward.z * pull + tangent.z * 1.8f;
-            } else {
-                vel.x = 0.f;
-                vel.z = 0.f;
-            }
-            vel.y *= 0.88f;
-
-            // 時間経過とともに暗く透明に
-            color.x = 0.35f * (1.f - t * 0.9f);
-            color.y = 0.f;
-            color.z = 0.9f * (1.f - t * 0.6f);
-            color.w = std::max(0.f, 0.85f * (1.f - t * 1.1f));
-        }));
-
-        particle_->Register(particleGroupName_);
-    }
+    particleGroupName_ = "bh_suction";
+    ParticleEffects::RegisterBlackHoleSuction(*particle_);
+    particle_->Register(particleGroupName_);
 }
 
 void BlackHole::Update() {
@@ -100,7 +58,7 @@ void BlackHole::Update() {
         break;
     }
 
-    collider_->SetTranslate({position_.x, position_.y, position_.z});
+    collider_->SetTranslate(position_);
     UpdateModel();
 }
 

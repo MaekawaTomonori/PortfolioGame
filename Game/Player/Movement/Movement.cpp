@@ -11,13 +11,7 @@ void Movement::Update(MovementContext& _context) {
 
     _context.owner = owner_;
 
-    // 優先度順にソート（降順：高い優先度が先）
-    std::ranges::sort(behaviors_,
-        [](IMovementBehavior* a, IMovementBehavior* b) {
-            return a->GetPriority() > b->GetPriority();
-        });
-
-    // 実行可能な動作を探して実行
+    // 優先度の高い順に並んでいるので、最初に実行できたものだけを使う
     for (auto* behavior : behaviors_) {
         if (behavior->CanExecute(_context)) {
             Vector3 velocity = behavior->Calculate(_context);
@@ -37,9 +31,14 @@ void Movement::Debug() const {
 }
 
 void Movement::AddBehavior(IMovementBehavior* _behavior) {
-    if (_behavior) {
-        behaviors_.push_back(_behavior);
-    }
+    if (!_behavior) return;
+
+    behaviors_.push_back(_behavior);
+    // 優先度は途中で変わらないので、足したときに一度だけ並べ直す
+    std::ranges::stable_sort(behaviors_,
+        [](const IMovementBehavior* _a, const IMovementBehavior* _b) {
+            return _a->GetPriority() > _b->GetPriority();
+        });
 }
 
 void Movement::ClearBehaviors() {

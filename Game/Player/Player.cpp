@@ -9,12 +9,12 @@
 #include "Json/JsonParams.hpp"
 #include "Time/Time.hpp"
 
-#undef min
-#undef max
-
 namespace {
     /** @brief マウスがこれより近いと向きが決まらないので、スキルを出さない */
     constexpr float MIN_AIM_DISTANCE = 0.01f;
+
+    /** @brief プレイヤーを照らす点光源を、プレイヤーからどれだけ上に置くか */
+    constexpr float LIGHT_HEIGHT = 3.f;
 }
 
 Player::Player(ParticleSystem* _particle, PostProcessExecutor* _postEffect, const KeyBinds& _binds) {
@@ -25,7 +25,7 @@ Player::Player(ParticleSystem* _particle, PostProcessExecutor* _postEffect, cons
 
     collider_ = std::make_unique<Collision::Collider>();
     collider_->SetEvent(Collision::EventType::Trigger, [this](const Collision::Collider* _collider) {OnCollision(_collider); })
-        ->SetTranslate({ position_.x, position_.y, position_.z })
+        ->SetTranslate(position_)
         ->SetType(Collision::Type::AABB)
         ->SetSize(Vector3{ .3f, .3f, .3f })
         ->SetOwner(this)
@@ -40,13 +40,9 @@ Player::Player(ParticleSystem* _particle, PostProcessExecutor* _postEffect, cons
     SetScale({0.4f, 0.4f, 0.4f});
     UpdateModel();
 
-    // Modules Initialization
-
-    // InputModule Initialize
     inputHandler_ = std::make_unique<InputHandler>();
     inputHandler_->Initialize(_binds);
 
-    // MovementModule Initialize
     movement_ = std::make_unique<Movement>();
     movement_->Initialize(this);
 
@@ -66,17 +62,12 @@ Player::Player(ParticleSystem* _particle, PostProcessExecutor* _postEffect, cons
     reticle_->SetSize({32.f, 32.f});
     reticle_->SetColor({0.f, 0.7f, 1.f, 0.9f});
 
-    forLight_ = position_;
-    forLight_.y += 3.f;
+    UpdateLightAnchor();
 }
 
 void Player::Initialize() {
-    status_ = {
-        100.f,
-        1.f,
-        1.f,
-        1.f
-    };
+    // 実際の値はこのあと Stage が SetStatus で入れる。前のラウンドの値を残さないように初期値へ戻す
+    status_ = {};
 
     LoadParams();
 
@@ -121,11 +112,9 @@ void Player::Update() {
 
     ApplyVelocity();
     ClampToFieldBounds();
+    UpdateLightAnchor();
 
-    forLight_ = position_;
-    forLight_.y += 3.0f;
-
-    collider_->SetTranslate({ position_.x, position_.y, position_.z });
+    collider_->SetTranslate(position_);
 
     UpdateModel();
 }
@@ -167,7 +156,6 @@ void Player::OnCollision(const Collision::Collider* _collider) {
     if (_collider->GetAttribute() & (static_cast<uint32_t>(CollisionAttribute::Enemy) | static_cast<uint32_t>(CollisionAttribute::EnemyBullet))) {
         if (invulnerability_)return;
         if (0.f < status_.hp) {
-            //Damage Motion
             if (camera_) camera_->Shake(0.4f, 1.f);
 
             if (postEffect_) postEffect_->ApplyPreset("DamageScreen");
@@ -221,8 +209,7 @@ void Player::RequestSkills() {
 }
 
 void Player::UpdateWithoutInput() {
-    forLight_ = position_;
-    forLight_.y += 3.0f;
+    UpdateLightAnchor();
 
     if (model_) {
         UpdateModel();
@@ -238,13 +225,19 @@ void Player::LoadParams() {
     if (!json->Load("PlayerParams")) return;
 
     if (walk_) {
-        baseWalkSpeed_ = std::get<float>(json->GetValue("PlayerParams", "Walk", "Speed"));
+        json->TryGetValue("PlayerParams", "Walk", "Speed", baseWalkSpeed_);
         walk_->SetSpeed(baseWalkSpeed_);
     }
     if (dash_) {
-        dash_->SetSpeed   (std::get<float>(json->GetValue("PlayerParams", "Dash",  "Speed")));
-        dash_->SetDuration(std::get<float>(json->GetValue("PlayerParams", "Dash",  "Duration")));
-        dash_->SetCooldown(std::get<float>(json->GetValue("PlayerParams", "Dash",  "Cooldown")));
+        float speed = dash_->GetSpeed();
+        float duration = dash_->GetDuration();
+        float cooldown = dash_->GetCooldown();
+        json->TryGetValue("PlayerParams", "Dash", "Speed", speed);
+        json->TryGetValue("PlayerParams", "Dash", "Duration", duration);
+        json->TryGetValue("PlayerParams", "Dash", "Cooldown", cooldown);
+        dash_->SetSpeed(speed);
+        dash_->SetDuration(duration);
+        dash_->SetCooldown(cooldown);
     }
 }
 
@@ -284,22 +277,20 @@ void Player::UpdateInvulnerability(const float _deltaTime) {
 
     invulnerabilityTimer_ -= _deltaTime;
 
-    // 進行度を計算 (1.0 → 0.0)
-    float progress = invulnerabilityTimer_ / INVULNERABILITY_DURATION;
-
-    // 白(2.0, 2.0, 2.0) → 青(0.3, 0.3, 1.0) にグラデーション
-    Vector4 currentColor;
-    currentColor.x = MathUtils::Lerp(BASE_COLOR.x, DAMAGE_FLASH_COLOR.x, progress);
-    currentColor.y = MathUtils::Lerp(BASE_COLOR.y, DAMAGE_FLASH_COLOR.y, progress);
-    currentColor.z = MathUtils::Lerp(BASE_COLOR.z, DAMAGE_FLASH_COLOR.z, progress);
-    currentColor.w = 1.f;
-    model_->SetColor(currentColor);
+    // 無敵が切れるにつれて、被弾の白から通常の色へ戻す
+    const float remaining = invulnerabilityTimer_ / INVULNERABILITY_DURATION;
+    model_->SetColor(MathUtils::Lerp(BASE_COLOR, DAMAGE_FLASH_COLOR, remaining));
 
     if (invulnerabilityTimer_ <= 0.f) {
         invulnerability_ = false;
         invulnerabilityTimer_ = INVULNERABILITY_DURATION;
         model_->SetColor(BASE_COLOR);
     }
+}
+
+void Player::UpdateLightAnchor() {
+    forLight_ = position_;
+    forLight_.y += LIGHT_HEIGHT;
 }
 
 void Player::RequestAutoAttack() {

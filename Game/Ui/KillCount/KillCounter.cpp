@@ -1,4 +1,3 @@
-#define NOMINMAX
 #include "KillCounter.hpp"
 
 #include <algorithm>

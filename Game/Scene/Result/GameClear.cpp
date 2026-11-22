@@ -3,7 +3,20 @@
 #include "Camera/Controller/CameraController.hpp"
 #include "Light/LightManager.hpp"
 #include "Pattern/Singleton.hpp"
+#include "Player/Player.hpp"
 #include "Random/RandomEngine.hpp"
+
+namespace {
+    // プレイヤーのキューブを、少し上から見下ろして展示する
+    constexpr Vector3 CAMERA_POSITION = {0.f, 2.5f, -11.1f};
+    constexpr Vector3 CAMERA_ROTATION = {0.2f, 0.f, 0.f};
+    constexpr Vector3 LIGHT_POSITION = {0.f, 2.f, 0.f};
+
+    constexpr float SHOWCASE_ROTATE_SPEED = 0.7f;
+    constexpr float SHOWCASE_WAVE_AMPLITUDE = 0.5f;
+
+    constexpr Vector2 MESSAGE_POSITION = {640.f, 190.f};
+}
 
 void GameClear::Initialize() {
     entryTransition_ = Transition::Type::Fade;
@@ -12,18 +25,18 @@ void GameClear::Initialize() {
     model->Initialize("animatedcube");
     model->SetTranslate({});
     model->SetTexture("white_x16.png");
-    model->SetColor({ 0.3f, 0.3f, 1.f, 1.f });
+    model->SetColor(Player::BASE_COLOR);
 
-    Singleton<LightManager>::GetInstance()->SetPosition({0.f,2.f,0.f});
+    Singleton<LightManager>::GetInstance()->SetPosition(LIGHT_POSITION);
     showcase_ = std::make_unique<ItemShowcase>(std::move(model));
     showcase_
-        ->SetRotateSpeed(0.7f)
-        .SetWaveAmplitude(0.5f);
+        ->SetRotateSpeed(SHOWCASE_ROTATE_SPEED)
+        .SetWaveAmplitude(SHOWCASE_WAVE_AMPLITUDE);
     showcase_->Update();
 
     sprite_ = std::make_unique<Sprite>();
     sprite_->Initialize("congrats.png");
-    sprite_->SetPosition({ 640.f, 190.f });
+    sprite_->SetPosition(MESSAGE_POSITION);
 }
 
 void GameClear::Update() {
@@ -48,7 +61,7 @@ void GameClear::Debug() {
 void GameClear::OnEnable() {
     Singleton<CameraController>::GetInstance()->GetActive()->transform_ = {
         {1,1,1},
-        Vector3{0.2f, 0.f, 0.f},
-        {0.f, 2.5f, -11.1f}
+        CAMERA_ROTATION,
+        CAMERA_POSITION
     };
 }

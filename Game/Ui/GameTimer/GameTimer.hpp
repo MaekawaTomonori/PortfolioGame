@@ -1,5 +1,5 @@
-#ifndef GameTimer_HPP_
-#define GameTimer_HPP_
+#ifndef GAME_TIMER_HPP_
+#define GAME_TIMER_HPP_
 #include "GEUI.hpp"
 
 class UiTheme;
@@ -39,4 +39,4 @@ private:
 
 }; // class GameTimer
 
-#endif // GameTimer_HPP_
+#endif // GAME_TIMER_HPP_

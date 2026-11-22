@@ -1,5 +1,5 @@
-#ifndef Stage_HPP_
-#define Stage_HPP_
+#ifndef STAGE_HPP_
+#define STAGE_HPP_
 #include <memory>
 
 #include "Model.hpp"
@@ -47,4 +47,4 @@ public:
     void SetCamera(FollowCamera* _camera) const;
 }; // class Stage
 
-#endif // Stage_HPP_
+#endif // STAGE_HPP_

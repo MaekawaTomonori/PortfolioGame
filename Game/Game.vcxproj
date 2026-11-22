@@ -62,7 +62,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <PreprocessorDefinitions>_DEBUG;_WINDOWS;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_WINDOWS;_UNICODE;UNICODE;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(ProjectDir).;$(SolutionDir)Engine\;$(SolutionDir)Engine\include;$(SolutionDir)Engine\src;$(SolutionDir)Engine\externals\assimp\include;$(SolutionDir)Engine\externals\imgui;$(SolutionDir)Engine\externals\DirectXTex;$(SolutionDir)Engine\externals\json;$(SolutionDir)Engine\Lib\Audio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
@@ -99,7 +99,7 @@ xcopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)d
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <PreprocessorDefinitions>NDEBUG;_WINDOWS;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_WINDOWS;_UNICODE;UNICODE;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(ProjectDir).;$(SolutionDir)Engine\;$(SolutionDir)Engine\include;$(SolutionDir)Engine\src;$(SolutionDir)Engine\externals\assimp\include;$(SolutionDir)Engine\externals\imgui;$(SolutionDir)Engine\externals\DirectXTex;$(SolutionDir)Engine\externals\json;$(SolutionDir)Engine\Lib\Audio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>MinSpace</Optimization>
@@ -137,11 +137,11 @@ xcopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)d
   <ItemGroup>
     <ClInclude Include="Bullet\Bullet.hpp" />
     <ClInclude Include="CollisionAttribute.hpp" />
+    <ClInclude Include="Effect\ParticleEffects.hpp" />
     <ClInclude Include="Effect\PerParticleUpdate.hpp" />
     <ClInclude Include="Enemy\Enemies.hpp" />
     <ClInclude Include="Enemy\Module\IEnemyActionModule.hpp" />
     <ClInclude Include="Enemy\Module\DashActionModule.hpp" />
-    <ClInclude Include="Enemy\Module\RangedActionModule.hpp" />
     <ClInclude Include="Enemy\State\EnemyStateDeath.hpp" />
     <ClInclude Include="Enemy\State\EnemyStateIdle.hpp" />
     <ClInclude Include="Enemy\State\IEnemyState.hpp" />
@@ -196,7 +196,6 @@ xcopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)d
     <ClCompile Include="Bullet\Bullet.cpp" />
     <ClCompile Include="Enemy\Enemies.cpp" />
     <ClCompile Include="Enemy\Module\DashActionModule.cpp" />
-    <ClCompile Include="Enemy\Module\RangedActionModule.cpp" />
     <ClCompile Include="Enemy\State\EnemyStateDeath.cpp" />
     <ClCompile Include="Enemy\State\EnemyStateIdle.cpp" />
     <ClCompile Include="FollowCamera.cpp" />
@@ -222,6 +221,7 @@ xcopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)d
     <ClCompile Include="Stage\Stage.cpp" />
     <ClCompile Include="Ui\HudLayout.cpp" />
     <ClCompile Include="Ui\PlayHud.cpp" />
+    <ClCompile Include="Effect\ParticleEffects.cpp" />
     <ClCompile Include="Ui\GameTimer\GameTimer.cpp" />
     <ClCompile Include="Ui\KeyGuide\KeyGuide.cpp" />
     <ClCompile Include="Ui\KillCount\KillCounter.cpp" />

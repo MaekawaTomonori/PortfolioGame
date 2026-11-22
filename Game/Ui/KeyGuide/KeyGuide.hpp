@@ -1,5 +1,5 @@
-#ifndef KeyGuide_HPP_
-#define KeyGuide_HPP_
+#ifndef KEY_GUIDE_HPP_
+#define KEY_GUIDE_HPP_
 #include <array>
 #include <vector>
 
@@ -49,7 +49,7 @@ public:
     void Debug();
     void SetActive(bool _active);
 
-    /** @brief 指定キーのCT比率を設定する (0=ready, 1=full cooldown) **/
+    /** @brief 指定キーのCT比率を設定する (0=ready, 1=full cooldown) */
     void SetCooldown(InputAction _action, float _ratio);
 
 private:
@@ -60,4 +60,4 @@ private:
 
 }; // class KeyGuide
 
-#endif // KeyGuide_HPP_
+#endif // KEY_GUIDE_HPP_

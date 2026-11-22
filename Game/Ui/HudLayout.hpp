@@ -1,5 +1,5 @@
-#ifndef HUDLAYOUT_HPP_
-#define HUDLAYOUT_HPP_
+#ifndef HUD_LAYOUT_HPP_
+#define HUD_LAYOUT_HPP_
 #include <span>
 #include <string>
 
@@ -33,4 +33,4 @@ namespace HudLayout {
     void DrawSaveButton(const std::string& _canvasPath, std::span<const Group> _groups);
 }
 
-#endif // HUDLAYOUT_HPP_
+#endif // HUD_LAYOUT_HPP_

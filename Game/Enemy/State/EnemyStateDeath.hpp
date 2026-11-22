@@ -1,5 +1,5 @@
-#ifndef EnemyStateDeath_HPP_
-#define EnemyStateDeath_HPP_
+#ifndef ENEMY_STATE_DEATH_HPP_
+#define ENEMY_STATE_DEATH_HPP_
 #include "IEnemyState.hpp"
 
 class EnemyStateDeath : public IEnemyState {
@@ -14,4 +14,4 @@ public:
 
 }; // class EnemyStateDeath
 
-#endif // EnemyStateDeath_HPP_
+#endif // ENEMY_STATE_DEATH_HPP_

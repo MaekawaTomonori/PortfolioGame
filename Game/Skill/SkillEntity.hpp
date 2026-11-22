@@ -7,8 +7,8 @@
 #include <memory>
 
 /** @brief スキルエンティティの基底クラス
- ** GameObjectを継承し、コライダーとライフタイムを共通で管理する
- **/
+ * GameObjectを継承し、コライダーとライフタイムを共通で管理する
+ */
 class SkillEntity : public GameObject {
 protected:
     std::unique_ptr<Collision::Collider> collider_;

@@ -1,5 +1,5 @@
-#ifndef ParticleScene_HPP_
-#define ParticleScene_HPP_
+#ifndef PARTICLE_SCENE_HPP_
+#define PARTICLE_SCENE_HPP_
 
 #include "IScene.hpp"
 
@@ -10,4 +10,4 @@ public:
     void Draw() override;
 };
 
-#endif // ParticleScene_HPP_
+#endif // PARTICLE_SCENE_HPP_

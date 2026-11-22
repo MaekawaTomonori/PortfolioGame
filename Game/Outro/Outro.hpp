@@ -1,5 +1,5 @@
-#ifndef Outro_HPP_
-#define Outro_HPP_
+#ifndef OUTRO_HPP_
+#define OUTRO_HPP_
 
 
 class Outro {
@@ -9,4 +9,4 @@ public:
     bool IsFinish() const;
 }; // class Outro
 
-#endif // Outro_HPP_
+#endif // OUTRO_HPP_

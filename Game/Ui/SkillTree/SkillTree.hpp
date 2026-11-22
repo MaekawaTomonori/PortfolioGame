@@ -1,5 +1,5 @@
-#ifndef SkillTree_HPP_
-#define SkillTree_HPP_
+#ifndef SKILL_TREE_HPP_
+#define SKILL_TREE_HPP_
 #include <array>
 #include <functional>
 #include <string>
@@ -126,4 +126,4 @@ private:
 
 }; // class SkillTree
 
-#endif // SkillTree_HPP_
+#endif // SKILL_TREE_HPP_

@@ -1,10 +1,9 @@
-#define NOMINMAX
 #include "Enemies.hpp"
 
 #include <algorithm>
 
 #include "Utils.hpp"
-#include "Effect/PerParticleUpdate.hpp"
+#include "Effect/ParticleEffects.hpp"
 #include "imgui.h"
 #include "Json/JsonParams.hpp"
 #include "Pattern/Singleton.hpp"
@@ -28,15 +27,7 @@ Enemies::Enemies(ParticleSystem* _particle, const GameStatus& _status) :status_(
         return;
     }
 
-    particle_->RegisterUpdateFunc("enemy_hit_explosion", PerParticleUpdate([](float t, const Vector3&, Vector3& pos, Vector3& velocity, Vector4& color) {
-        (void)pos;
-        if (t < 0.01f) {
-            velocity = Vector3::Random() * 6.0f;
-        }
-        velocity = velocity * 0.92f;
-        velocity.y -= 0.05f;
-        color.w = 0.9f * (.7f - t);
-    }));
+    ParticleEffects::RegisterEnemyHitExplosion(*particle_);
 }
 
 void Enemies::Initialize() {
@@ -63,67 +54,45 @@ void Enemies::Update() {
         }
     }
 
-#ifdef _DEBUG
-
-    line_.Clear();
-    Vector3 p = target_->GetPosition();
-
-    constexpr int CIRCLE_SEGMENTS = 32;
-    constexpr float ANGLE_STEP = 2.f * MathUtils::F_PI / static_cast<float>(CIRCLE_SEGMENTS);
-
-    for (int i = 0; i < CIRCLE_SEGMENTS; ++i) {
-        float ang1 = ANGLE_STEP * i;
-        float ang2 = ANGLE_STEP * ((i + 1) % CIRCLE_SEGMENTS);
-
-        Vector3 point1 = p + Vector3{
-            cosf(ang1) * distance_.x,
-            0.f,
-            sinf(ang1)* distance_.x
-        };
-        Vector3 point2 = p + Vector3{
-            cosf(ang2) * distance_.x,
-            0.f,
-            sinf(ang2)* distance_.x
-        };
-        line_.AddLine(point1, point2);
-    }
-
-    for (int i = 0; i < CIRCLE_SEGMENTS; ++i) {
-        float ang1 = ANGLE_STEP * i;
-        float ang2 = ANGLE_STEP * ((i + 1) % CIRCLE_SEGMENTS);
-
-        Vector3 point1 = p + Vector3{
-            cosf(ang1) * distance_.y,
-            0.f,
-            sinf(ang1)* distance_.y
-        };
-        Vector3 point2 = p + Vector3{
-            cosf(ang2) * distance_.y,
-            0.f,
-            sinf(ang2)* distance_.y
-        };
-
-        line_.AddLine(point1, point2);
-    }
-
-    line_.Update();
+    DrawSpawnRange();
 
     if (autoSpawn_) {
-#endif
         if (status_.enemySpawnInterval <= timer_) {
             timer_ = 0.f;
             Spawn();
         } else {
             timer_ += Time().GetDeltaTime();
         }
-
-#ifdef _DEBUG
     }
-#endif
 
     for (const auto& enemy : enemies_) {
         enemy->Update();
     }
+}
+
+void Enemies::DrawSpawnRange() {
+#ifdef _DEBUG
+    if (!target_) return;
+
+    constexpr int CIRCLE_SEGMENTS = 32;
+    constexpr float ANGLE_STEP = 2.f * MathUtils::F_PI / static_cast<float>(CIRCLE_SEGMENTS);
+
+    const Vector3 center = target_->GetPosition();
+    const auto addCircle = [&](const float _radius) {
+        for (int i = 0; i < CIRCLE_SEGMENTS; ++i) {
+            const float angle = ANGLE_STEP * static_cast<float>(i);
+            const float nextAngle = ANGLE_STEP * static_cast<float>(i + 1);
+            line_.AddLine(
+                center + Vector3{std::cos(angle) * _radius, 0.f, std::sin(angle) * _radius},
+                center + Vector3{std::cos(nextAngle) * _radius, 0.f, std::sin(nextAngle) * _radius});
+        }
+    };
+
+    line_.Clear();
+    addCircle(distance_.x);
+    addCircle(distance_.y);
+    line_.Update();
+#endif
 }
 
 void Enemies::Draw() const {
@@ -160,23 +129,16 @@ void Enemies::Debug() {
 #ifdef _DEBUG
     ImGui::Begin("Enemies");
 
-    // Display current enemy count
     ImGui::Text("Active Enemies: %zu / %hu", enemies_.size(), status_.maxEnemyCount);
 
     ImGui::Separator();
 
-    // Auto Spawn toggle with clear visual state
     ImGui::Checkbox("Auto Spawn", &autoSpawn_);
-    ImGui::SameLine();
-    ImGui::TextColored(autoSpawn_ ? ImVec4(0.0f, 1.0f, 0.0f, 1.0f) : ImVec4(0.5f, 0.5f, 0.5f, 1.0f),autoSpawn_ ? "[ON]" : "[OFF]");
-
-    // Show spawn timer when auto spawn is enabled
     if (autoSpawn_) {
         ImGui::Text("Next spawn in: %.1fs", status_.enemySpawnInterval - timer_);
         ImGui::ProgressBar(timer_ / status_.enemySpawnInterval, ImVec2(-1.0f, 0.0f));
     }
 
-    // Manual spawn button
     if (ImGui::Button("Spawn Enemy")) {
         Spawn();
     }
@@ -195,14 +157,9 @@ void Enemies::Debug() {
         ImGui::SetNextItemWidth(INPUT_WIDTH * 0.5f);
         bool maxChanged = ImGui::DragFloat("##Max", &distance_.y, 0.1f, 0.1f, 25.0f, "Max: %.1f");
 
-        if (minChanged && !maxChanged) {
-            distance_.x = std::clamp(distance_.x, 0.0f, 24.9f);
-            if (distance_.x >= distance_.y) distance_.y = std::min(distance_.x + 0.1f, 25.0f);
-        }
-        if (maxChanged && !minChanged) {
-            distance_.y = std::clamp(distance_.y, 0.1f, 25.0f);
-            if (distance_.y <= distance_.x) distance_.x = std::max(distance_.y - 0.1f, 0.f);
-        }
+        // 内側が外側を追い越さないように、動かしていない方を押し出す
+        if (minChanged && distance_.x >= distance_.y) distance_.y = std::min(distance_.x + 0.1f, 25.0f);
+        if (maxChanged && distance_.y <= distance_.x) distance_.x = std::max(distance_.y - 0.1f, 0.f);
 
         ImGui::Separator();
 
@@ -265,27 +222,11 @@ void Enemies::Debug() {
 
     ImGui::Separator();
 
-    // Individual enemy details
     if (ImGui::CollapsingHeader("Enemy Details")) {
         int index = 0;
         for (const auto& enemy : enemies_) {
             ImGui::PushID(index);
-
-            // Enemy header with status indicator
-            bool isDying = enemy->IsDead();
-            bool isActive = enemy->IsActive();
-
-            ImVec4 headerColor = isActive ?
-                (isDying ? ImVec4(1.0f, 0.5f, 0.0f, 1.0f) : ImVec4(0.0f, 1.0f, 0.0f, 1.0f)) :
-                ImVec4(0.5f, 0.5f, 0.5f, 1.0f);
-
-            ImGui::TextColored(headerColor, "Enemy #%d", index);
-            ImGui::SameLine();
-
-            const char* status = isActive ? (isDying ? "[Dying]" : "[Active]") : "[Inactive]";
-            ImGui::Text("%s", status);
-
-            // Enemy debug info
+            ImGui::Text("Enemy #%d %s", index, enemy->IsDead() ? "[Dying]" : "");
             enemy->Debug();
 
             ImGui::PopID();
@@ -318,8 +259,6 @@ void Enemies::Spawn() {
     dash->SetParams(&dashParams_);
     enemy->SetActionModule(std::move(dash));
 
-    enemy->SetScale({SIZE, SIZE, SIZE});
-
     enemies_.push_back(std::move(enemy));
 }
 
@@ -345,35 +284,26 @@ uint16_t Enemies::GetDeathCount() const {
 void Enemies::LoadParams() {
     const auto& json = Singleton<JsonParams>::GetInstance();
 
-    if (json->Load("EnemyParams")) {
-        // 基本ステータス
-        enemyParams_.maxHp      = std::get<float>(json->GetValue("EnemyParams", "Basic", "MaxHp"));
-        enemyParams_.moveSpeed  = std::get<float>(json->GetValue("EnemyParams", "Basic", "MoveSpeed"));
-        enemyParams_.minDistance= std::get<float>(json->GetValue("EnemyParams", "Basic", "MinDistance"));
+    // ファイルやキーが無いときは、Params の初期値のまま使う
+    if (!json->Load("EnemyParams")) return;
 
-        distance_ = std::get<Vector2>(json->GetValue("EnemyParams", "Basic", "SpawnDistance"));
+    json->TryGetValue("EnemyParams", "Basic", "MaxHp", enemyParams_.maxHp);
+    json->TryGetValue("EnemyParams", "Basic", "MoveSpeed", enemyParams_.moveSpeed);
+    json->TryGetValue("EnemyParams", "Basic", "MinDistance", enemyParams_.minDistance);
+    json->TryGetValue("EnemyParams", "Basic", "SpawnDistance", distance_);
+    json->TryGetValue("EnemyParams", "Invincible", "Duration", enemyParams_.invincibleDuration);
+    json->TryGetValue("EnemyParams", "Knockback", "Decay", enemyParams_.knockbackDecay);
+    json->TryGetValue("EnemyParams", "Death", "Duration", enemyParams_.deathDuration);
 
-        // 無敵時間
-        enemyParams_.invincibleDuration = std::get<float>(json->GetValue("EnemyParams", "Invincible", "Duration"));
-
-        // ノックバック
-        enemyParams_.knockbackDecay = std::get<float>(json->GetValue("EnemyParams", "Knockback", "Decay"));
-
-        // 死亡演出
-        enemyParams_.deathDuration = std::get<float>(json->GetValue("EnemyParams", "Death", "Duration"));
-
-        // ダッシュアクション
-        dashParams_.chargeMaxTime = std::get<float>(json->GetValue("EnemyParams", "Dash", "ChargeMaxTime"));
-        dashParams_.duration = std::get<float>(json->GetValue("EnemyParams", "Dash", "Duration"));
-        dashParams_.speed = std::get<float>(json->GetValue("EnemyParams", "Dash", "Speed"));
-        dashParams_.triggerInterval = std::get<float>(json->GetValue("EnemyParams", "Dash", "TriggerInterval"));
-        dashParams_.triggerChance = std::get<float>(json->GetValue("EnemyParams", "Dash", "TriggerChance"));
-        dashParams_.enemyOffset = std::get<float>(json->GetValue("EnemyParams", "Dash", "EnemyOffset"));
-        dashParams_.lineLength = std::get<float>(json->GetValue("EnemyParams", "Dash", "LineLength"));
-        dashParams_.lineWidth = std::get<float>(json->GetValue("EnemyParams", "Dash", "LineWidth"));
-        dashParams_.lineCenterOffset = std::get<float>(json->GetValue("EnemyParams", "Dash", "LineCenterOffset"));
-    }
-    // JSONファイルが存在しない場合はデフォルト値を使用
+    json->TryGetValue("EnemyParams", "Dash", "ChargeMaxTime", dashParams_.chargeMaxTime);
+    json->TryGetValue("EnemyParams", "Dash", "Duration", dashParams_.duration);
+    json->TryGetValue("EnemyParams", "Dash", "Speed", dashParams_.speed);
+    json->TryGetValue("EnemyParams", "Dash", "TriggerInterval", dashParams_.triggerInterval);
+    json->TryGetValue("EnemyParams", "Dash", "TriggerChance", dashParams_.triggerChance);
+    json->TryGetValue("EnemyParams", "Dash", "EnemyOffset", dashParams_.enemyOffset);
+    json->TryGetValue("EnemyParams", "Dash", "LineLength", dashParams_.lineLength);
+    json->TryGetValue("EnemyParams", "Dash", "LineWidth", dashParams_.lineWidth);
+    json->TryGetValue("EnemyParams", "Dash", "LineCenterOffset", dashParams_.lineCenterOffset);
 }
 
 void Enemies::SaveParams() {

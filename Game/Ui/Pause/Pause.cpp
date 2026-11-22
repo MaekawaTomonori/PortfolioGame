@@ -31,7 +31,7 @@ void Pause::Update() {
 }
 
 void Pause::UpdateFade(const float _deltaTime) {
-    fadeTime_ = (std::min)(fadeTime_ + _deltaTime, FADE_TIME);
+    fadeTime_ = std::min(fadeTime_ + _deltaTime, FADE_TIME);
     const float t = fadeTime_ / FADE_TIME;
     ui_.SetAlpha(1.f - (1.f - t) * (1.f - t));
 }

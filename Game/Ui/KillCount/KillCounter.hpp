@@ -1,5 +1,5 @@
-#ifndef KillCounter_HPP_
-#define KillCounter_HPP_
+#ifndef KILL_COUNTER_HPP_
+#define KILL_COUNTER_HPP_
 #include <cstdint>
 
 #include "GEUI.hpp"
@@ -38,4 +38,4 @@ private:
 
 }; // class KillCounter
 
-#endif // KillCounter_HPP_
+#endif // KILL_COUNTER_HPP_

@@ -1,4 +1,3 @@
-#define NOMINMAX
 #include "GameOver.hpp"
 
 #include "PostProcess/Executor/PostProcessExecutor.hpp"

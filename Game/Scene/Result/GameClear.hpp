@@ -1,5 +1,5 @@
-#ifndef GameClear_HPP_
-#define GameClear_HPP_
+#ifndef GAME_CLEAR_HPP_
+#define GAME_CLEAR_HPP_
 #include "IScene.hpp"
 #include "Sprite.hpp"
 #include "Showcase/ItemShowcase.hpp"
@@ -22,4 +22,4 @@ private:
     void OnEnable() override;
 }; // class GameClear
 
-#endif // GameClear_HPP_
+#endif // GAME_CLEAR_HPP_

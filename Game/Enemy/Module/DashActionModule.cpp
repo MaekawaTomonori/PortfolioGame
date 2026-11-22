@@ -8,8 +8,8 @@
 #include "Time/Time.hpp"
 
 namespace {
-    constexpr Vector4 IDLE_COLOR = {1.f, 0.3f, 0.3f, 1.f};
-    constexpr Vector3 IDLE_SCALE = {0.5f, 0.5f, 0.5f};
+    // 溜めの間に、通常色からこの色へ近づける
+    constexpr Vector4 CHARGE_COLOR = {1.5f, 1.5f, 0.3f, 1.f};
 }
 
 void DashActionModule::Update(Enemy* _enemy) {
@@ -83,13 +83,10 @@ void DashActionModule::UpdateCharging(Enemy* _enemy) {
 
     float progress = elapsedTime_ / params_->chargeMaxTime;
 
-    float r = MathUtils::Lerp(1.0f, 1.5f, progress);
-    float g = MathUtils::Lerp(0.3f, 1.5f, progress);
-    float b = MathUtils::Lerp(0.3f, 0.3f, progress);
-    _enemy->SetModelColor({ r, g, b, 1.f });
+    _enemy->SetModelColor(MathUtils::Lerp(Enemy::BASE_COLOR, CHARGE_COLOR, progress));
 
     float pulse = std::sin(elapsedTime_ * 10.0f) * 0.025f * progress;
-    float scaleValue = 0.5f + pulse;
+    float scaleValue = Enemy::DEFAULT_SCALE.x + pulse;
     _enemy->SetScale({ scaleValue, scaleValue, scaleValue });
 
     UpdatePredictionLine();
@@ -131,8 +128,8 @@ void DashActionModule::UpdateDashing(Enemy* _enemy) {
 
     if (elapsedTime_ >= params_->duration) {
         _enemy->SetVelocity({ 0.f, 0.f, 0.f });
-        _enemy->SetModelColor(IDLE_COLOR);
-        _enemy->SetScale(IDLE_SCALE);
+        _enemy->SetModelColor(Enemy::BASE_COLOR);
+        _enemy->SetScale(Enemy::DEFAULT_SCALE);
         phase_ = Phase::Waiting;
     }
 }

@@ -1,5 +1,5 @@
-#ifndef GameScene_HPP_
-#define GameScene_HPP_
+#ifndef GAME_SCENE_HPP_
+#define GAME_SCENE_HPP_
 #include "IScene.hpp"
 
 #include "FollowCamera.hpp"
@@ -60,4 +60,4 @@ private:
 
 }; // class GameScene
 
-#endif // GameScene_HPP_
+#endif // GAME_SCENE_HPP_

@@ -1,5 +1,5 @@
-#ifndef IENEMYSTATE_HPP
-#define IENEMYSTATE_HPP
+#ifndef I_ENEMY_STATE_HPP_
+#define I_ENEMY_STATE_HPP_
 #include <memory>
 
 class Enemy;
@@ -21,4 +21,4 @@ public:
     virtual const char* GetStateName() const { return "Unknown"; }
 };
 
-#endif // IENEMYSTATE_HPP
+#endif // I_ENEMY_STATE_HPP_

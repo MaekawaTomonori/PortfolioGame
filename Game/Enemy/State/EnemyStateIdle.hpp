@@ -1,5 +1,5 @@
-#ifndef EnemyStateIdle_HPP_
-#define EnemyStateIdle_HPP_
+#ifndef ENEMY_STATE_IDLE_HPP_
+#define ENEMY_STATE_IDLE_HPP_
 #include "IEnemyState.hpp"
 
 class EnemyStateIdle : public IEnemyState {
@@ -11,4 +11,4 @@ public:
     const char* GetStateName() const override { return "Idle"; }
 };
 
-#endif // EnemyStateIdle_HPP_
+#endif // ENEMY_STATE_IDLE_HPP_

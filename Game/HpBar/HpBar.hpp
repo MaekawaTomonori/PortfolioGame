@@ -1,5 +1,5 @@
-#ifndef HpBar_HPP_
-#define HpBar_HPP_
+#ifndef HP_BAR_HPP_
+#define HP_BAR_HPP_
 #include <memory>
 
 #include "Sprite.hpp"
@@ -69,4 +69,4 @@ private:
 
 }; // class HpBar
 
-#endif // HpBar_HPP_
+#endif // HP_BAR_HPP_

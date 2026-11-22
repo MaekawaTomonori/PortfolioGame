@@ -1,5 +1,5 @@
-#ifndef GameObject_HPP_
-#define GameObject_HPP_
+#ifndef GAME_OBJECT_HPP_
+#define GAME_OBJECT_HPP_
 #include <memory>
 
 #include "Model.hpp"
@@ -42,12 +42,10 @@ public:
 protected:
     void UpdateModel();
 
-    /// <summary>
-    /// velocityを位置に適用（継承先のUpdate内で呼び出す）
-    /// </summary>
+    /** @brief velocity を位置に足す。継承先の Update の中で呼ぶ */
     void ApplyVelocity();
 
     void SetModel(const std::string& _name);
 }; // class GameObject
 
-#endif // GameObject_HPP_
+#endif // GAME_OBJECT_HPP_

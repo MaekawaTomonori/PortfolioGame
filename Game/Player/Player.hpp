@@ -26,8 +26,6 @@ class Player : public GameObject {
     ParticleSystem* particle_ = nullptr;
     FollowCamera* camera_ = nullptr;
     PostProcessExecutor* postEffect_ = nullptr;
-    // プレイヤーの基本色
-    static constexpr Vector4 BASE_COLOR = {0.3f, 0.3f, 1.f, 1.f};
     static constexpr Vector4 DAMAGE_FLASH_COLOR = {2.f, 2.f, 2.f, 1.f};
 
     std::unique_ptr<Movement> movement_;
@@ -65,6 +63,9 @@ class Player : public GameObject {
     bool enable_ = false;
 
 public:
+    /** @brief プレイヤーの基本色。クリア画面の展示でも同じ色を使う */
+    static constexpr Vector4 BASE_COLOR = {0.3f, 0.3f, 1.f, 1.f};
+
     Player(ParticleSystem* _particle, PostProcessExecutor* _postEffect, const KeyBinds& _binds);
     void Initialize();
     void Update() override;
@@ -82,8 +83,8 @@ public:
     void SetEnable(bool _enable) { enable_ = _enable; }
 
     /** @brief スキル発動時のコールバックを設定
-     ** @param _callback (スキルスロット, 現在位置, 指定方向) を受け取るコールバック
-     **/
+     * @param _callback (スキルスロット, 現在位置, 指定方向) を受け取るコールバック
+     */
     void SetOnSkillRequest(std::function<void(SkillSlot, const Vector3&, const Vector3&)> _callback);
 
     bool IsDashing() const { return dash_ && dash_->IsDashing(); }
@@ -94,7 +95,7 @@ public:
 
     bool IsDead() const;
 
-    /** @brief ライト追従用のアンカー位置(プレイヤー位置に補間された座標)を返す **/
+    /** @brief プレイヤーを照らすライトを置く位置（プレイヤーの頭上）を返す */
     const Vector3& GetLightAnchor() const { return forLight_; }
 
 private:
@@ -107,6 +108,7 @@ private:
     void LoadParams();
     void SaveParams() const;
     void UpdateInvulnerability(float _deltaTime);
+    void UpdateLightAnchor();
     void RequestAutoAttack();
     void RequestSkills();
     void ClampToFieldBounds();

@@ -1,5 +1,5 @@
-#ifndef StageInfoUI_HPP_
-#define StageInfoUI_HPP_
+#ifndef STAGE_INFO_UI_HPP_
+#define STAGE_INFO_UI_HPP_
 #include <cstdint>
 #include <functional>
 
@@ -62,4 +62,4 @@ private:
 
 }; // class StageInfoUI
 
-#endif // StageInfoUI_HPP_
+#endif // STAGE_INFO_UI_HPP_

@@ -1,6 +1,6 @@
 #include "Stage.hpp"
 
-#include "Effect/PerParticleUpdate.hpp"
+#include "Effect/ParticleEffects.hpp"
 #include "Math/MathUtils.hpp"
 #include "Pattern/Singleton.hpp"
 #include "Light/LightManager.hpp"
@@ -9,31 +9,8 @@
 #include "Skill/Flash/FlashSkill.hpp"
 #include "src/Time/Time.hpp"
 
-#undef max
-
 namespace {
     constexpr float FOG_INTERVAL = 0.5f;
-
-    constexpr float FOG_SPAWN_RADIUS_MIN     = 0.5f;
-    constexpr float FOG_SPAWN_RADIUS_MAX     = 10.5f;
-    constexpr float FOG_SPAWN_HEIGHT_MIN     = -0.2f;
-    constexpr float FOG_SPAWN_HEIGHT_MAX     = 0.3f;
-    constexpr float FOG_HORIZONTAL_SPEED_MAX = 0.2f;
-    constexpr float FOG_RISE_SPEED_MIN       = 0.35f;
-    constexpr float FOG_RISE_SPEED_MAX       = 0.65f;
-
-    constexpr float FOG_VERTICAL_DRAG   = 0.97f;
-    constexpr float FOG_HORIZONTAL_DRAG = 0.93f;
-    constexpr float FOG_FADE_IN_DURATION = 0.15f;
-    constexpr float FOG_MAX_ALPHA        = 0.5f;
-    constexpr Vector3 FOG_COLOR = {0.32f, 0.28f, 0.42f};
-
-    constexpr float HIT_EXPLOSION_INITIAL_BURST_THRESHOLD = 0.01f;
-    constexpr float HIT_EXPLOSION_BURST_SPEED = 8.0f;
-    constexpr float HIT_EXPLOSION_DRAG        = 0.92f;
-    constexpr float HIT_EXPLOSION_GRAVITY     = 0.05f;
-    constexpr float HIT_EXPLOSION_LIFETIME    = 0.7f;
-    constexpr float HIT_EXPLOSION_ALPHA_SCALE = 0.9f;
 
     constexpr float TERRAIN_SIZE = 100.f;
     // 見た目の地形端より内側でプレイヤーの移動を止めるための余白
@@ -73,50 +50,10 @@ void Stage::Setup(const GESTD::ReferencePtr<ParticleSystem>& _particle, const GE
         skillManager_->Activate(_slot, {*player_, _pos, _dir });
     });
 
-    // フィールドの暗闇感を演出する霧エフェクトのスポーン関数（発生中心の周囲にランダム配置）
-    particle_->RegisterSpawnFunc("field_fog_spawn", 
-        [](const Vector3& center, Vector3& pos, Vector3& vel) {
-            float angle = MathUtils::Random(0.f, MathUtils::F_PI * 2.f);
-            float radius = MathUtils::Random(FOG_SPAWN_RADIUS_MIN, FOG_SPAWN_RADIUS_MAX);
-            pos = {
-                center.x + std::cos(angle) * radius,
-                center.y + MathUtils::Random(FOG_SPAWN_HEIGHT_MIN, FOG_SPAWN_HEIGHT_MAX),
-                center.z + std::sin(angle) * radius,
-            };
-            float horizAngle = MathUtils::Random(0.f, MathUtils::F_PI * 2.f);
-            float horizSpeed = MathUtils::Random(0.f, FOG_HORIZONTAL_SPEED_MAX);
-            vel = {
-                std::cos(horizAngle) * horizSpeed,
-                MathUtils::Random(FOG_RISE_SPEED_MIN, FOG_RISE_SPEED_MAX),
-                std::sin(horizAngle) * horizSpeed,
-            };
-        }
-    );
+    if (!particle_) return;
 
-    // フィールド霧エフェクトの更新関数（上昇しながらフェードアウト）
-    particle_->RegisterUpdateFunc("field_fog_update",
-        PerParticleUpdate([](float t, const Vector3&, Vector3&, Vector3& vel, Vector4& color) {
-            vel.y *= FOG_VERTICAL_DRAG;
-            vel.x *= FOG_HORIZONTAL_DRAG;
-            vel.z *= FOG_HORIZONTAL_DRAG;
-            float alpha = (t < FOG_FADE_IN_DURATION)
-                ? (t / FOG_FADE_IN_DURATION) * FOG_MAX_ALPHA
-                : FOG_MAX_ALPHA * (1.f - (t - FOG_FADE_IN_DURATION) / (1.f - FOG_FADE_IN_DURATION));
-            color = { FOG_COLOR.x, FOG_COLOR.y, FOG_COLOR.z, std::max(0.f, alpha)};
-        })
-    );
-
-    // プレイヤー被弾時のヒットエフェクトの更新関数（弾け飛んで減衰しながらフェードアウト）
-    particle_->RegisterUpdateFunc("hit_explosion", PerParticleUpdate([](float t, const Vector3&, Vector3& pos, Vector3& velocity, Vector4& color) {
-        (void)pos;
-        if (t < HIT_EXPLOSION_INITIAL_BURST_THRESHOLD) {
-            velocity = Vector3::Random() * HIT_EXPLOSION_BURST_SPEED;
-        }
-        velocity = velocity * HIT_EXPLOSION_DRAG;
-        velocity.y -= HIT_EXPLOSION_GRAVITY;
-        color.w = HIT_EXPLOSION_ALPHA_SCALE * (HIT_EXPLOSION_LIFETIME - t);
-    }));
-
+    ParticleEffects::RegisterFieldFog(*particle_);
+    ParticleEffects::RegisterHitExplosion(*particle_);
     particle_->Register("hit");
 }
 

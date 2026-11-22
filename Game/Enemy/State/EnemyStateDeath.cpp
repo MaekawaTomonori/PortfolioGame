@@ -28,7 +28,7 @@ std::unique_ptr<IEnemyState> EnemyStateDeath::Update() {
     if (progress < 0.3f) {
         // フェーズ1: 膨張
         float phase = progress / 0.3f;
-        float scaleValue = MathUtils::Lerp(0.5f, 0.65f, phase);
+        float scaleValue = MathUtils::Lerp(Enemy::DEFAULT_SCALE.x, 0.65f, phase);
         enemy_->SetScale({ scaleValue, scaleValue, scaleValue });
         enemy_->SetModelColor({ 2.f, 2.f, 2.f, 1.f });
 

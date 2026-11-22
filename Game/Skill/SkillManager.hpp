@@ -3,6 +3,7 @@
 
 #include <array>
 #include <memory>
+#include <vector>
 
 #include "ISkill.hpp"
 #include "SkillEntity.hpp"
@@ -29,9 +30,9 @@ public:
     void Equip(SkillSlot _slot, std::unique_ptr<ISkill> _skill);
 
     /** @brief スキル発動
-     ** @param _slot どのスロットのスキルか
-     ** @param _context 位置や発動方向を指定
-     **/
+     * @param _slot どのスロットのスキルか
+     * @param _context 位置や発動方向を指定
+     */
     void Activate(SkillSlot _slot, const SkillContext& _context);
 
     float GetCooldownRatio(SkillSlot _slot) const;

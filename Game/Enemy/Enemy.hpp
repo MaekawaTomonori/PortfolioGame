@@ -28,6 +28,10 @@ public:
         float deathDuration = 0.8f;
     };
 
+    /** @brief 通常時の見た目。突進や死亡の演出はここから変化させ、終わったらここへ戻す */
+    static constexpr Vector4 BASE_COLOR = {1.f, 0.3f, 0.3f, 1.f};
+    static constexpr Vector3 DEFAULT_SCALE = {0.5f, 0.5f, 0.5f};
+
 private:
 
     ParticleSystem* particle_ = nullptr;

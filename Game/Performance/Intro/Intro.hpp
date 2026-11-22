@@ -1,5 +1,5 @@
-#ifndef Intro_HPP_
-#define Intro_HPP_
+#ifndef INTRO_HPP_
+#define INTRO_HPP_
 
 class Intro {
     bool cameraDone_ = false;
@@ -12,4 +12,4 @@ public:
     bool IsCameraDone() const { return cameraDone_; }
 }; // class Intro
 
-#endif // Intro_HPP_
+#endif // INTRO_HPP_

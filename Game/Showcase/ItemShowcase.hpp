@@ -1,14 +1,11 @@
-#ifndef ItemShowcase_HPP_
-#define ItemShowcase_HPP_
+#ifndef ITEM_SHOWCASE_HPP_
+#define ITEM_SHOWCASE_HPP_
 #include <memory>
 
 #include "Model.hpp"
 #include "Math/MathUtils.hpp"
 
-/// <summary>
-/// モデルぷかぷか展示クラス
-/// 指定したモデルを回転させながら展示する
-/// </summary>
+/** @brief 指定したモデルを、回転させながら上下にゆらして展示する */
 class ItemShowcase {
     struct Transform {
         Vector3 scale;
@@ -42,4 +39,4 @@ private:
     void Debug();
 }; // class ItemShowcase
 
-#endif // ItemShowcase_HPP_
+#endif // ITEM_SHOWCASE_HPP_

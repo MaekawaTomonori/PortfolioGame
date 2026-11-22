@@ -1,5 +1,5 @@
-#ifndef PlayerStatus_HPP_
-#define PlayerStatus_HPP_
+#ifndef PLAYER_STATUS_HPP_
+#define PLAYER_STATUS_HPP_
 
 struct PlayerStatus {
     float hp = 10.f;
@@ -12,4 +12,4 @@ struct PlayerStatus {
     //       SkillManagerのJSON保存に組み込む
 }; // struct PlayerStatus
 
-#endif // PlayerStatus_HPP_
+#endif // PLAYER_STATUS_HPP_

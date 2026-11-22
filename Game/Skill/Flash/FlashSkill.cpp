@@ -16,10 +16,11 @@ float FlashSkill::GetCooldown() const {
 }
 
 void FlashSkill::Load() {
-    if (!Singleton<JsonParams>::GetInstance()->Load(SKILL_PARAMS_FILE)) return;
+    const auto& json = Singleton<JsonParams>::GetInstance();
+    if (!json->Load(SKILL_PARAMS_FILE)) return;
 
-    ReadSkillParam("Flash", "Distance", distance_);
-    ReadSkillParam("Flash", "Cooldown", cooldown_);
+    json->TryGetValue(SKILL_PARAMS_FILE, "Flash", "Distance", distance_);
+    json->TryGetValue(SKILL_PARAMS_FILE, "Flash", "Cooldown", cooldown_);
 }
 
 void FlashSkill::Save() const {

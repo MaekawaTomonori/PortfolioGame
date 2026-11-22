@@ -1,5 +1,5 @@
-#ifndef GameStatus_HPP_
-#define GameStatus_HPP_
+#ifndef GAME_STATUS_HPP_
+#define GAME_STATUS_HPP_
 #include <cstdint>
 
 #include "Player/Status/PlayerStatus.hpp"
@@ -17,4 +17,4 @@ struct GameStatus {
     void Save() const;
 };
 
-#endif // GameStatus_HPP_
+#endif // GAME_STATUS_HPP_

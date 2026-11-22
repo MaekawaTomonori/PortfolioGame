@@ -1,4 +1,3 @@
-#define NOMINMAX
 #include "KeyGuide.hpp"
 
 #include <algorithm>

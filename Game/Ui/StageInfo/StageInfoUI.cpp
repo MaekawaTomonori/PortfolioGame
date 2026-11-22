@@ -1,4 +1,3 @@
-#define NOMINMAX
 #include "StageInfoUI.hpp"
 
 #include <algorithm>
